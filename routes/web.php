@@ -1,8 +1,10 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\GroupNotificationSettingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
+use App\Models\GroupNotificationSetting;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\GroupController;
@@ -61,6 +63,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Salle de chat
     Route::get('/chat-room', [GroupController::class, 'chatRoom'])->name('chat-room');
     Route::get('/chat-room-users', [SearchUserController::class, 'chatRoomUsers'])->name('chat-room-users');
+    Route::get('/group/{groupId}/user/{userId}/notification-status', [GroupNotificationSettingController::class, 'getNotificationStatus']);
+    Route::post('/toggle-group-notification', [GroupNotificationSettingController::class, 'toggleNotification'])->name('toggle-group-notification');
 
     // Groupes et conversations
     Route::resource('groups', GroupController::class);
@@ -99,6 +103,7 @@ Route::resources([
     'usershow' => UserMessController::class, // Gestion des utilisateurs par les mess
     'chat' => ChatController::class, // Gestion de la messagerie
     'searchUser' => SearchUserController::class,
+    'groupNotificationSetting' => GroupNotificationSetting::class,
 
 ]);
 

@@ -157,27 +157,24 @@
                 <div id="groupName" class="font-semibold text-sm"></div>
             </div>
             <div class="ml-auto">
-                <ul class="flex flex-row items-center space-x-2">
+{{--                <ul class="flex flex-row items-center space-x-2">--}}
+                    {{--<li></li>--}}
+                <button id="btn_chat_option" class="flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-400 h-10 w-10 rounded-full">
+                    <span>
+                        <svg class="w-5 h-5"
+                                   fill="none"
+                                   stroke="currentColor"
+                                   viewBox="0 0 24 24"
+                                   xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round"
+                                      stroke-linejoin="round"
+                                      stroke-width="2"
+                                      d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
+                        </svg>
+                    </span>
 
-
-                    <li>
-                        <a href="#"
-                           class="flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-400 h-10 w-10 rounded-full">
-                <span>
-                  <svg class="w-5 h-5"
-                       fill="none"
-                       stroke="currentColor"
-                       viewBox="0 0 24 24"
-                       xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"></path>
-                  </svg>
-                </span>
-                        </a>
-                    </li>
-                </ul>
+                        </button>
+{{--                </ul>--}}
             </div>
         </div>
         <div class="h-full overflow-hidden py-4">
@@ -314,6 +311,65 @@
     </div>
 </div>
 
+
+    <div id="chatSettingsModal" class="hidden fixed z-10 inset-0 overflow-y-auto">
+        <!-- Fond de la modale -->
+        <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <!-- Overlay -->
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <!-- Contenu de la modale -->
+            <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+                <!-- En-tête de la modale -->
+                <div class="bg-gray-100 p-4">
+                    <h3 class="text-lg leading-6 font-medium text-gray-900">Réglages du chat</h3>
+                </div>
+
+                <!-- Corps de la modale -->
+                <div class="p-4">
+
+
+                    <div class="flex items-center justify-between mb-4">
+                        <!-- Ligne Notifications On/Off -->
+                    <label for="toggleNotificationsChat" class="flex items-center cursor-pointer">
+                        <!-- toggle -->
+                        <div class="ml-3 text-gray-700 font-medium">
+                            Activer les notifications
+                        </div>
+                        <div class="relative" style="width: 50px; height: 24px;">
+                            <!-- input -->
+                            <input id="toggleNotificationsChat" type="checkbox" class="sr-only" />
+                            <!-- line -->
+                            <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
+                            <!-- dot -->
+                            <div class="toggle-dot-chat absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
+                        </div>
+                        <!-- label -->
+
+                    </label>
+                    </div>
+
+
+
+                </div>
+
+                <!-- Pied de la modale -->
+                <div class="bg-gray-100 px-4 py-3 sm:flex sm:flex-row-reverse">
+                    <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm" id="btn_fermer_chat_settings_modal_">
+                        Fermer
+                    </button>
+                    <button id="nextButton" type="button" class="hidden w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
+                        Suivant
+                    </button>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Pop-up container -->
     <div id="notificationPopup" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onclick="closePopup()">
         <!-- Pop-up content -->
@@ -351,9 +407,12 @@
                 });
         }
 
+
+        //checkbox notif global
         document.addEventListener('DOMContentLoaded', function () {
             const toggleNotifications = document.getElementById('toggleNotifications');
             const toggleDot = document.querySelector('.toggle-dot');
+
 
             // Appliquer les styles initiaux au dot toggle
             toggleDot.style.position = 'absolute';
@@ -380,6 +439,9 @@
                 }
             });
         });
+
+
+
 
 
 
