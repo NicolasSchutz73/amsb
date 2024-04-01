@@ -13,6 +13,7 @@ use App\Http\Controllers\UserMessController;
 use Illuminate\Support\Facades\Storage;
 use App\Http\Controllers\TeamController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\EventsController;
 
 // Routes d'accueil
 Route::get('/', function () {
@@ -136,6 +137,7 @@ Route::get('/api/users', [UserMessController::class, 'apiIndex'])->middleware('a
 Route::get('/usersjson', [UserMessController::class, 'apiIndex']); // À déplacer dans api.php pour une réponse JSON
 
 Route::get('/calendar', [CalendarController::class, 'show'])->name('calendar');
+Route::get('/event/{id}', [EventsController::class, 'show']);
 
 
 // Authentification

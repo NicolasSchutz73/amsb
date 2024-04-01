@@ -21,8 +21,9 @@
     </div>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.js'></script>
-
+    <script src='fullcalendar/locales/fr.js'></script>
     <script>
+
         document.addEventListener('DOMContentLoaded', function() {
             // Encodage direct en JSON sans JSON.parse
             var events = {!! json_encode($events->map(function($event) {
@@ -42,13 +43,19 @@
 
                 var calendarEl = document.getElementById('calendar');
                 var calendar = new FullCalendar.Calendar(calendarEl, {
+                eventClick: function(info) {
+                    // Redirection vers une autre page avec l'ID de l'événement
+                    window.location.href = '/event/' + info.event.id; // Adapter la route selon votre structure de routes
+                },
+                locale: 'fr', // Utilisez le français comme langue
+                firstDay: 1,  // Définissez le premier jour de la semaine comme lundi (0 pour dimanche, 1 pour lundi, etc.)
                 headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,listDay'
+                right: 'dayGridMonth,timeGridWeek,timeGridDay, listWeek'
             },
                 initialView: 'dayGridMonth', // This will show the month view with blocks
-                events: events
+                events: events,
             });
                 calendar.render();
         });
