@@ -10,8 +10,12 @@
             <select id="category-filter" onchange="changeCategory()">
                 <option value="">Toutes les catégories</option>
                 @foreach($categories as $category)
-                    @if($category == $_GET['category'])
-                        <option value="{{ $category }}" selected>{{ $category }}</option>
+                    @if(isset($_GET['category']))
+                        @if($category == $_GET['category'])
+                            <option value="{{ $category }}" selected>{{ $category }}</option>
+                        @else
+                            <option value="{{ $category }}">{{ $category }}</option>
+                        @endif
                     @else
                         <option value="{{ $category }}">{{ $category }}</option>
                     @endif
