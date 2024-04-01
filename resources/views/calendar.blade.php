@@ -10,7 +10,11 @@
             <select id="category-filter" onchange="changeCategory()">
                 <option value="">Toutes les catégories</option>
                 @foreach($categories as $category)
-                    <option value="{{ $category }}">{{ $category }}</option>
+                    @if($category == $_GET['category'])
+                        <option value="{{ $category }}" selected>{{ $category }}</option>
+                    @else
+                        <option value="{{ $category }}">{{ $category }}</option>
+                    @endif
                 @endforeach
             </select>
 
@@ -62,7 +66,9 @@
 
         function changeCategory() {
             var category = document.getElementById('category-filter').value;
-            window.location.href = '/calendar?category=' + encodeURIComponent(category);
+            if(category !== 'AllCategory' || category !== ''){
+                window.location.href = '/calendar?category=' + encodeURIComponent(category);
+            }
         }
     </script>
 </x-app-layout>
