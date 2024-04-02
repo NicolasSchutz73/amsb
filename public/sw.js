@@ -47,20 +47,19 @@ const returnFromCache = function (request) {
 };
 
 self.addEventListener("fetch", function (event) {
-    // Ignorer les requêtes non-HTTP/HTTPS
+    // S'assurer que l'événement fetch concerne une requête HTTP ou HTTPS.
     if (!event.request.url.startsWith('http') && !event.request.url.startsWith('https')) {
-        return;
+        return; // Si ce n'est pas le cas, on ne fait rien.
     }
 
+    // Essayer de répondre avec la version en cache de la ressource demandée.
     event.respondWith(
-        checkResponse(event.request).catch(function() {
+        checkResponse(event.request).catch(function () {
             return returnFromCache(event.request);
         })
     );
-    event.respondWith(checkResponse(event.request).catch(function () {
-        return returnFromCache(event.request);
-    }));
-    if(!event.request.url.startsWith('http')){
-        event.waitUntil(addToCache(event.request));
-    }
+
+    // Essayer d'ajouter la ressource demandée au cache pour une utilisation hors ligne future.
+    // Remarque : Cela n'interfère pas avec event.respondWith ci-dessus.
+    event.waitUntil(addToCache(event.request));
 });
