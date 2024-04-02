@@ -4,7 +4,7 @@
     "start_url": "https://amsb.dptinfo-usmb.fr",
     "background_color": "#fff",
     "description": "Tutorial of Laravel Package",
-    "display": "standalone",
+    "display": "fullscreen",
     "theme_color": "#fff",
     "icons": [
         {
@@ -12,11 +12,6 @@
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "any maskable"
-        },
-        {
-            "src": "logo.png",
-            "sizes": "48x48",
-            "type": "image/png"
         }
     ]
 }
