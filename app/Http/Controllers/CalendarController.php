@@ -10,34 +10,57 @@ class CalendarController extends Controller
 {
     public function show(Request $request)
     {
-        // Récupérer la catégorie sélectionnée depuis la requête
-        $category = $request->input('category');
+        $events = Event::all(); // Récupère tous les événements pour simplifier
 
-        // Si aucune catégorie n'est sélectionnée, afficher tous les événements
-        if (!$category) {
-            $events = Event::getEvents($request); // Ajouter get() pour récupérer les résultats
-        } else {
-            // Si une catégorie est sélectionnée, filtrer les événements correspondants à cette catégorie
-            $events = Event::getEventsByCategory($request, $category); // Utiliser getEventsByCategory à la place de whereCategoryIn
-        }
+        // Récupérer les catégories depuis un modèle Team ou autre logique
+        $categories = Team::all()->pluck('name'); // Exemple de récupération des noms de catégories
 
-        // Récupérer les catégories depuis EventsController
-        $ekip = new Team();
-        $categories = $ekip->getAllCategories();
-
-        // Passer les événements filtrés et les catégories à la vue
         return view('calendar', [
             'events' => $events,
-            'selectedCategory' => $category,
             'categories' => $categories,
         ]);
     }
 
-    public function getEventsByCategory(Request $request)
+    public function index(Request $request)
     {
         $category = $request->input('category');
-        $events = Event::getEventsByCategory($request, $category);
-        return response()->json(['events' => $events]);
+
+        if ($category) {
+            $team = Team::where('name', $category)->first();
+            if ($team) {
+                $category = $team->category;
+            }
+        }
+
+        $events = Event::query();
+
+        // Filtrer les événements si une catégorie est sélectionnée
+        if ($category) {
+            $events = $events->where('description', 'like', "%$category%");
+        }
+
+        $events = $events->get();
+
+        $categories = Team::all()->pluck('name'); // Exemple de récupération des noms de catégories
+        return view('calendar', [
+            'events' => $events,
+            'categories' => $categories, // Assurez-vous de passer vos catégories à la vue
+        ]);
     }
+
+    public function getCategoriesByName($name)
+    {
+        // Récupérer une équipe en fonction de son nom
+        $team = Team::where('name', $name)->first();
+
+        if ($team) {
+            // Si une équipe est trouvée, vous pouvez récupérer sa catégorie
+            return $team->category;
+        } else {
+            // Si aucune équipe n'est trouvée avec ce nom, vous pouvez retourner une valeur par défaut ou un message d'erreur
+            return "Aucune équipe trouvée avec le nom $name";
+        }
+    }
+
 
 }
