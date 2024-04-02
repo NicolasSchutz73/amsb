@@ -5,8 +5,9 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="container py-12">
+        <div class="row">
+            <div class="col-12 col-md-8 mx-auto">
             <select id="category-filter" onchange="changeCategory()">
                 <option value="">Toutes les catégories</option>
                 @foreach($categories as $category)
@@ -24,9 +25,47 @@
 
             <br><br>
 
-            <div id='calendar'></div>
+                <div id='calendar'></div>
+            </div>
         </div>
     </div>
+
+    <style>
+    /* CSS personnalisé pour FullCalendar en mode responsive */
+    @media (max-width: 767px) {
+        #calendar{
+            margin: 15px;
+        }
+
+        select{
+            width: 75%;
+            margin: 0 12.5%;
+        }
+        .fc-header-toolbar {
+            flex-direction: column;
+        }
+
+        .fc-toolbar-title {
+            font-size: 1.5rem !important; /* Taille de texte plus petite */
+            margin-bottom: 0.5rem !important; /* Ajoute un peu d'espace en dessous du titre */
+        }
+
+        .fc-button-group > .fc-button, .fc-button {
+            font-size: 0.8rem; /* Réduit la taille de texte des boutons */
+            padding: 0.25rem 0.5rem; /* Réduit le padding des boutons */
+        }
+
+        .fc-button-group {
+            margin-bottom: 0.5rem; /* Ajoute de l'espace sous les boutons de groupe */
+        }
+
+        /* Ajuste les vues spécifiques si nécessaire */
+        .fc-dayGridMonth-view, .fc-timeGridWeek-view, .fc-timeGridDay-view {
+            /* Styles spécifiques aux vues */
+        }
+    }
+
+</style>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.js'></script>
     <script src='fullcalendar/locales/fr.js'></script>
@@ -55,12 +94,22 @@
                     // Redirection vers une autre page avec l'ID de l'événement
                     window.location.href = '/event/' + info.event.id; // Adapter la route selon votre structure de routes
                 },
+                windowResize: function(view) {
+                    if (window.innerWidth < 768) { // ou une autre taille de breakpoint
+                        calendar.changeView('listWeek');
+                    } else {
+                        calendar.changeView('dayGridMonth');
+                    }
+                },
+                height: 'auto',
                 locale: 'fr', // Utilisez le français comme langue
                 firstDay: 1,  // Définissez le premier jour de la semaine comme lundi (0 pour dimanche, 1 pour lundi, etc.)
+                slotMinTime: '08:00:00', // Heure de début à 8h du matin
+                slotMaxTime: '24:00:00', // Heure de fin à minuit
                 headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay, listWeek'
+                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
             },
             buttonText: { // Personnalisez les textes des boutons ici
                 today:    'Aujourd\'hui',
