@@ -62,6 +62,13 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,timeGridDay, listWeek'
             },
+            buttonText: { // Personnalisez les textes des boutons ici
+                today:    'Aujourd\'hui',
+                month:    'Mois',
+                week:     'Semaine',
+                day:      'Jour',
+                list:     'Liste'
+            },
                 initialView: 'dayGridMonth', // This will show the month view with blocks
                 events: events,
             });
