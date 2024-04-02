@@ -685,7 +685,8 @@ function startRefreshingConversations() {
         loadUserGroups();
         loadUserConversation();
         loadPreviousMessages(currentGroupId)
-        }, 10000);
+        console.log("actualiser")
+        }, 1000);
 }
 
 
