@@ -47,6 +47,16 @@ const returnFromCache = function (request) {
 };
 
 self.addEventListener("fetch", function (event) {
+    // Ignorer les requêtes non-HTTP/HTTPS
+    if (!event.request.url.startsWith('http') && !event.request.url.startsWith('https')) {
+        return;
+    }
+
+    event.respondWith(
+        checkResponse(event.request).catch(function() {
+            return returnFromCache(event.request);
+        })
+    );
     event.respondWith(checkResponse(event.request).catch(function () {
         return returnFromCache(event.request);
     }));
