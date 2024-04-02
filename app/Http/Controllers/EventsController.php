@@ -75,7 +75,6 @@ class EventsController extends Controller
             if (!empty($userIds)) {
                 // Créer ou mettre à jour un groupe pour l'événement
                 $group = Group::firstOrCreate(
-                    ['id' => $newEvent->id],
                     ['name' => $newEvent->title . " Group", 'type' => 'group']
                 );
 
