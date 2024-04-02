@@ -16,7 +16,6 @@
     <meta name="theme-color" content="#6777ef"/>
     <link rel="apple-touch-icon" href="{{ asset('logo.PNG') }}">
     <link rel="manifest" href="{{ asset('manifest.json') }}">
-    <link rel="manifest" href="/public/manifest.json">
 
 </head>
 <body class="dark:bg-neutral-900">
@@ -56,6 +55,44 @@
     } else {
         console.log('Service workers are not supported.');
     }
+
+    let deferredPrompt;
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+        // Empêcher l'invite par défaut
+        e.preventDefault();
+        deferredPrompt = e;
+
+        // Créer un bouton d'installation s'il n'existe pas déjà
+        let installButton = document.getElementById('installButton');
+        if (!installButton) {
+            installButton = document.createElement('button');
+            installButton.id = 'installButton';
+            installButton.textContent = 'Installer l\'application';
+            installButton.style.display = 'none'; // Cacher le bouton par défaut
+
+            document.body.appendChild(installButton);
+
+            // Afficher le bouton lorsque l'événement beforeinstallprompt est déclenché
+            installButton.style.display = 'block';
+
+            // Ajouter un écouteur d'événement au bouton pour déclencher l'invite d'installation
+            installButton.addEventListener('click', async () => {
+                if (deferredPrompt) {
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    if (outcome === 'accepted') {
+                        console.log('L\'utilisateur a accepté l\'installation');
+                    }
+                    deferredPrompt = null;
+
+                    // Cacher le bouton après l'installation ou le refus de l'installation
+                    installButton.style.display = 'none';
+                }
+            });
+        }
+    });
+
 </script>
 </body>
 </html>
