@@ -16,6 +16,8 @@
     <meta name="theme-color" content="#6777ef"/>
     <link rel="apple-touch-icon" href="{{ asset('logo.PNG') }}">
     <link rel="manifest" href="{{ asset('/manifest.json') }}">
+    <link rel="manifest" href="/public/manifest.json">
+
 </head>
 <body class="dark:bg-neutral-900">
 <div class="flex items-center justify-center min-h-screen">
