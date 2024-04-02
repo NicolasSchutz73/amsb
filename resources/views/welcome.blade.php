@@ -43,6 +43,8 @@
         </div>
     @endif
 </div>
+<div id="installButtonContainer"></div>
+
 
 <script src="{{ asset('/sw.js') }}"></script>
 <script>
@@ -59,22 +61,23 @@
     let deferredPrompt;
 
     window.addEventListener('beforeinstallprompt', (e) => {
+        console.log("bonojoru")
         // Empêcher l'invite par défaut
         e.preventDefault();
         deferredPrompt = e;
 
-        // Créer un bouton d'installation s'il n'existe pas déjà
-        let installButton = document.getElementById('installButton');
-        if (!installButton) {
-            installButton = document.createElement('button');
+        // Assurez-vous que l'élément conteneur existe dans votre HTML
+        // Par exemple, vous    pouvez placer un élément div vide avec l'ID `installButtonContainer` là où vous voulez que le bouton apparaisse
+        const container = document.getElementById('installButtonContainer');
+
+        if (container) {
+            // Créer un bouton d'installation
+            var installButton = document.createElement('button');
             installButton.id = 'installButton';
             installButton.textContent = 'Installer l\'application';
-            installButton.style.display = 'none'; // Cacher le bouton par défaut
+            installButton.className = 'bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded';
 
-            document.body.appendChild(installButton);
-
-            // Afficher le bouton lorsque l'événement beforeinstallprompt est déclenché
-            installButton.style.display = 'block';
+            container.appendChild(installButton);
 
             // Ajouter un écouteur d'événement au bouton pour déclencher l'invite d'installation
             installButton.addEventListener('click', async () => {
@@ -92,7 +95,6 @@
             });
         }
     });
-
 </script>
-</body>
+ </body>
 </html>
