@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Group;
+use App\Models\Team;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Google_Client;
 use Google_Service_Calendar;
 use App\Models\Event;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Log;
 
 // Importez la classe Event
 
@@ -40,7 +43,7 @@ class EventsController extends Controller
             $start = $startDateTime ? Carbon::parse($startDateTime)->format('Y-m-d H:i:s') : null;
             $end = $endDateTime ? Carbon::parse($endDateTime)->format('Y-m-d H:i:s') : null;
 
-            Event::updateOrCreate(
+            $newEvent = Event::updateOrCreate(
                 ['id' => $event->getId()],
                 [
                     'title' => $event->getSummary(),
@@ -51,6 +54,35 @@ class EventsController extends Controller
                     'isRecurring' => !is_null($event->getRecurringEventId()),
                 ]
             );
+
+            // Extraire et traiter les catégories (équipes) de la description
+            $teamCategories = explode(',', $newEvent->description);
+            $userIds = [];
+
+            foreach ($teamCategories as $category) {
+                $team = Team::where('category', trim($category))->first();
+                Log::info('Recherche de l\'équipe avec la catégorie', ['category' => trim($category)]);
+                if ($team) {
+                    Log::info('Équipe trouvée', ['team' => $team->toArray()]);
+                    $teamUserIds = $team->users->pluck('id')->toArray();
+                    $userIds = array_merge($userIds, $teamUserIds);
+                }
+            }
+
+            $userIds = array_unique($userIds); // Enlever les doublons
+            Log::info('IDs utilisateur pour le groupe', ['user_ids' => $userIds]);
+
+            if (!empty($userIds)) {
+                // Créer ou mettre à jour un groupe pour l'événement
+                $group = Group::firstOrCreate(
+                    ['id' => $newEvent->id],
+                    ['name' => $newEvent->title . " Group", 'type' => 'group']
+                );
+
+                // Attacher les utilisateurs à ce groupe
+                $group->users()->sync($userIds);
+                Log::info('Groupe créé et utilisateurs ajoutés', ['group_id' => $group->id, 'user_ids' => $userIds]);
+            }
         }
 
         return response()->json(['success' => true, 'message' => 'Events updated/created successfully.']);

@@ -118,6 +118,10 @@
                 day:      'Jour',
                 list:     'Liste'
             },
+            buttonIcons: {
+                prev: 'chevrons-left',
+                next: 'chevrons-right'
+            },
                 initialView: 'dayGridMonth', // This will show the month view with blocks
                 events: events,
             });
