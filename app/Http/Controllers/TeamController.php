@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\GroupCreated;
 use App\Http\Requests\StoreTeamRequest;
 use App\Http\Requests\UpdateTeamRequest;
+use App\Models\Group;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 
 class TeamController extends Controller
@@ -70,13 +73,34 @@ class TeamController extends Controller
             // Ajoute d'autres propriétés si nécessaire
         ]);
 
+        Log::info('Équipe créée : ', ['team_id' => $team->id, 'team_name' => $team->name]);
+
         // Attacher les utilisateurs à l'équipe
         if (isset($validatedData['add_users'])) {
             $team->users()->attach($validatedData['add_users']);
+            Log::info('Utilisateurs ajoutés à l\'équipe : ', ['team_id' => $team->id, 'users' => $validatedData['add_users']]);
         }
 
+        // Créer un groupe associé à l'équipe nouvellement créée
+        $group = new Group();
+        $group->name = $team->name . " Group"; // Nomme le groupe basé sur le nom de l'équipe
+        $group->type = 'group'; // Utilise un type personnalisé comme 'team' pour identifier les groupes d'équipes
+        $group->save();
+
+        Log::info('Groupe créé : ', ['group_id' => $group->id, 'group_name' => $group->name]);
+
+        // Attacher les utilisateurs/membres au groupe
+        $userIds = $validatedData['add_users'] ?? [];
+        $group->users()->sync($userIds);
+
+        Log::info('Utilisateurs ajoutés au groupe : ', ['group_id' => $group->id, 'users' => $userIds]);
+
+        // Déclencher l'événement de création de groupe si tu souhaites notifier les utilisateurs ou effectuer une action supplémentaire
+        event(new GroupCreated($group));
+        Log::info('Événement GroupCreated déclenché pour le groupe : ', ['group_id' => $group->id]);
+
         // Rediriger vers la page de la liste des équipes avec un message
-        return redirect()->route('teams.index')->with('success', 'Équipe créée avec succès.');
+        return redirect()->route('teams.index')->with('success', 'Équipe et groupe de discussion associé créés avec succès.');
     }
 
     /**
