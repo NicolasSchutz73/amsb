@@ -1,7 +1,7 @@
 {
     "name": "AMSB",
     "short_name": "AMSB",
-    "start_url": "https://amsb.dptinfo-usmb.fr",
+    "start_url": "/",
     "background_color": "#fff",
     "description": "Tutorial of Laravel Package",
     "display": "fullscreen",
