@@ -683,7 +683,9 @@ function startRefreshingConversations() {
     // Définissez un intervalle pour relancer l'actualisation toutes les 1 minute (60000 millisecondes)
     setInterval(() => {
         loadUserGroups();
-        loadUserConversation();    }, 60000);
+        loadUserConversation();
+        loadPreviousMessages(currentGroupId)
+        }, 10000);
 }
 
 
