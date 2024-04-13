@@ -72,60 +72,54 @@
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
-            // Encodage direct en JSON sans JSON.parse
             var events = {!! json_encode($events->map(function($event) {
-            return [
-                'id' => $event->id,
-                'title' => $event->title,
-                'description' => $event->description,
-                'location' => $event->location,
-                'start' => $event->start,
-                'end' => $event->end,
-                'isRecurring' => $event->isRecurring,
-                // Ajoutez ici d'autres propriétés nécessaires pour FullCalendar
-            ];
-        })->toArray(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!};
+        return [
+            'id' => $event->id,
+            'title' => $event->title,
+            'description' => $event->description,
+            'location' => $event->location,
+            'start' => $event->start,
+            'end' => $event->end,
+            'isRecurring' => $event->isRecurring,
+        ];
+    })->toArray(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!};
 
-            console.log(events);
-
-                var calendarEl = document.getElementById('calendar');
-                var calendar = new FullCalendar.Calendar(calendarEl, {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
                 eventClick: function(info) {
-                    // Redirection vers une autre page avec l'ID de l'événement
-                    window.location.href = '/event/' + info.event.id; // Adapter la route selon votre structure de routes
-                },
-                windowResize: function(view) {
-                    if (window.innerWidth < 768) { // ou une autre taille de breakpoint
-                        calendar.changeView('listWeek');
-                    } else {
-                        calendar.changeView('dayGridMonth');
-                    }
+                    window.location.href = '/event/' + info.event.id;
                 },
                 height: 'auto',
-                locale: 'fr', // Utilisez le français comme langue
-                firstDay: 1,  // Définissez le premier jour de la semaine comme lundi (0 pour dimanche, 1 pour lundi, etc.)
-                slotMinTime: '08:00:00', // Heure de début à 8h du matin
-                slotMaxTime: '24:00:00', // Heure de fin à minuit
+                locale: 'fr',
+                firstDay: 1,
+                slotMinTime: '08:00:00',
+                slotMaxTime: '24:00:00',
                 headerToolbar: {
-                left: 'prev,next today',
-                center: 'title',
-                right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
-            },
-            buttonText: { // Personnalisez les textes des boutons ici
-                today:    'Aujourd\'hui',
-                month:    'Mois',
-                week:     'Semaine',
-                day:      'Jour',
-                list:     'Liste'
-            },
-            buttonIcons: {
-                prev: 'chevrons-left',
-                next: 'chevrons-right'
-            },
-                initialView: 'dayGridMonth', // This will show the month view with blocks
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
+                },
+                buttonText: {
+                    today:    'Aujourd\'hui',
+                    month:    'Mois',
+                    week:     'Semaine',
+                    day:      'Jour',
+                    list:     'Liste'
+                },
+                buttonIcons: {
+                    prev: 'chevrons-left',
+                    next: 'chevrons-right'
+                },
+                initialView: 'dayGridMonth',
                 events: events,
+                eventContent: function(arg) {
+                    return {
+                        html: '<div>' + arg.event.title + '</div>',
+                    };
+                },
             });
-                calendar.render();
+
+            calendar.render();
         });
 
         function changeCategory() {
@@ -134,5 +128,7 @@
                 window.location.href = '/calendar?category=' + encodeURIComponent(category);
             }
         }
+
+
     </script>
 </x-app-layout>
