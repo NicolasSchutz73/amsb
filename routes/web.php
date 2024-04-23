@@ -63,8 +63,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Salle de chat
     Route::get('/chat-room', [GroupController::class, 'chatRoom'])->name('chat-room');
     Route::get('/chat-room-users', [SearchUserController::class, 'chatRoomUsers'])->name('chat-room-users');
+
+//gestion des notifs pour groupe
+    // GET route pour récupérer le statut de notification pour un utilisateur et un groupe donnés
     Route::get('/group/{groupId}/user/{userId}/notification-status', [GroupNotificationSettingController::class, 'getNotificationStatus']);
-    Route::post('/toggle-group-notification', [GroupNotificationSettingController::class, 'toggleNotification'])->name('toggle-group-notification');
+    // POST route pour activer ou désactiver les notifications pour un utilisateur et un groupe donnés
+    Route::post('/group/{groupId}/toggle-notification', [GroupNotificationSettingController::class, 'toggleNotification']);
+
 
     // Groupes et conversations
     Route::resource('groups', GroupController::class);

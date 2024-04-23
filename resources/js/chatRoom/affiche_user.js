@@ -319,6 +319,38 @@ function joinGroupChat(groupId, groupName) {
     subscribeToGroupChannel(groupId);
 
     showConversation()
+
+    // Assurez-vous que les paramètres de notification sont initialisés
+    const url = '/api/initialize-notification-setting';
+
+    // Préparer les données pour la requête
+    const data = {
+        group_id: groupId,
+        user_id: globalUserId
+    };
+
+    // Faire une requête POST à l'API pour initialiser le paramètre
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF token pour Laravel
+        },
+        body: JSON.stringify(data)
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok ' + response.statusText);
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Initialization successful', data);
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+        });
 }
 function subscribeToGroupChannel(groupId) {
     if (!groupChannels[groupId]) {
@@ -816,36 +848,48 @@ function openModal() {
 }
 
 function fetchNotificationStatus(groupId, userId) {
-    // Retourne une nouvelle promesse
     return new Promise((resolve, reject) => {
-        fetch(`/api/group/${groupId}/user/${userId}/notification-status`)
+        const url = `/api/notification-setting/${groupId}/${userId}`;
+
+        fetch(url, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') // CSRF token pour Laravel
+            }
+        })
             .then(response => {
-                // Vous devez vérifier que la réponse est ok avant de convertir en JSON
                 if (!response.ok) {
-                    throw new Error('Network response was not ok');
+                    throw new Error('Network response was not ok ' + response.statusText);
                 }
                 return response.json();
             })
-            .then(data => {
-                resolve(data); // Résout la promesse avec les données reçues
+            .then(setting => {
+                console.log('Fetched user notification setting:', setting);
+                resolve(setting); // Resolve la promesse avec les données de la configuration
             })
             .catch(error => {
-                reject(error); // Rejette la promesse avec l'erreur
+                console.error('Error fetching user notification setting:', error);
+                reject(error); // Reject la promesse si une erreur survient
             });
     });
 }
 
+
 function openModalChatSettings() {
 
     getUserInfoAsync().then(() => {
+        console.log("on a recup les données")
 
-        const groupId = currentGroupId; // L'ID du groupe actuel
-        const userId = globalUserId; // L'ID de l'utilisateur actuel
-        fetchNotificationStatus(groupId, userId)
+        fetchNotificationStatus(currentGroupId, globalUserId)
             .then(data => {
+                console.log("camarche jusquici")
+                console.log(data.notif_status)
                 const toggleNotificationsChat = document.getElementById('toggleNotificationsChat');
-                toggleNotificationsChat.checked = data.group_notif_settings.notif_status;
-                updateDotStyle(data.notifications_enabled); // Cette fonction doit être définie ailleurs dans votre code
+                if(data.notif_status === 1){
+                    updateNotificationButton(1)
+                } else {
+                    updateNotificationButton(0)
+                }
                 document.getElementById('chatSettingsModal').classList.remove('hidden');
             })
             .catch(error => {
@@ -873,139 +917,63 @@ function closeChatSettingsModal() {
 
 
 
-//---------------------------checkbox notif reglage de chat-----------------------------------------------
-// function notifGroup(){
-//     return new Promise((resolve, reject) => {
-//         function fetchNotificationStatus(groupId, userId) {
-//             fetch(`/api/group/${groupId}/user/${userId}/notification-status`)
-//                 .then(response => response.json())
-//                 .then(data => {
-//                     const toggleNotificationsChat = document.getElementById('toggleNotificationsChat');
-//                     const isChecked = data.notifications_enabled;
-//                     toggleNotificationsChat.checked = isChecked;
-//                     // Ajustez la classe du dot en fonction de l'état
-//                     updateDotStyle(isChecked);
-//                 })
-//                 .catch(error => console.error('Error:', error));
-//         }
-//
-//         function updateDotStyle(isChecked) {
-//             const toggleDot = document.querySelector('.toggle-dot-chat');
-//             if (isChecked) {
-//                 toggleDot.style.transform = 'translateX(100%)';
-//                 toggleDot.style.backgroundColor = '#48bb78'; // green-500 in Tailwind
-//             } else {
-//                 toggleDot.style.transform = 'translateX(0)';
-//                 toggleDot.style.backgroundColor = 'white';
-//             }
-//         }
-//
-//
-//         document.addEventListener('DOMContentLoaded', function () {
-//             const toggleNotificationsChat = document.getElementById('toggleNotificationsChat');
-//             const toggleDot = document.querySelector('.toggle-dot-chat');
-//
-//             // Récupérer l'état initial
-//             fetchNotificationStatus(currentGroupId, globalUserId);
-//
-//             // Appliquer les styles initiaux au dot toggle
-//             toggleDot.style.position = 'absolute';
-//             toggleDot.style.width = '24px'; // 6rem in Tailwind
-//             toggleDot.style.height = '24px'; // 6rem in Tailwind
-//             toggleDot.style.backgroundColor = 'white';
-//             toggleDot.style.borderRadius = '9999px'; // rounded-full in Tailwind
-//             toggleDot.style.boxShadow = '0 2px 4px 0 rgba(0,0,0,0.2)';
-//             toggleDot.style.transition = 'transform 0.3s ease-in-out';
-//             toggleDot.style.left = '-0.25rem'; // -1 in Tailwind
-//             toggleDot.style.top = '-0.25rem'; // -1 in Tailwind
-//
-//             toggleNotificationsChat.addEventListener('change', function () {
-//                 const isChecked = this.checked;
-//                 updateDotStyle(isChecked);
-//
-//
-//                 fetch(`/api/toggle-group-notification`, {
-//                     method: 'POST',
-//                     headers: {
-//                         'Content-Type': 'application/json',
-//                         // Ajoutez ici d'autres en-têtes si nécessaire, comme un jeton CSRF
-//                     },
-//                     body: JSON.stringify({
-//                         group_id: currentGroupId,
-//                         user_id: globalUserId,
-//                         enable: isChecked
-//                     })
-//                 })
-//                     .then(response => response.json())
-//                     .then(data => {
-//                         console.log(data.message);
-//                     })
-//                     .catch(error => {
-//                         console.error('Error:', error);
-//                     });
-//             });
-//         });
-// };
+// ---------------------------checkbox notif reglage de chat-----------------------------------------------
 
 
+// Récupération des éléments du DOM
+const toggleNotificationsChat = document.getElementById('toggleNotificationsChat');
+const toggleDot = document.querySelector('.toggle-dot-chat');
 
-// Pour utiliser la fonction comme une promesse :
-//     function updateDotStyle(isChecked) {
-//         const toggleDot = document.querySelector('.toggle-dot-chat');
-//         if (isChecked) {
-//             toggleDot.style.transform = 'translateX(100%)';
-//             toggleDot.style.backgroundColor = '#48bb78'; // green-500 in Tailwind
-//         } else {
-//             toggleDot.style.transform = 'translateX(0)';
-//             toggleDot.style.backgroundColor = 'white';
-//         }
-//     }// Le code ici sera exécuté après que la promesse ait été résolue
-//     document.addEventListener('DOMContentLoaded', function () {
-//         const toggleNotificationsChat = document.getElementById('toggleNotificationsChat');
-//         const toggleDot = document.querySelector('.toggle-dot-chat');
-//
-//         // Récupérer l'état initial
-//         fetchNotificationStatus(currentGroupId, globalUserId);
-//
-//         // Appliquer les styles initiaux au dot toggle
-//         toggleDot.style.position = 'absolute';
-//         toggleDot.style.width = '24px'; // 6rem in Tailwind
-//         toggleDot.style.height = '24px'; // 6rem in Tailwind
-//         toggleDot.style.backgroundColor = 'white';
-//         toggleDot.style.borderRadius = '9999px'; // rounded-full in Tailwind
-//         toggleDot.style.boxShadow = '0 2px 4px 0 rgba(0,0,0,0.2)';
-//         toggleDot.style.transition = 'transform 0.3s ease-in-out';
-//         toggleDot.style.left = '-0.25rem'; // -1 in Tailwind
-//         toggleDot.style.top = '-0.25rem'; // -1 in Tailwind
-//
-//         toggleNotificationsChat.addEventListener('change', function () {
-//             const isChecked = this.checked;
-//             updateDotStyle(isChecked);
-//
-//
-//             fetch(`/api/toggle-group-notification`, {
-//                 method: 'POST',
-//                 headers: {
-//                     'Content-Type': 'application/json',
-//                     // Ajoutez ici d'autres en-têtes si nécessaire, comme un jeton CSRF
-//                 },
-//                 body: JSON.stringify({
-//                     group_id: currentGroupId,
-//                     user_id: globalUserId,
-//                     enable: isChecked
-//                 })
-//             })
-//                 .then(response => response.json())
-//                 .then(data => {
-//                     console.log(data.message);
-//                 })
-//                 .catch(error => {
-//                     console.error('Error:', error);
-//                 });
-//         });
-//     });
-//     console.log('Les notifications sont configurées.', data);
-// }).catch(error => {
-//     // Le code ici sera exécuté si la promesse est rejetée
-//     console.error('Une erreur s\'est produite lors de la configuration des notifications.', error);
-//
+function updateNotificationButton(isEnabled) {
+    // Mettre à jour l'état du bouton basculant
+    toggleNotificationsChat.checked = isEnabled;
+
+    // Changer l'apparence du bouton en fonction de l'état
+    toggleDot.style.transform = isEnabled ? 'translateX(100%)' : 'translateX(0)';
+    toggleDot.style.backgroundColor = isEnabled ? '#48bb78' : 'white'; // Vert pour "on", blanc pour "off"
+}
+
+// Fonction pour envoyer une requête au serveur et mettre à jour la base de données
+function updateNotificationStatus(groupId, userId, isEnabled) {
+    // Préparer les données à envoyer
+    const data = {
+        group_id: groupId,
+        user_id: userId,
+        notif_status: isEnabled
+    };
+    // Faire une requête POST pour mettre à jour l'état des notifications
+    fetch('/api/toggle-group-notification', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+        },
+        body: JSON.stringify(data)
+
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(jsonResponse => {
+            console.log('Mise à jour réussie', jsonResponse);
+        })
+        .catch(error => {
+            console.error('Erreur lors de la mise à jour des notifications', error);
+        });
+}
+
+// Écouteur d'événement pour gérer les clics sur le bouton de notification
+toggleNotificationsChat.addEventListener('change', function() {
+    // Obtenir les valeurs actuelles de groupId et userId
+    const groupId = currentGroupId; // L'ID de votre groupe actuel
+    const userId = globalUserId; // L'ID de l'utilisateur actuel
+
+    // Mettre à jour l'UI immédiatement pour une réponse rapide
+    updateNotificationButton(this.checked);
+
+    // Envoyer la nouvelle valeur au serveur pour mise à jour
+    updateNotificationStatus(groupId, userId, this.checked);
+});

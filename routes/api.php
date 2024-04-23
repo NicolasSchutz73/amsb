@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\GroupNotificationSettingController;
 use App\Models\Event;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\GroupController;
@@ -48,4 +49,10 @@ Route::post('/send-notification', [App\Http\Controllers\HomeController::class, '
 Route::post('/send-notification-group', [GroupController::class, 'sendNotificationGroup'])->middleware('auth:sanctum');
 
 Route::get('events', [EventsController::class, 'getEvents'])->name('events');
+
+Route::post('/initialize-notification-setting', [GroupNotificationSettingController::class, 'initializeSetting'])->name('initialize-notification-setting');
+Route::get('/notification-setting/{groupId}/{userId}', [GroupNotificationSettingController::class, 'getNotificationSetting']);
+Route::post('/toggle-group-notification', [GroupNotificationSettingController::class, 'toggleNotification']);
+
+
 
