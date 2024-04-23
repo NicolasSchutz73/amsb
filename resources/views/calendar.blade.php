@@ -110,7 +110,7 @@
                     prev: 'chevrons-left',
                     next: 'chevrons-right'
                 },
-                initialView: 'dayGridMonth',
+                initialView: 'timeGridWeek',
                 events: events,
                 eventContent: function(arg) {
                     return {
