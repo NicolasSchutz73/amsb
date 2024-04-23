@@ -1,5 +1,3 @@
-
-
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -10,22 +8,22 @@
     <div class="container py-12">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-            <select id="category-filter" onchange="changeCategory()">
-                <option value="">Toutes les catégories</option>
-                @foreach($categories as $category)
-                    @if(isset($_GET['category']))
-                        @if($category == $_GET['category'])
-                            <option value="{{ $category }}" selected>{{ $category }}</option>
+                <select id="category-filter" onchange="changeCategory()">
+                    <option value="">Toutes les catégories</option>
+                    @foreach($categories as $category)
+                        @if(isset($_GET['category']))
+                            @if($category == $_GET['category'])
+                                <option value="{{ $category }}" selected>{{ $category }}</option>
+                            @else
+                                <option value="{{ $category }}">{{ $category }}</option>
+                            @endif
                         @else
                             <option value="{{ $category }}">{{ $category }}</option>
                         @endif
-                    @else
-                        <option value="{{ $category }}">{{ $category }}</option>
-                    @endif
-                @endforeach
-            </select>
+                    @endforeach
+                </select>
 
-            <br><br>
+                <br><br>
 
                 <div id='calendar'></div>
             </div>
@@ -33,41 +31,41 @@
     </div>
 
     <style>
-    /* CSS personnalisé pour FullCalendar en mode responsive */
-    @media (max-width: 767px) {
-        #calendar{
-            margin: 15px;
+        /* CSS personnalisé pour FullCalendar en mode responsive */
+        @media (max-width: 767px) {
+            #calendar{
+                margin: 15px;
+            }
+
+            select{
+                width: 75%;
+                margin: 0 12.5%;
+            }
+            .fc-header-toolbar {
+                flex-direction: column;
+            }
+
+            .fc-toolbar-title {
+                font-size: 1.5rem !important; /* Taille de texte plus petite */
+                margin-bottom: 0.5rem !important; /* Ajoute un peu d'espace en dessous du titre */
+            }
+
+            .fc-button-group > .fc-button, .fc-button {
+                font-size: 0.8rem; /* Réduit la taille de texte des boutons */
+                padding: 0.25rem 0.5rem; /* Réduit le padding des boutons */
+            }
+
+            .fc-button-group {
+                margin-bottom: 0.5rem; /* Ajoute de l'espace sous les boutons de groupe */
+            }
+
+            /* Ajuste les vues spécifiques si nécessaire */
+            .fc-dayGridMonth-view, .fc-timeGridWeek-view, .fc-timeGridDay-view {
+                /* Styles spécifiques aux vues */
+            }
         }
 
-        select{
-            width: 75%;
-            margin: 0 12.5%;
-        }
-        .fc-header-toolbar {
-            flex-direction: column;
-        }
-
-        .fc-toolbar-title {
-            font-size: 1.5rem !important; /* Taille de texte plus petite */
-            margin-bottom: 0.5rem !important; /* Ajoute un peu d'espace en dessous du titre */
-        }
-
-        .fc-button-group > .fc-button, .fc-button {
-            font-size: 0.8rem; /* Réduit la taille de texte des boutons */
-            padding: 0.25rem 0.5rem; /* Réduit le padding des boutons */
-        }
-
-        .fc-button-group {
-            margin-bottom: 0.5rem; /* Ajoute de l'espace sous les boutons de groupe */
-        }
-
-        /* Ajuste les vues spécifiques si nécessaire */
-        .fc-dayGridMonth-view, .fc-timeGridWeek-view, .fc-timeGridDay-view {
-            /* Styles spécifiques aux vues */
-        }
-    }
-
-</style>
+    </style>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.js'></script>
     <script src='fullcalendar/locales/fr.js'></script>
@@ -126,22 +124,12 @@
 
         function changeCategory() {
             var category = document.getElementById('category-filter').value;
-            var currentCategory = "{{ isset($_GET['category']) ? $_GET['category'] : '' }}";
-
-            if (category !== 'AllCategory' && category !== '' && category !== currentCategory) {
+            if(category !== 'AllCategory' || category !== ''){
                 window.location.href = '/calendar?category=' + encodeURIComponent(category);
             }
         }
 
 
 
-
     </script>
 </x-app-layout>
-
-@php
-    use Illuminate\Support\Facades\Log;
-    // Log pour afficher les événements et les catégories passés à la vue
-    Log::info('Events passed to view:', ['events' => $events->isEmpty() ? [] : $events->toArray()]);
-    Log::info('Categories passed to view:', ['categories' => $categories->toArray()]);
-@endphp

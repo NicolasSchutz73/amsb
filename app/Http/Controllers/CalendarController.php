@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Event;
 use App\Models\Team;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class CalendarController extends Controller
 {
@@ -25,55 +23,44 @@ class CalendarController extends Controller
 
     public function index(Request $request)
     {
-        // Récupérer l'utilisateur connecté
-        $user = Auth::user();
+        $category = $request->input('category');
 
-        // Log pour vérifier si l'utilisateur est récupéré correctement
-        Log::info('User retrieved:', ['user' => $user]);
-
-        // Vérifier si l'utilisateur est authentifié
-        if ($user) {
-            // Récupérer les équipes associées à l'utilisateur connecté
-            $teams = $user->team; // Correction : appel de la méthode team()
-
-            // Log pour vérifier si les équipes sont récupérées correctement
-            Log::info('Teams retrieved:', ['teams' => $teams->toArray()]);
-
-            // Vérifier si des équipes sont trouvées
-            if ($teams->isNotEmpty()) {
-                // Récupérer le nom de la première équipe
-                $category = $teams->first()->name;
-
-                // Log pour vérifier le nom de l'équipe sélectionnée
-                Log::info('Selected category:', ['category' => $category]);
-
-                // Construire l'URL avec le paramètre de catégorie
-                $redirectUrl = '/calendar?category=' . urlencode($category);
-
-                // Log pour vérifier l'URL de redirection
-                Log::info('Redirect URL:', ['url' => $redirectUrl]);
-
-                // Rediriger vers l'URL du calendrier de l'équipe
-                return redirect($redirectUrl);
+        if ($category) {
+            $team = Team::where('name', $category)->first();
+            if ($team) {
+                $category = $team->category;
             }
         }
 
-        // Si aucune équipe n'est trouvée pour l'utilisateur ou s'il n'est pas connecté,
-        // affichez simplement le calendrier avec toutes les catégories
-        $events = Event::all();
-        $categories = Team::all()->pluck('name');
+        $events = Event::query();
 
-        // Log pour vérifier si les événements et les catégories sont récupérés correctement
-        Log::info('Events:', ['events' => $events->toArray()]);
-        Log::info('Categories:', ['categories' => $categories->toArray()]);
+        // Filtrer les événements si une catégorie est sélectionnée
+        if ($category) {
+            $events = $events->where('description', 'like', "%$category%");
+        }
 
+        $events = $events->get();
+
+        $categories = Team::all()->pluck('name'); // Exemple de récupération des noms de catégories
         return view('calendar', [
             'events' => $events,
-            'categories' => $categories,
+            'categories' => $categories, // Assurez-vous de passer vos catégories à la vue
         ]);
     }
 
+    public function getCategoriesByName($name)
+    {
+        // Récupérer une équipe en fonction de son nom
+        $team = Team::where('name', $name)->first();
 
+        if ($team) {
+            // Si une équipe est trouvée, vous pouvez récupérer sa catégorie
+            return $team->category;
+        } else {
+            // Si aucune équipe n'est trouvée avec ce nom, vous pouvez retourner une valeur par défaut ou un message d'erreur
+            return "Aucune équipe trouvée avec le nom $name";
+        }
+    }
 
 
 }
