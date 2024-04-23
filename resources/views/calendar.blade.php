@@ -1,3 +1,5 @@
+
+
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -124,12 +126,22 @@
 
         function changeCategory() {
             var category = document.getElementById('category-filter').value;
-            if(category !== 'AllCategory' || category !== ''){
+            var currentCategory = "{{ isset($_GET['category']) ? $_GET['category'] : '' }}";
+
+            if (category !== 'AllCategory' && category !== '' && category !== currentCategory) {
                 window.location.href = '/calendar?category=' + encodeURIComponent(category);
             }
         }
 
 
 
+
     </script>
 </x-app-layout>
+
+@php
+    use Illuminate\Support\Facades\Log;
+    // Log pour afficher les événements et les catégories passés à la vue
+    Log::info('Events passed to view:', ['events' => $events->isEmpty() ? [] : $events->toArray()]);
+    Log::info('Categories passed to view:', ['categories' => $categories->toArray()]);
+@endphp

@@ -61,16 +61,13 @@ class EventsController extends Controller
 
             foreach ($teamCategories as $category) {
                 $team = Team::where('category', trim($category))->first();
-                Log::info('Recherche de l\'équipe avec la catégorie', ['category' => trim($category)]);
                 if ($team) {
-                    Log::info('Équipe trouvée', ['team' => $team->toArray()]);
                     $teamUserIds = $team->users->pluck('id')->toArray();
                     $userIds = array_merge($userIds, $teamUserIds);
                 }
             }
 
             $userIds = array_unique($userIds); // Enlever les doublons
-            Log::info('IDs utilisateur pour le groupe', ['user_ids' => $userIds]);
 
             if (!empty($userIds)) {
                 // Créer ou mettre à jour un groupe pour l'événement
@@ -80,7 +77,6 @@ class EventsController extends Controller
 
                 // Attacher les utilisateurs à ce groupe
                 $group->users()->sync($userIds);
-                Log::info('Groupe créé et utilisateurs ajoutés', ['group_id' => $group->id, 'user_ids' => $userIds]);
             }
         }
 
