@@ -181,19 +181,59 @@ class EventsController extends Controller
         $results = $service->events->listEvents($calendarId, $optParams);
         $events = $results->getItems();
 
-        // Filtrer les événements pour ceux qui contiennent la catégorie spécifiée dans leur description
-        $filteredEvents = [];
+        $eventsData = [];
+
         foreach ($events as $event) {
-            $description = $event->getDescription();
-            if ($description && strpos($description, $category) !== false) {
-                $filteredEvents[] = $event;
+            $startDateTime = $event->getStart()->dateTime;
+            $endDateTime = $event->getEnd()->dateTime;
+
+            $start = $startDateTime ? Carbon::parse($startDateTime)->format('Y-m-d H:i:s') : null;
+            $end = $endDateTime ? Carbon::parse($endDateTime)->format('Y-m-d H:i:s') : null;
+
+            $newEvent = Event::updateOrCreate(
+                ['id' => $event->getId()],
+                [
+                    'title' => $event->getSummary(),
+                    'description' => $event->getDescription(),
+                    'location' => $event->getLocation(),
+                    'start' => $start,
+                    'end' => $end,
+                    'isRecurring' => $event->getRecurringEventId() !== null ? 1 : 0,
+                ]
+            );
+
+            $teamCategories = explode(',', $newEvent->description);
+            $userIds = [];
+            $teamNames = explode(',', $event->getDescription());
+
+            $colors = [];
+            foreach ($teamNames as $teamName) {
+                // Rechercher l'équipe par nom
+                $team = Team::where('name', trim($teamName))->first();
+                if ($team) {
+                    // Ajouter la couleur de l'équipe à la liste des couleurs
+                    $colors[] = $team->color;
+                } else {
+                    // Utiliser une couleur par défaut si l'équipe n'est pas trouvée
+                    $colors[] = '#ccc';
+                }
+            }
+
+            // Ajouter les couleurs récupérées à votre logique de traitement ou de réponse
+            $eventsData[] = [
+                'event' => $newEvent,
+                'colors' => $colors  // Stockez les couleurs avec les données de l'événement
+            ];
+
+            if (!empty($userIds)) {
+                $group = Group::firstOrCreate(
+                    ['name' => $newEvent->title . " Group", 'type' => 'group']
+                );
+                $group->users()->sync($userIds);
             }
         }
 
-        // Retourner les événements filtrés au format JSON
-        return response()->json([
-            'events' => $filteredEvents,
-        ]);
+        return response()->json(['success' => true, 'data' => $eventsData]);
     }
 
     public function show($id)
