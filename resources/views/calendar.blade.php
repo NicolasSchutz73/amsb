@@ -1,3 +1,4 @@
+@php use App\Http\Controllers\CalendarController; @endphp
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -5,6 +6,15 @@
         </h2>
     </x-slot>
 
+    @if(!($filtre) && $valable)
+        <script>
+            if(!(window.location.href === '/calendar?category=')){
+                var teamName = "{{$teamName}}";
+                console.log("teamName: ",teamName);
+                window.location.href = '/calendar?category=' + encodeURIComponent(teamName);
+            }
+        </script>
+    @endif
     <div class="container py-12">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
@@ -33,14 +43,15 @@
     <style>
         /* CSS personnalisé pour FullCalendar en mode responsive */
         @media (max-width: 767px) {
-            #calendar{
+            #calendar {
                 margin: 15px;
             }
 
-            select{
+            select {
                 width: 75%;
                 margin: 0 12.5%;
             }
+
             .fc-header-toolbar {
                 flex-direction: column;
             }
@@ -71,7 +82,7 @@
     <script src='fullcalendar/locales/fr.js'></script>
     <script>
 
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             var events = {!! json_encode($events->map(function($event) {
         return [
             'id' => $event->id,
@@ -86,7 +97,7 @@
 
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                eventClick: function(info) {
+                eventClick: function (info) {
                     window.location.href = '/event/' + info.event.id;
                 },
                 height: 'auto',
@@ -100,11 +111,11 @@
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
                 },
                 buttonText: {
-                    today:    'Aujourd\'hui',
-                    month:    'Mois',
-                    week:     'Semaine',
-                    day:      'Jour',
-                    list:     'Liste'
+                    today: 'Aujourd\'hui',
+                    month: 'Mois',
+                    week: 'Semaine',
+                    day: 'Jour',
+                    list: 'Liste'
                 },
                 buttonIcons: {
                     prev: 'chevrons-left',
@@ -112,7 +123,7 @@
                 },
                 initialView: 'timeGridWeek',
                 events: events,
-                eventContent: function(arg) {
+                eventContent: function (arg) {
                     return {
                         html: '<div>' + arg.event.title + '</div>',
                     };
@@ -124,11 +135,10 @@
 
         function changeCategory() {
             var category = document.getElementById('category-filter').value;
-            if(category !== 'AllCategory' || category !== ''){
+            if (category !== 'AllCategory' || category !== '') {
                 window.location.href = '/calendar?category=' + encodeURIComponent(category);
             }
         }
-
 
 
     </script>
