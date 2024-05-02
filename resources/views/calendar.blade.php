@@ -1,4 +1,4 @@
-{{--@php use App\Http\Controllers\CalendarController; @endphp--}}
+@php use App\Http\Controllers\CalendarController; @endphp
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -6,20 +6,20 @@
         </h2>
     </x-slot>
 
-{{--    @if(!($filtre) && $valable)--}}
-{{--        <script>--}}
-{{--            function hasGetVariable(variableName) {--}}
-{{--                const urlParams = new URLSearchParams(window.location.search);--}}
-{{--                return urlParams.has(variableName);--}}
-{{--            }--}}
+    @if(!($filtre) && $valable)
+        <script>
+            function hasGetVariable(variableName) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.has(variableName);
+            }
 
-{{--            if(!(hasGetVariable('category'))){--}}
-{{--                var teamName = "{{$teamName}}";--}}
-{{--                console.log("teamName: ",teamName);--}}
-{{--                window.location.href = '/calendar?category=' + encodeURIComponent(teamName);--}}
-{{--            }--}}
-{{--        </script>--}}
-{{--    @endif--}}
+            if(!(hasGetVariable('category'))){
+                var teamName = "{{$teamName}}";
+                console.log("teamName: ",teamName);
+                window.location.href = '/calendar?category=' + encodeURIComponent(teamName);
+            }
+        </script>
+    @endif
 
     <div class="container py-12">
         <div class="row">
