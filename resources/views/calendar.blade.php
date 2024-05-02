@@ -1,9 +1,25 @@
+{{--@php use App\Http\Controllers\CalendarController; @endphp--}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Emploi du temps') }}
         </h2>
     </x-slot>
+
+{{--    @if(!($filtre) && $valable)--}}
+{{--        <script>--}}
+{{--            function hasGetVariable(variableName) {--}}
+{{--                const urlParams = new URLSearchParams(window.location.search);--}}
+{{--                return urlParams.has(variableName);--}}
+{{--            }--}}
+
+{{--            if(!(hasGetVariable('category'))){--}}
+{{--                var teamName = "{{$teamName}}";--}}
+{{--                console.log("teamName: ",teamName);--}}
+{{--                window.location.href = '/calendar?category=' + encodeURIComponent(teamName);--}}
+{{--            }--}}
+{{--        </script>--}}
+{{--    @endif--}}
 
     <div class="container py-12">
         <div class="row">
@@ -25,7 +41,11 @@
 
                 <br><br>
                 @php
-                    $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['category']);
+                    if (isset($_GET['category'])) {
+                        $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['category']);
+                    }else{
+                        $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), '');
+                    }
                 @endphp
                 <div id='calendar'></div>
             </div>
