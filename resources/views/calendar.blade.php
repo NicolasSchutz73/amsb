@@ -85,8 +85,11 @@
             .fc-dayGridMonth-view, .fc-timeGridWeek-view, .fc-timeGridDay-view {
                 /* Styles spécifiques aux vues */
             }
-        }
 
+        }
+        #eventModal {
+            display: none; /* Cache le modal au chargement de la page */
+        }
     </style>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.js'></script>
@@ -130,7 +133,7 @@
                     $('#eventStart').text(formatDate(eventObj.start.toISOString()));
                     $('#eventEnd').text(formatDate(eventObj.end.toISOString()));
                     $('#eventPageLink').attr('href', '/event/' + eventObj.id);
-                    $('#messPageLink').attr('href', '/chat-room-users/' + eventObj.id);
+                    $('#messPageLink').attr('href', '/chat-room-users');
                     $('#eventModal').modal('show');
                 },
 
