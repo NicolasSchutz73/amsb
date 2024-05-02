@@ -8,6 +8,49 @@ use Illuminate\Http\Request;
 
 class CalendarController extends Controller
 {
+
+
+    public function getUserTeam()
+    {
+        // Authentification de l'utilisateur
+        $user = auth()->user();
+
+        // Récupération de l'équipe de l'utilisateur
+        $userTeam = $user->team()->first(); // Supposant qu'un utilisateur peut appartenir à une seule équipe
+
+        // Vérification du nombre d'équipes de l'utilisateur
+        $numberOfTeams = $user->team()->count();
+
+        if ($userTeam) {
+            if ($numberOfTeams === 1) {
+                // L'utilisateur a une seule équipe, retourner l'ID de l'équipe
+                return response()->json(['team_id' => $userTeam->id]);
+            } else {
+                // L'utilisateur a plus d'une équipe, retourner une erreur
+                return response()->json(['error' => 'L\'utilisateur a plus d\'une équipe.']);
+            }
+        } else {
+            // L'utilisateur n'est pas associé à une équipe, retourner une erreur
+            return response()->json(['error' => 'Aucune équipe associée à cet utilisateur.']);
+        }
+    }
+
+    public function getTeamName($teamId)
+    {
+        // Recherche de l'équipe par son ID
+        $team = Team::find($teamId);
+
+        if ($team) {
+            // Si l'équipe est trouvée, récupérez son nom
+            $teamName = $team->name;
+            return response()->json(['team_name' => $teamName]);
+        } else {
+            // Si l'équipe n'est pas trouvée, retournez une erreur
+            return response()->json(['error' => 'L\'équipe avec l\'ID spécifié n\'existe pas.'], 404);
+        }
+    }
+
+
     public function show(Request $request)
     {
         $events = Event::all(); // Récupère tous les événements pour simplifier
