@@ -8,7 +8,12 @@
 
     @if(!($filtre) && $valable)
         <script>
-            if(!(window.location.href === '/calendar?category=')){
+            function hasGetVariable(variableName) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.has(variableName);
+            }
+
+            if(!(hasGetVariable('category'))){
                 var teamName = "{{$teamName}}";
                 console.log("teamName: ",teamName);
                 window.location.href = '/calendar?category=' + encodeURIComponent(teamName);
