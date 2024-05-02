@@ -13,10 +13,9 @@
             <input type="text" id="searchBar" placeholder="Rechercher des utilisateurs..." class="mt-2 mb-4 w-64 px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none text-gray-900">
 
         @if (!$roles->isEmpty())
-            <x-dynamic-table :headers="['ID', 'Nom', 'Action']">
+            <x-dynamic-table :headers="['Nom', 'Action']">
                 @foreach ($roles as $role)
                     <tr class="bg-white border-b hover:bg-gray-50 role-item">
-                        <td class="px-6 py-4 text-sm text-neutral-600">{{ $loop->iteration }}</td>
                         <!-- Ajout d'une classe pour faciliter la sélection par JS -->
                         <td class="px-6 py-4 text-sm text-neutral-600 role-name">{{ $role->name }}</td>
                         <td class="px-6 py-4 text-sm text-neutral-600">
