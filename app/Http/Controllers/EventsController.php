@@ -174,6 +174,8 @@ class EventsController extends Controller
             'singleEvents' => true,
             'timeMin' => date('c'),
         ];
+
+
         $results = $service->events->listEvents($calendarId, $optParams);
         $events = $results->getItems();
 
@@ -181,16 +183,65 @@ class EventsController extends Controller
         $filteredEvents = [];
         foreach ($events as $event) {
             $description = $event->getDescription();
+            // Log pour voir ce que contient réellement description
+            Log::info("Description: $description, Category: $category, Match: " . strpos($description, $category));
             if ($description && strpos($description, $category) !== false) {
-                $filteredEvents[] = $event;
+                $newEvent = [
+                    'id' => $event->getId(),
+                    'title' => $event->getSummary(),
+                    'description' => $event->getDescription(),
+                    'location' => $event->getLocation(),
+                    'start' => $event->getStart()->dateTime,
+                    'end' => $event->getEnd()->dateTime,
+                    'isRecurring' => $event->getRecurringEventId() ? 1 : 0
+                ];
+                $teamNames = explode(',', $description);
+                $colors = $this->fetchColorsForTeams($teamNames);
+                $filteredEvents[] = [
+                    'event' => $newEvent,
+                    'colors' => $colors
+                ];
             }
         }
 
         // Retourner les événements filtrés au format JSON
         return response()->json([
-            'events' => $filteredEvents,
+            'data' => $filteredEvents,
         ]);
+//        return response()->json(['success' => true, 'data' => $eventsData]);
     }
+
+    private function prepareEventData($event)
+    {
+        $startDateTime = $event->getStart()->dateTime;
+        $endDateTime = $event->getEnd()->dateTime;
+
+        $start = $startDateTime ? Carbon::parse($startDateTime)->format('Y-m-d H:i:s') : null;
+        $end = $endDateTime ? Carbon::parse($endDateTime)->format('Y-m-d H:i:s') : null;
+
+        return Event::updateOrCreate(
+            ['id' => $event->getId()],
+            [
+                'title' => $event->getSummary(),
+                'description' => $event->getDescription(),
+                'location' => $event->getLocation(),
+                'start' => $start,
+                'end' => $end,
+                'isRecurring' => $event->getRecurringEventId() !== null ? 1 : 0,
+            ]
+        );
+    }
+
+    private function fetchColorsForTeams($teamNames)
+    {
+        $colors = [];
+        foreach ($teamNames as $teamName) {
+            $team = Team::where('name', trim($teamName))->first();
+            $colors[] = $team ? $team->color : '#ccc'; // Utiliser une couleur par défaut si l'équipe n'est pas trouvée
+        }
+        return $colors;
+    }
+
 
     public function show($id)
     {

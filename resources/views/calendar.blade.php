@@ -24,7 +24,9 @@
                 </select>
 
                 <br><br>
-
+                @php
+                    $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['category']);
+                @endphp
                 <div id='calendar'></div>
             </div>
         </div>
@@ -72,17 +74,22 @@
     <script>
 
         document.addEventListener('DOMContentLoaded', function() {
-            var events = {!! json_encode($events->map(function($event) {
-        return [
-            'id' => $event->id,
-            'title' => $event->title,
-            'description' => $event->description,
-            'location' => $event->location,
-            'start' => $event->start,
-            'end' => $event->end,
-            'isRecurring' => $event->isRecurring,
-        ];
-    })->toArray(), JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!};
+            @php
+                // Récupération de la réponse JSON
+                $responseData = json_decode($eventsData->getContent(), true);
+//                dd($responseData);
+                // Initialisation du tableau pour stocker les événements
+                $events = [];
+                foreach ($responseData['data'] as $item) {
+                    $event = $item['event'];
+                    $event['backgroundColor'] = $item['colors'][0] ?? '#ccc'; // Couleur par défaut si aucune couleur n'est définie
+                    $events[] = $event;
+                }
+            @endphp
+
+            var events = {!! json_encode($events) !!};
+
+            console.log(events)
 
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
@@ -113,9 +120,11 @@
                 initialView: 'timeGridWeek',
                 events: events,
                 eventContent: function(arg) {
-                    return {
-                        html: '<div>' + arg.event.title + '</div>',
-                    };
+                    var element = document.createElement('div');
+                    element.innerText = arg.event.title;
+                    element.style.backgroundColor = arg.event.backgroundColor;
+                    element.style.color = '#ffffff';
+                    return { domNodes: [element] };
                 },
             });
 
