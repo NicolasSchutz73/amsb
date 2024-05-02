@@ -156,17 +156,22 @@ class TeamController extends Controller
             'category' => $validatedData['category'],
         ]);
 
+        // Récupère le groupe associé à l'équipe
+        $group = Group::where('name', $team->name . " Group")->first();
+
+        // Synchroniser les utilisateurs dans l'équipe
+        $usersToAdd = $validatedData['add_users'] ?? [];
+        $usersToRemove = $validatedData['remove_users'] ?? [];
+
         // Ajoute les utilisateurs à l'équipe
-        if (isset($validatedData['add_users'])) {
-            $team->users()->attach($validatedData['add_users']);
-        }
+        $team->users()->attach($usersToAdd);
 
         // Supprime les utilisateurs de l'équipe
-        if (isset($validatedData['remove_users'])) {
-            $team->users()->detach($validatedData['remove_users']);
-        }
+        $team->users()->detach($usersToRemove);
 
-        // Redirige vers la page de détails de l'équipe
+        // Synchroniser le groupe de messagerie avec les mêmes utilisateurs
+        $group->users()->sync($team->users->pluck('id')->toArray());
+
         return redirect()->route('teams.show', $team->id)->with('success', 'L\'équipe a été mise à jour avec succès.');
     }
 
