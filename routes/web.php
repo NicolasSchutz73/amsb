@@ -138,7 +138,6 @@ Route::get('/usersjson', [UserMessController::class, 'apiIndex']); // À déplac
 
 //Route::get('/calendar', [CalendarController::class, 'show'])->name('calendar');
 Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar');
-//Route::get('/calendar/{category}', [EventsController::class, 'getEventsByCategory'])->name('calendar');
 Route::get('/event/{id}', [EventsController::class, 'show']);
 
 

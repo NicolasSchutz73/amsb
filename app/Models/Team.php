@@ -11,8 +11,7 @@ class Team extends Model
 
     protected $fillable = [
         'name',
-        'category',
-        'color'
+        'category'
     ];
 
     // Relation Many-to-Many avec les utilisateurs (joueurs et parents)
@@ -29,11 +28,6 @@ class Team extends Model
             // Filtre les utilisateurs ayant le rôle "coach"
             $query->where('name', 'coach');
         });
-    }
-
-    public function teams()
-    {
-        return $this->belongsToMany(Team::class);
     }
 
     public static function getAllCategories()
