@@ -51,6 +51,28 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="eventModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventModalLabel">Détails de l'événement</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h6 id="eventTitle"></h6>
+                    <p id="eventDescription"></p>
+                    <p id="eventLocation"></p>
+                    <p>Commence: <span id="eventStart"></span></p>
+                    <p>Fin: <span id="eventEnd"></span></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                    <a href="" id="eventPageLink" class="btn btn-primary">Voir la page de l'événement</a>
+                    <a href="" id="messPageLink" class="btn btn-primary">Accéder à la messagerie</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <style>
         /* CSS personnalisé pour FullCalendar en mode responsive */
@@ -85,13 +107,29 @@
             .fc-dayGridMonth-view, .fc-timeGridWeek-view, .fc-timeGridDay-view {
                 /* Styles spécifiques aux vues */
             }
-        }
 
+        }
+        #eventModal {
+            display: none; /* Cache le modal au chargement de la page */
+        }
     </style>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.js'></script>
     <script src='fullcalendar/locales/fr.js'></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+
+        function formatDate(dateStr) {
+            let date = new Date(dateStr);
+            let day = date.getDate().toString().padStart(2, '0');
+            let month = (date.getMonth() + 1).toString().padStart(2, '0');
+            let year = date.getFullYear();
+            let hours = date.getHours().toString().padStart(2, '0');
+            let minutes = date.getMinutes().toString().padStart(2, '0');
+            return `${day}/${month}/${year} à ${hours}:${minutes}`;
+        }
 
         document.addEventListener('DOMContentLoaded', function() {
             @php
@@ -114,8 +152,18 @@
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 eventClick: function(info) {
-                    window.location.href = '/event/' + info.event.id;
+                    var eventObj = info.event;
+                    console.log(eventObj)
+                    $('#eventTitle').text(eventObj.title);
+                    $('#eventDescription').text(eventObj.extendedProps.description);
+                    $('#eventLocation').text(eventObj.extendedProps.location);
+                    $('#eventStart').text(formatDate(eventObj.start.toISOString()));
+                    $('#eventEnd').text(formatDate(eventObj.end.toISOString()));
+                    $('#eventPageLink').attr('href', '/event/' + eventObj.id);
+                    $('#messPageLink').attr('href', '/chat-room-users');
+                    $('#eventModal').modal('show');
                 },
+
                 height: 'auto',
                 locale: 'fr',
                 firstDay: 1,
