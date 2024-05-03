@@ -22,5 +22,9 @@ class Event extends Model {
     public $incrementing = false;
     protected $keyType = 'string';
 
+    public function groups()
+    {
+        return $this->hasMany(Group::class);
+    }
 
 }

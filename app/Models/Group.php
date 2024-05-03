@@ -30,6 +30,10 @@ class Group extends Model
 
 
 
+    public function event()
+    {
+        return $this->belongsTo(Event::class);
+    }
 
     protected $fillable = ['name', 'type'];
 
