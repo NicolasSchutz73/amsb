@@ -6,47 +6,50 @@
         </h2>
     </x-slot>
 
-    @if(!($filtre) && $valable)
-        <script>
-            function hasGetVariable(variableName) {
-                const urlParams = new URLSearchParams(window.location.search);
-                return urlParams.has(variableName);
-            }
+{{--    @if(!($filtre) && $valable)--}}
+{{--        <script>--}}
+{{--            function hasGetVariable(variableName) {--}}
+{{--                const urlParams = new URLSearchParams(window.location.search);--}}
+{{--                return urlParams.has(variableName);--}}
+{{--            }--}}
 
-            if(!(hasGetVariable('category'))){
-                var teamName = "{{$teamName}}";
-                console.log("teamName: ",teamName);
-                window.location.href = '/calendar?category=' + encodeURIComponent(teamName);
-            }
-        </script>
-    @endif
+{{--            if(!(hasGetVariable('teams'))){--}}
+{{--                var teamName = "{{$teamName}}";--}}
+{{--                console.log("teamName: ",teamName);--}}
+{{--                window.location.href = '/calendar?teams=' + encodeURIComponent(teamName);--}}
+{{--            }--}}
+{{--        </script>--}}
+{{--    @endif--}}
+
 
     <div class="container py-12">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-                <select id="category-filter" onchange="changeCategory()">
-                    <option value="">Toutes les catégories</option>
+                <form action="{{ url('calendar') }}" method="GET">
                     @foreach($categories as $category)
-                        @if(isset($_GET['category']))
-                            @if($category == $_GET['category'])
-                                <option value="{{ $category }}" selected>{{ $category }}</option>
-                            @else
-                                <option value="{{ $category }}">{{ $category }}</option>
-                            @endif
-                        @else
-                            <option value="{{ $category }}">{{ $category }}</option>
-                        @endif
+                        <div class="form-check">
+                            @php
+                                if (isset($_GET['teams'])) {
+                                   if(in_array($category, $_GET['teams'])){
+                                       $check = 'checked';
+                                   } else {
+                                       $check = '';
+                                   }
+                                } else {
+                                    $check = '';
+                                }
+
+                                @endphp
+                            <input class="form-check-input" type="checkbox" value="{{ $category }}" id="team{{ $loop->index }}" name="teams[]" {{$check}}>
+                            <label class="form-check-label" for="team{{ $loop->index }}">
+                                {{ $category }}
+                            </label>
+                        </div>
                     @endforeach
-                </select>
+                    <button type="submit" class="btn btn-primary">Voir les calendriers</button>
+                </form>
 
                 <br><br>
-                @php
-                    if (isset($_GET['category'])) {
-                        $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['category']);
-                    }else{
-                        $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), '');
-                    }
-                @endphp
                 <div id='calendar'></div>
             </div>
         </div>
@@ -73,6 +76,13 @@
             </div>
         </div>
     </div>
+    @php
+        if (isset($_GET['teams'])) {
+            $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['teams']);
+        }else{
+            $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), '');
+        }
+    @endphp
 
     <style>
         /* CSS personnalisé pour FullCalendar en mode responsive */
@@ -205,7 +215,6 @@
                 window.location.href = '/calendar?category=' + encodeURIComponent(category);
             }
         }
-
 
 
     </script>
