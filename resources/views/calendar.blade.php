@@ -6,20 +6,20 @@
         </h2>
     </x-slot>
 
-{{--    @if(!($filtre) && $valable)--}}
-{{--        <script>--}}
-{{--            function hasGetVariable(variableName) {--}}
-{{--                const urlParams = new URLSearchParams(window.location.search);--}}
-{{--                return urlParams.has(variableName);--}}
-{{--            }--}}
+    @if(!($filtre) && $valable)
+        <script>
+            function hasGetVariable(variableName) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.has(variableName);
+            }
 
-{{--            if(!(hasGetVariable('teams'))){--}}
-{{--                var teamName = "{{$teamName}}";--}}
-{{--                console.log("teamName: ",teamName);--}}
-{{--                window.location.href = '/calendar?teams=' + encodeURIComponent(teamName);--}}
-{{--            }--}}
-{{--        </script>--}}
-{{--    @endif--}}
+            if(!(hasGetVariable('teams'))){
+                var teamName = "{{$teamName}}";
+                console.log("teamName: ",teamName);
+                window.location.href = '/calendar?teams%5B%5D=' + encodeURIComponent(teamName);
+            }
+        </script>
+    @endif
 
 
     <div class="container py-12">
