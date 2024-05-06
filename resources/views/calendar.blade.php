@@ -44,7 +44,7 @@
                         <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Voir les calendriers</button>
                     </form>
                 </div>
-                <br><br>
+                <br>
                 <div id='calendar'></div>
             </div>
         </div>
