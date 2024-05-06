@@ -25,22 +25,25 @@
     <div class="container py-12">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-                <form action="{{ url('calendar') }}" method="GET">
-                    <input type="text" id="searchBox" placeholder="Rechercher une équipe..." class="form-control mb-3">
-                    <div class="scroll-container">
-                        @foreach($categories as $category)
-                            <div class="card-check {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}" data-team-name="{{ strtolower($category) }}">
-                                <input type="checkbox" value="{{ $category }}" id="team{{ $loop->index }}" name="teams[]" {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}>
-                                <label for="team{{ $loop->index }}">
-                                    {{ $category }}
-                                </label>
-                            </div>
-                        @endforeach
-                    </div>
-                    <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Voir les calendriers</button>
-                </form>
-
-
+                <div class="form-container">
+                    <button id="toggleFormButton" class="btn btn-info" onclick="toggleForm()">
+                        <span id="arrowIcon" class="arrow down"></span> Ajouter des équipes
+                    </button>
+                    <form id="dynamicForm" action="{{ url('calendar') }}" method="GET" style="display: none; overflow: hidden; transition: max-height 0.5s ease;">
+                        <input type="text" id="searchBox" placeholder="Rechercher une équipe..." class="form-control mb-3">
+                        <div class="scroll-container">
+                            @foreach($categories as $category)
+                                <div class="card-check {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}" data-team-name="{{ strtolower($category) }}">
+                                    <input type="checkbox" value="{{ $category }}" id="team{{ $loop->index }}" name="teams[]" {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}>
+                                    <label for="team{{ $loop->index }}">
+                                        {{ $category }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Voir les calendriers</button>
+                    </form>
+                </div>
                 <br><br>
                 <div id='calendar'></div>
             </div>
@@ -80,6 +83,42 @@
     <style>
         /* CSS personnalisé pour FullCalendar en mode responsive */
         @media (max-width: 767px) {
+            .btn-info{
+                width: 100% !important;
+                background-color: white !important;
+                display: flex !important;
+                flex-direction: row-reverse !important;
+                justify-content: space-around !important;
+                align-items: center;
+                border: none !important;
+                margin-bottom: 10px;
+            }
+            .btn-info:hover{
+                border: none;
+            }
+            .arrow {
+                border: solid black;
+                border-width: 0 2px 2px 0;
+                display: inline-block;
+                padding: 3px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
+
+            .down {
+                transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+            }
+
+            .up {
+                transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+            }
+
+            .form-container {
+                margin-bottom: 20px;
+            }
+
             .scroll-container {
                 height: 200px;
                 overflow-y: auto;
@@ -266,6 +305,22 @@
                 }
             });
         });
+
+        function toggleForm() {
+            var form = document.getElementById('dynamicForm');
+            var arrowIcon = document.getElementById('arrowIcon');
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+                form.style.maxHeight = form.scrollHeight + 'px';
+                arrowIcon.classList.remove('down');
+                arrowIcon.classList.add('up');
+            } else {
+                form.style.display = 'none';
+                form.style.maxHeight = '0';
+                arrowIcon.classList.remove('up');
+                arrowIcon.classList.add('down');
+            }
+        }
 
     </script>
 </x-app-layout>
