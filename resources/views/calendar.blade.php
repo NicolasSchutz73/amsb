@@ -25,28 +25,19 @@
     <div class="container py-12">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
+                <h2>Choisir les équipes </h2>
                 <form action="{{ url('calendar') }}" method="GET">
-                    @foreach($categories as $category)
-                        <div class="form-check">
-                            @php
-                                if (isset($_GET['teams'])) {
-                                   if(in_array($category, $_GET['teams'])){
-                                       $check = 'checked';
-                                   } else {
-                                       $check = '';
-                                   }
-                                } else {
-                                    $check = '';
-                                }
-
-                                @endphp
-                            <input class="form-check-input" type="checkbox" value="{{ $category }}" id="team{{ $loop->index }}" name="teams[]" {{$check}}>
-                            <label class="form-check-label" for="team{{ $loop->index }}">
-                                {{ $category }}
-                            </label>
-                        </div>
-                    @endforeach
-                    <button type="submit" class="btn btn-primary">Voir les calendriers</button>
+                    <div class="scroll-container">
+                        @foreach($categories as $category)
+                            <div class="card-check {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}">
+                                <input type="checkbox" value="{{ $category }}" id="team{{ $loop->index }}" name="teams[]" {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}>
+                                <label for="team{{ $loop->index }}">
+                                    {{ $category }}
+                                </label>
+                            </div>
+                        @endforeach
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Voir les calendriers</button>
                 </form>
 
                 <br><br>
@@ -87,6 +78,41 @@
     <style>
         /* CSS personnalisé pour FullCalendar en mode responsive */
         @media (max-width: 767px) {
+            .scroll-container {
+                height: 200px;
+                overflow-y: auto;
+                padding: 15px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                margin-top: 20px;
+            }
+            button[type="submit"] {
+                width: 100%; /* Rend le bouton aussi large que son conteneur */
+                display: block; /* S'assure que le bouton s'affiche comme un bloc */
+            }
+            .card-check {
+                border: 1px solid #ccc;
+                padding: 10px;
+                border-radius: 8px;
+                display: block;
+                margin-bottom: 10px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            .card-check input[type="checkbox"] {
+                display: none; /* Cache la checkbox, mais elle est toujours fonctionnelle */
+            }
+
+            .card-check.checked {
+                background-color: #b0e0a1; /* Couleur lors de la sélection */
+            }
+
+            .card-check:hover {
+                background-color: #f0f0f0; /* Couleur au survol si pas sélectionnée */
+            }
+
+
             #calendar{
                 margin: 15px;
             }
@@ -199,7 +225,7 @@
                 events: events,
                 eventContent: function(arg) {
                     var element = document.createElement('div');
-                    element.innerText = arg.event.title;
+                    element.innerText = "("+arg.event.extendedProps.description+") "+ arg.event.title;
                     element.style.backgroundColor = arg.event.backgroundColor;
                     element.style.color = '#ffffff';
                     return { domNodes: [element] };
@@ -215,6 +241,13 @@
                 window.location.href = '/calendar?category=' + encodeURIComponent(category);
             }
         }
+        document.querySelectorAll('.card-check').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked; // Change l'état de la checkbox
+                this.classList.toggle('checked', checkbox.checked); // Ajoute/retire la classe 'checked'
+            });
+        });
 
 
     </script>
