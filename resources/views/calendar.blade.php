@@ -25,11 +25,11 @@
     <div class="container py-12">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-                <h2>Choisir les équipes </h2>
                 <form action="{{ url('calendar') }}" method="GET">
+                    <input type="text" id="searchBox" placeholder="Rechercher une équipe..." class="form-control mb-3">
                     <div class="scroll-container">
                         @foreach($categories as $category)
-                            <div class="card-check {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}">
+                            <div class="card-check {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}" data-team-name="{{ strtolower($category) }}">
                                 <input type="checkbox" value="{{ $category }}" id="team{{ $loop->index }}" name="teams[]" {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}>
                                 <label for="team{{ $loop->index }}">
                                     {{ $category }}
@@ -39,6 +39,7 @@
                     </div>
                     <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Voir les calendriers</button>
                 </form>
+
 
                 <br><br>
                 <div id='calendar'></div>
@@ -70,8 +71,9 @@
     @php
         if (isset($_GET['teams'])) {
             $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['teams']);
-        }else{
-            $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), '');
+        }else {
+            // Sinon, retourner un tableau JSON vide
+            $eventsData = response()->json(['data' => []]);
         }
     @endphp
 
@@ -148,6 +150,8 @@
         #eventModal {
             display: none; /* Cache le modal au chargement de la page */
         }
+
+        a{ text-decoration: none !important; }
     </style>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.js'></script>
@@ -249,6 +253,19 @@
             });
         });
 
+        document.getElementById('searchBox').addEventListener('input', function() {
+            var searchQuery = this.value.toLowerCase();
+            var cards = document.querySelectorAll('.card-check');
+
+            cards.forEach(function(card) {
+                var teamName = card.getAttribute('data-team-name');
+                if (teamName.includes(searchQuery)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
 
     </script>
 </x-app-layout>
