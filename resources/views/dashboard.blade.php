@@ -22,5 +22,13 @@
         </div>
     </div>
 
+    @if(isset($instagram))
+        @foreach($instagram as $post)
+            <img src="{{ $post['url'] }}" alt="Instagram Post">
+        @endforeach
+    @else
+        <p>No Instagram posts to display or Instagram profile not configured.</p>
+    @endif
+
 
 </x-app-layout>

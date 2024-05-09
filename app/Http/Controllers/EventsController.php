@@ -154,7 +154,7 @@ class EventsController extends Controller
         ]);
     }
 
-    public function getEventsByCategory(Request $request, $category): JsonResponse
+    public function getEventsByCategory(Request $request, $categories): JsonResponse
     {
         // Configuration de l'accès à l'API Google Calendar
         $client = new Google_Client();
@@ -184,23 +184,25 @@ class EventsController extends Controller
         foreach ($events as $event) {
             $description = $event->getDescription();
             // Log pour voir ce que contient réellement description
-            Log::info("Description: $description, Category: $category, Match: " . strpos($description, $category));
-            if ($description && strpos($description, $category) !== false) {
-                $newEvent = [
-                    'id' => $event->getId(),
-                    'title' => $event->getSummary(),
-                    'description' => $event->getDescription(),
-                    'location' => $event->getLocation(),
-                    'start' => $event->getStart()->dateTime,
-                    'end' => $event->getEnd()->dateTime,
-                    'isRecurring' => $event->getRecurringEventId() ? 1 : 0
-                ];
-                $teamNames = explode(',', $description);
-                $colors = $this->fetchColorsForTeams($teamNames);
-                $filteredEvents[] = [
-                    'event' => $newEvent,
-                    'colors' => $colors
-                ];
+//            Log::info("Description: $description, Category: $category, Match: " . strpos($description, $category));
+            foreach ($categories as $category){
+                if ($description && strpos($description, $category) !== false) {
+                    $newEvent = [
+                        'id' => $event->getId(),
+                        'title' => $event->getSummary(),
+                        'description' => $event->getDescription(),
+                        'location' => $event->getLocation(),
+                        'start' => $event->getStart()->dateTime,
+                        'end' => $event->getEnd()->dateTime,
+                        'isRecurring' => $event->getRecurringEventId() ? 1 : 0
+                    ];
+                    $teamNames = explode(',', $description);
+                    $colors = $this->fetchColorsForTeams($teamNames);
+                    $filteredEvents[] = [
+                        'event' => $newEvent,
+                        'colors' => $colors
+                    ];
+                }
             }
         }
 

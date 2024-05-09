@@ -13,40 +13,38 @@
                 return urlParams.has(variableName);
             }
 
-            if(!(hasGetVariable('category'))){
+            if(!(hasGetVariable('teams'))){
                 var teamName = "{{$teamName}}";
                 console.log("teamName: ",teamName);
-                window.location.href = '/calendar?category=' + encodeURIComponent(teamName);
+                window.location.href = '/calendar?teams%5B%5D=' + encodeURIComponent(teamName);
             }
         </script>
     @endif
 
+
     <div class="container py-12">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
-                <select id="category-filter" onchange="changeCategory()">
-                    <option value="">Toutes les catégories</option>
-                    @foreach($categories as $category)
-                        @if(isset($_GET['category']))
-                            @if($category == $_GET['category'])
-                                <option value="{{ $category }}" selected>{{ $category }}</option>
-                            @else
-                                <option value="{{ $category }}">{{ $category }}</option>
-                            @endif
-                        @else
-                            <option value="{{ $category }}">{{ $category }}</option>
-                        @endif
-                    @endforeach
-                </select>
-
-                <br><br>
-                @php
-                    if (isset($_GET['category'])) {
-                        $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['category']);
-                    }else{
-                        $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), '');
-                    }
-                @endphp
+                <div class="form-container">
+                    <button id="toggleFormButton" class="btn btn-info" onclick="toggleForm()">
+                        <span id="arrowIcon" class="arrow down"></span> Ajouter des équipes
+                    </button>
+                    <form id="dynamicForm" action="{{ url('calendar') }}" method="GET" style="display: none; overflow: hidden; transition: max-height 0.5s ease;">
+                        <input type="text" id="searchBox" placeholder="Rechercher une équipe..." class="form-control mb-3">
+                        <div class="scroll-container">
+                            @foreach($categories as $category)
+                                <div class="card-check {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}" data-team-name="{{ strtolower($category) }}">
+                                    <input type="checkbox" value="{{ $category }}" id="team{{ $loop->index }}" name="teams[]" {{ in_array($category, request()->get('teams', [])) ? 'checked' : '' }}>
+                                    <label for="team{{ $loop->index }}">
+                                        {{ $category }}
+                                    </label>
+                                </div>
+                            @endforeach
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Voir les calendriers</button>
+                    </form>
+                </div>
+                <br>
                 <div id='calendar'></div>
             </div>
         </div>
@@ -73,10 +71,89 @@
             </div>
         </div>
     </div>
+    @php
+        if (isset($_GET['teams'])) {
+            $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['teams']);
+        }else {
+            // Sinon, retourner un tableau JSON vide
+            $eventsData = response()->json(['data' => []]);
+        }
+    @endphp
 
     <style>
         /* CSS personnalisé pour FullCalendar en mode responsive */
         @media (max-width: 767px) {
+            .btn-info{
+                width: 100% !important;
+                background-color: white !important;
+                display: flex !important;
+                flex-direction: row-reverse !important;
+                justify-content: space-around !important;
+                align-items: center;
+                border: none !important;
+                margin-bottom: 10px;
+            }
+            .btn-info:hover{
+                border: none;
+            }
+            .arrow {
+                border: solid black;
+                border-width: 0 2px 2px 0;
+                display: inline-block;
+                padding: 3px;
+                margin-left: 5px;
+                vertical-align: middle;
+            }
+
+            .down {
+                transform: rotate(45deg);
+                -webkit-transform: rotate(45deg);
+            }
+
+            .up {
+                transform: rotate(-135deg);
+                -webkit-transform: rotate(-135deg);
+            }
+
+            .form-container {
+                margin-bottom: 20px;
+            }
+
+            .scroll-container {
+                height: 200px;
+                overflow-y: auto;
+                padding: 15px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                margin-top: 20px;
+            }
+            button[type="submit"] {
+                width: 100%; /* Rend le bouton aussi large que son conteneur */
+                display: block; /* S'assure que le bouton s'affiche comme un bloc */
+            }
+            .card-check {
+                border: 1px solid #ccc;
+                padding: 10px;
+                border-radius: 8px;
+                display: block;
+                margin-bottom: 10px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            .card-check input[type="checkbox"] {
+                display: none; /* Cache la checkbox, mais elle est toujours fonctionnelle */
+            }
+
+            .card-check.checked {
+                background-color: #b0e0a1; /* Couleur lors de la sélection */
+            }
+
+            .card-check:hover {
+                background-color: #f0f0f0; /* Couleur au survol si pas sélectionnée */
+            }
+
+
             #calendar{
                 margin: 15px;
             }
@@ -112,6 +189,8 @@
         #eventModal {
             display: none; /* Cache le modal au chargement de la page */
         }
+
+        a{ text-decoration: none !important; }
     </style>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.js'></script>
@@ -189,7 +268,7 @@
                 events: events,
                 eventContent: function(arg) {
                     var element = document.createElement('div');
-                    element.innerText = arg.event.title;
+                    element.innerText = "("+arg.event.extendedProps.description+") "+ arg.event.title;
                     element.style.backgroundColor = arg.event.backgroundColor;
                     element.style.color = '#ffffff';
                     return { domNodes: [element] };
@@ -205,8 +284,43 @@
                 window.location.href = '/calendar?category=' + encodeURIComponent(category);
             }
         }
+        document.querySelectorAll('.card-check').forEach(function(card) {
+            card.addEventListener('click', function() {
+                var checkbox = this.querySelector('input[type="checkbox"]');
+                checkbox.checked = !checkbox.checked; // Change l'état de la checkbox
+                this.classList.toggle('checked', checkbox.checked); // Ajoute/retire la classe 'checked'
+            });
+        });
 
+        document.getElementById('searchBox').addEventListener('input', function() {
+            var searchQuery = this.value.toLowerCase();
+            var cards = document.querySelectorAll('.card-check');
 
+            cards.forEach(function(card) {
+                var teamName = card.getAttribute('data-team-name');
+                if (teamName.includes(searchQuery)) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        function toggleForm() {
+            var form = document.getElementById('dynamicForm');
+            var arrowIcon = document.getElementById('arrowIcon');
+            if (form.style.display === 'none' || form.style.display === '') {
+                form.style.display = 'block';
+                form.style.maxHeight = form.scrollHeight + 'px';
+                arrowIcon.classList.remove('down');
+                arrowIcon.classList.add('up');
+            } else {
+                form.style.display = 'none';
+                form.style.maxHeight = '0';
+                arrowIcon.classList.remove('up');
+                arrowIcon.classList.add('down');
+            }
+        }
 
     </script>
 </x-app-layout>

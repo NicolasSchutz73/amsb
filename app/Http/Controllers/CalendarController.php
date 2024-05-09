@@ -69,33 +69,37 @@ class CalendarController extends Controller
         $filtre = false;
         $valable = false;
 
-        $category = $request->input('category');
+        // Authentification de l'utilisateur et récupération de l'équipe de l'utilisateur
+        $user = auth()->user();
+        $userTeam = $user->team()->first();
+        $teamData = $this->getUserTeam();
 
-        if ($category) {
-            $team = Team::where('name', $category)->first();
-            if ($team) {
-                $category = $team->category;
-            }
-        }
+        // Récupération des noms des équipes sélectionnées via des checkboxes
+        $teamNames = $request->input('teams', []);
 
+        // Récupération de toutes les catégories pour les options du formulaire
+        $categories = Team::all()->pluck('name');
+
+        // Initialisation de la requête d'événements
         $events = Event::query();
 
-        // Filtrer les événements si une catégorie est sélectionnée
-        if ($category) {
-            $events = $events->where('description', 'like', "%$category%");
+        // Filtrer les événements si des noms d'équipe sont sélectionnés
+        if (!empty($teamNames)) {
             $filtre = true;
+            $events = $events->where(function ($query) use ($teamNames) {
+                foreach ($teamNames as $teamName) {
+                    // Utilisation de LIKE pour isoler mieux les mots en cherchant des correspondances exactes dans la description
+                    $team = Team::where('name', $teamName)->first();
+                    if ($team) {
+                        $query->orWhere('description', 'like', "%{$team->name}%");
+                    }
+                }
+            });
         }
 
         $events = $events->get();
 
-        $categories = Team::all()->pluck('name'); // Exemple de récupération des noms de catégories
-
-        $teamData = $this->getUserTeam();
-
-        // Authentification de l'utilisateur
-        $user = auth()->user();
-        // Récupération de l'équipe de l'utilisateur
-        $userTeam = $user->team()->first();
+//        dd($events);
 
         if ($teamData == ['team_id' => $userTeam->id]) {
             $teamId = $teamData['team_id'];
@@ -108,17 +112,80 @@ class CalendarController extends Controller
                 'categories' => $categories,
                 'teamName' => $teamName,
                 'filtre' => $filtre,
-                'valable' => $valable
+                'valable' => $valable,
+                'color' => '#ccc'
             ]);
-        }else{
+        } else {
             return view('calendar', [
                 'events' => $events,
                 'categories' => $categories,
                 'filtre' => $filtre,
-                'valable' => $valable
+                'valable' => $valable,
+                'color' => '#ccc'
             ]);
         }
     }
+
+
+
+//    public function index(Request $request)
+//    {
+//        $filtre = false;
+//        $valable = false;
+//        $user = auth()->user();
+//        $userTeam = $user->team()->first();
+//        $teamData = $this->getUserTeam();
+//        $teamNames = $request->input('teams', []);
+//        $categories = Team::all()->pluck('name');
+//
+//        $events = Event::select('events.*', 'teams.color as teamColor')
+//            ->leftJoin('teams', 'events.descritpion', '=', 'teams.name');
+//
+//        if (!empty($teamNames)) {
+//            $filtre = true;
+//            $events = $events->whereIn('teams.name', $teamNames);
+//        }
+//
+//        $events = $events->get();
+//
+//        if ($teamData == ['team_id' => $userTeam->id]) {
+//            $teamId = $teamData['team_id'];
+//            $teamNameData = $this->getTeamName($teamId);
+//            $teamName = $teamNameData['team_name'];
+//
+//            $valable = true;
+//
+//            return view('calendar', [
+//                'events' => $events,
+//                'categories' => $categories,
+//                'teamName' => $teamName,
+//                'filtre' => $filtre,
+//                'valable' => $valable
+//            ]);
+//        } else {
+//            return view('calendar', [
+//                'events' => $events,
+//                'categories' => $categories,
+//                'filtre' => $filtre,
+//                'valable' => $valable
+//            ]);
+//        }
+//    }
+
+
+    private function fetchColorsForTeams($teamNames)
+    {
+        $colors = [];
+        foreach ($teamNames as $teamName) {
+            $team = Team::where('name', trim($teamName))->first();
+            $colors[] = $team ? $team->color : '#ccc'; // Utiliser une couleur par défaut si l'équipe n'est pas trouvée
+        }
+        return $colors;
+    }
+
+
+
+
 
     public function getCategoriesByName($name)
     {

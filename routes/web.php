@@ -21,9 +21,11 @@ Route::get('/', function () {
 });
 
 // Tableau de bord
-Route::get('/dashboard', function () {
+/*Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');*/
+
+Route::get('/dashboard', 'HomeController@show')->middleware(['auth', 'verified'])->name('dashboard');
 
 
 // Recherche d'utilisateurs
@@ -154,5 +156,10 @@ Route::get('storage/profile-photos/{filename}', function ($filename) {
 
     abort(404);
 })->where('filename', '.*');
+
+
+Route::get('instagram-auth', 'InstagramAuthController@show')->middleware('auth');
+Route::get('instagram-auth/callback', 'InstagramAuthController@callback');
+Route::get('instagram-auth/response', 'InstagramAuthController@response');
 
 require __DIR__.'/auth.php';

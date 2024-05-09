@@ -9,6 +9,7 @@ use Illuminate\Contracts\View\Factory;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Dymantic\InstagramFeed\Profile;
 
 class HomeController extends Controller
 {
@@ -109,6 +110,17 @@ class HomeController extends Controller
         curl_close($ch);
 
 
+    }
+
+
+    public function show() {
+        $profile = Profile::where('username', 'your_username')->first();
+        if ($profile) {
+            $feed = $profile->feed();
+            return view('dashboard', ['instagram' => $feed]);
+        } else {
+            return view('dashboard')->with('error', 'Instagram profile not found');
+        }
     }
 
 }

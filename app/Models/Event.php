@@ -24,7 +24,13 @@ class Event extends Model {
 
     public function groups()
     {
-        return $this->hasMany(Group::class);
+        return $this->hasMany(Group::class, 'event_id', 'id');
+    }
+
+// Dans Group
+    public function event()
+    {
+        return $this->belongsTo(Event::class, 'event_id', 'id');
     }
 
 }
