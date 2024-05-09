@@ -25,7 +25,7 @@ Route::get('/', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');*/
 
-Route::get('/dashboard', 'HomeController@show')->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [HomeController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
 
 
 // Recherche d'utilisateurs
