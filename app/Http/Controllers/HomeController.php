@@ -116,9 +116,14 @@ class HomeController extends Controller
     public function show() {
         $profile = Profile::where('username', 'your_username')->first();
         if ($profile) {
+            dd($profile); // Dump the profile to check its details
             $feed = $profile->feed();
+            if (empty($feed)) {
+                dd('Feed is empty', $profile);
+            }
             return view('dashboard', ['instagram' => $feed]);
         } else {
+            dd('Profile not found');
             return view('dashboard')->with('error', 'Instagram profile not found');
         }
     }
