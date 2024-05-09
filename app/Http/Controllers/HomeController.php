@@ -115,7 +115,7 @@ class HomeController extends Controller
 
     public function show() {
         $profile = Profile::where('username', 'amsb_test')->first();
-        $profile->getInstagramAuthUrl();
+        dd($profile, $profile->getInstagramAuthUrl());
         /*if ($profile) {
             dd($profile, $profile->access_token); // Dump profile details and specifically the access token
             $feed = $profile->feed();
