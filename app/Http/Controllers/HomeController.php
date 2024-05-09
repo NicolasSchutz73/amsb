@@ -136,4 +136,21 @@ class HomeController extends Controller
         }
     }
 
+    public function refreshInstagramFeed() {
+        $profile = \Dymantic\InstagramFeed\Profile::where('username', 'amsb_test')->first();
+
+        if ($profile) {
+            try {
+                // This will force a refresh of the feed
+                $profile->refreshFeed();
+
+                return back()->with('success', 'Instagram feed refreshed successfully!');
+            } catch (\Exception $e) {
+                return back()->with('error', 'Failed to refresh Instagram feed: ' . $e->getMessage());
+            }
+        } else {
+            return back()->with('error', 'Instagram profile not found');
+        }
+    }
+
 }
