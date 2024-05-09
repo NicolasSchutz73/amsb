@@ -116,7 +116,7 @@ class HomeController extends Controller
     public function show() {
         $profile = Profile::where('username', 'amsb_test')->first();
         if ($profile) {
-            dd($profile); // Dump the profile to check its details
+            dd($profile, $profile->access_token); // Dump profile details and specifically the access token
             $feed = $profile->feed();
             if (empty($feed)) {
                 dd('Feed is empty', $profile);
