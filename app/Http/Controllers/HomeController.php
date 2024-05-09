@@ -116,9 +116,8 @@ class HomeController extends Controller
     public function show() {
         $profile = Profile::where('username', 'amsb_test')->first();
         if ($profile) {
-            $profile->refreshFeed();  // Force refresh the feed
+            dd($profile, $profile->access_token); // Dump profile details and specifically the access token
             $feed = $profile->feed();
-            dd($feed);  // See what the feed data looks like
             if (empty($feed)) {
                 dd('Feed is empty', $profile);
             }
