@@ -14,7 +14,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('instagram-feed:refresh-tokens')->monthly();
-        $schedule->command('instagram-feed:refresh')->hourly();
+        $schedule->command('instagram-feed:refresh')->everyMinute();
 
     }
 
