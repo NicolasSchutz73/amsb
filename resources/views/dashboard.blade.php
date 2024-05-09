@@ -25,6 +25,7 @@
     @if(isset($instagram))
         @foreach($instagram as $post)
             <img src="{{ $post['url'] }}" alt="Instagram Post">
+            <p>{{ $post['caption'] ?? 'No caption' }}</p>
         @endforeach
     @else
         <p>No Instagram posts to display or Instagram profile not configured.</p>

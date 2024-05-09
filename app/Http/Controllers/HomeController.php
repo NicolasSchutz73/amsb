@@ -114,19 +114,25 @@ class HomeController extends Controller
 
 
     public function show() {
+        // Retrieve the profile by username
         $profile = Profile::where('username', 'amsb_test')->first();
-        $authUrl = $profile->getInstagramAuthUrl();
-        dd($authUrl);
+
+        // Check if the profile exists
         if ($profile) {
-            dd($profile, $profile->access_token); // Dump profile details and specifically the access token
+            // Attempt to get the feed
             $feed = $profile->feed();
+
+            // Check if the feed is empty
             if (empty($feed)) {
-                dd('Feed is empty', $profile);
+                // If the feed is empty, pass an error message to the view
+                return view('dashboard', ['error' => 'Instagram feed is empty']);
             }
+
+            // If the feed is not empty, pass it to the view
             return view('dashboard', ['instagram' => $feed]);
         } else {
-            dd('Profile not found');
-            return view('dashboard')->with('error', 'Instagram profile not found');
+            // If no profile is found, pass an error message to the view
+            return view('dashboard', ['error' => 'Instagram profile not found']);
         }
     }
 
