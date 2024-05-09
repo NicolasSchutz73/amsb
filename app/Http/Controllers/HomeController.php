@@ -114,7 +114,7 @@ class HomeController extends Controller
 
 
     public function show() {
-        $profile = Profile::where('username', 'your_username')->first();
+        $profile = Profile::where('username', 'amsb_test')->first();
         if ($profile) {
             dd($profile); // Dump the profile to check its details
             $feed = $profile->feed();
