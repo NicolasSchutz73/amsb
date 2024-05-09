@@ -115,10 +115,10 @@ class HomeController extends Controller
 
     public function show() {
         $profile = Profile::where('username', 'amsb_test')->first();
-        dd($profile, $profile->getInstagramAuthUrl());
-        /*if ($profile) {
-            dd($profile, $profile->access_token); // Dump profile details and specifically the access token
+        if ($profile) {
+            $profile->refreshFeed();  // Force refresh the feed
             $feed = $profile->feed();
+            dd($feed);  // See what the feed data looks like
             if (empty($feed)) {
                 dd('Feed is empty', $profile);
             }
@@ -126,7 +126,27 @@ class HomeController extends Controller
         } else {
             dd('Profile not found');
             return view('dashboard')->with('error', 'Instagram profile not found');
-        }*/
+        }
+    }
+
+    public function getInstagramAuthUrl() {
+        $profile = Profile::where('username', 'amsb_test')->first();
+        if ($profile) {
+            $authUrl = $profile->getInstagramAuthUrl();
+            return redirect($authUrl);
+        } else {
+            return view('error')->with('message', 'Profile not found');
+        }
+    }
+
+    public function handleInstagramCallback(Request $request) {
+        $profile = Profile::where('username', 'amsb_test')->first();
+        if ($profile && $request->has('code')) {
+            $profile->saveInstagramToken($request->code);
+            return redirect('/')->with('message', 'Instagram feed connected successfully!');
+        } else {
+            return view('error')->with('message', 'Failed to authenticate with Instagram');
+        }
     }
 
 }

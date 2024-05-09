@@ -27,6 +27,7 @@ Route::get('/', function () {
 
 Route::get('/dashboard', [HomeController::class, 'show'])->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/instagram-auth-url', 'HomeController@getInstagramAuthUrl');
 
 // Recherche d'utilisateurs
 /*Route::get('/search-user', function () {
