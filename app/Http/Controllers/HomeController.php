@@ -115,7 +115,8 @@ class HomeController extends Controller
 
     public function show() {
         $profile = Profile::where('username', 'amsb_test')->first();
-        if ($profile) {
+        $profile->getInstagramAuthUrl();
+        /*if ($profile) {
             dd($profile, $profile->access_token); // Dump profile details and specifically the access token
             $feed = $profile->feed();
             if (empty($feed)) {
@@ -125,7 +126,7 @@ class HomeController extends Controller
         } else {
             dd('Profile not found');
             return view('dashboard')->with('error', 'Instagram profile not found');
-        }
+        }*/
     }
 
 }
