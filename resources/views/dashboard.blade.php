@@ -1,8 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Dashboard') }}
-        </h2>
+        <x-crud-header title="{{ __('Dashboard') }}" subtitle="Découvrez l'actualité du club."></x-crud-header>
     </x-slot>
 
     @if(isset($error))
