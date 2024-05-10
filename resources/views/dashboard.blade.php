@@ -5,26 +5,12 @@
         </h2>
     </x-slot>
 
-        @if(isset($error))
-            <p class="text-red-500">{{ $error }}</p>
-        @else
-            <div class="grid grid-cols-3 gap-4"">
-                @foreach($instagram as $post)
-                    <div>
-                        <img src="{{ $post->url }}" alt="Instagram Post" class="w-full object-cover rounded-lg">
-                    </div>
-                @endforeach
-            </div>
-        @endif
-
-
-            <div class="grid grid-cols-4 gap-4">
-                <div>01</div>
-                <div>02</div>
-                <div>03</div>
-                <div>04</div>
-
-                <!-- ... -->
-                <div>09</div>
-            </div>
+    <div class="grid grid-cols-3 gap-4 p-4">
+        <div><img src="https://source.unsplash.com/random/300x300?sig=1" alt="Photo 1" class="w-full"></div>
+        <div><img src="https://source.unsplash.com/random/300x300?sig=2" alt="Photo 2" class="w-full"></div>
+        <div><img src="https://source.unsplash.com/random/300x300?sig=3" alt="Photo 3" class="w-full"></div>
+        <div><img src="https://source.unsplash.com/random/300x300?sig=4" alt="Photo 4" class="w-full"></div>
+        <div><img src="https://source.unsplash.com/random/300x300?sig=5" alt="Photo 5" class="w-full"></div>
+        <div><img src="https://source.unsplash.com/random/300x300?sig=6" alt="Photo 6" class="w-full"></div>
+    </div>
 </x-app-layout>
