@@ -12,8 +12,8 @@
             <div class="flex flex-wrap -mx-2">
                 @foreach($instagram as $post)
                     <div class="w-1/3 px-2 mb-4">
-                        <div class="bg-gray-200 rounded-lg overflow-hidden">
-                            <img src="{{ $post->url }}" alt="Instagram Post" class="w-full h-auto object-cover">
+                        <div class="bg-gray-200 rounded-lg overflow-hidden" style="height: 300px;"> <!-- Taille fixe pour chaque conteneur d'image -->
+                            <img src="{{ $post->url }}" alt="Instagram Post" class="w-full h-full object-cover">
                         </div>
                     </div>
                 @endforeach
