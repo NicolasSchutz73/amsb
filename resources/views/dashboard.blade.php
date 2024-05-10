@@ -8,27 +8,16 @@
     @if(isset($error))
         <p class="text-red-500">{{ $error }}</p>
     @else
-        <div class="container">
-            @foreach($instagram as $post)
-                <item>
-                    <img src="{{ $post->url }}" alt="Instagram Post" class="w-full object-cover rounded-lg">
-                </item>
-            @endforeach
+        <div class="container mx-auto px-4">
+            <div class="flex flex-wrap -mx-2">
+                @foreach($instagram as $post)
+                    <div class="w-1/3 px-2 mb-4">
+                        <div class="bg-gray-200 rounded-lg overflow-hidden">
+                            <img src="{{ $post->url }}" alt="Instagram Post" class="w-full h-auto object-cover">
+                        </div>
+                    </div>
+                @endforeach
+            </div>
         </div>
     @endif
-
-    <style>
-        .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        }
-
-        .item {
-            width: 32%;
-            padding-bottom: 32%; /* Same as width, sets height */
-            margin-bottom: 2%; /* (100-32*3)/2 */
-            position: relative;
-        }
-    </style>
 </x-app-layout>
