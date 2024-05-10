@@ -9,7 +9,7 @@
         <p class="text-red-500">{{ $error }}</p>
     @else
         <div class="container mx-auto px-4 py-4">
-            <div class="flex flex-wrap -mb-4 -mx-2"> <!-- Assurez-vous que flex-wrap est actif ici -->
+            <div class="test"> <!-- Assurez-vous que flex-wrap est actif ici -->
                 @foreach($instagram as $post)
                     <div class="w-1/3 mb-4 px-2">
                         <div class="h-12 bg-indigo-200" style="height: 300px;">
@@ -20,4 +20,12 @@
             </div>
         </div>
     @endif
+
+    <style>
+        .test {
+            display: flex;
+            flex-wrap: wrap;
+        }
+    </style>
 </x-app-layout>
+
