@@ -9,10 +9,10 @@
         <p class="text-red-500">{{ $error }}</p>
     @else
         <div class="container mx-auto px-4 py-4">
-            <div class="flex flex-wrap -mx-2">
+            <div class="flex flex-wrap -mb-4 -mx-2"> <!-- Assurez-vous que flex-wrap est actif ici -->
                 @foreach($instagram as $post)
-                    <div class="w-1/3 px-1 mb-4">
-                        <div class="bg-gray-200 overflow-hidden" style="height: 300px;">
+                    <div class="w-1/3 mb-4 px-2">
+                        <div class="h-12 bg-indigo-200" style="height: 300px;">
                             <img src="{{ $post->url }}" alt="Instagram Post" class="w-full h-full object-cover">
                         </div>
                     </div>
