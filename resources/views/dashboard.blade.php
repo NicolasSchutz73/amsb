@@ -5,11 +5,10 @@
         </h2>
     </x-slot>
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8 py-4">
         @if(isset($error))
             <p class="text-red-500">{{ $error }}</p>
         @else
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            <div class="grid grid-cols-3 gap-4"">
                 @foreach($instagram as $post)
                     <div>
                         <img src="{{ $post->url }}" alt="Instagram Post" class="w-full object-cover rounded-lg">
@@ -17,5 +16,15 @@
                 @endforeach
             </div>
         @endif
-    </div>
+
+
+            <div class="grid grid-cols-4 gap-4">
+                <div>01</div>
+                <div>02</div>
+                <div>03</div>
+                <div>04</div>
+
+                <!-- ... -->
+                <div>09</div>
+            </div>
 </x-app-layout>
