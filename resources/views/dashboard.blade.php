@@ -8,7 +8,7 @@
     @if(isset($error))
         <p class="text-red-500">{{ $error }}</p>
     @else
-        <div class="container mx-auto px-4">
+        <div class="container mx-auto px-4 py-4">
             <div class="flex flex-wrap -mx-2">
                 @foreach($instagram as $post)
                     <div class="w-1/3 px-1 mb-4">
