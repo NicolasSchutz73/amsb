@@ -7,7 +7,7 @@
         <p class="text-red-500">{{ $error }}</p>
     @else
         <div class="container mx-auto px-4 py-4" style="max-width: 1200px; margin: auto;">
-            <div class="test" style="display: flex; justify-content: center; flex-wrap: wrap; margin: -2px;">
+            <div class="test" style="display: flex; justify-content: center; flex-wrap: wrap;">
                 @foreach($instagram as $post)
                     <div style="width: 33.3333%; padding: 2px; box-sizing: border-box;">
                         <a href="https://www.instagram.com/amsb_test/" target="_blank" style="display: block; height: 300px; background-color: #c3b1e1; overflow: hidden; position: relative;">
@@ -33,17 +33,10 @@
             flex-wrap: wrap;
             margin: -2px;
         }
-        /* Styles pour les écrans plus petits */
-        @media (max-width: 640px) {
-            .test div {
-                width: 100%; /* Chaque div prendra toute la largeur disponible */
-            }
-        }
     </style>
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            // Sélectionne tous les éléments <a> et ajoute des écouteurs d'événements
             const links = document.querySelectorAll('a');
 
             links.forEach(link => {
