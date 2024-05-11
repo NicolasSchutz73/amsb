@@ -33,10 +33,30 @@
             flex-wrap: wrap;
             margin: -2px;
         }
-        a:hover .overlay {
-            opacity: 1; !important; /* Rendre le fond gris transparent visible au survol */
-        }
     </style>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Sélectionne tous les éléments <a> et ajoute des écouteurs d'événements
+            const links = document.querySelectorAll('a');
+
+            links.forEach(link => {
+                const overlay = link.querySelector('.overlay');
+
+                if (overlay) {
+                    // Ajoute l'effet de survol
+                    link.addEventListener('mouseenter', function() {
+                        overlay.style.opacity = '1';
+                    });
+
+                    // Retire l'effet lorsque la souris quitte le lien
+                    link.addEventListener('mouseleave', function() {
+                        overlay.style.opacity = '0';
+                    });
+                }
+            });
+        });
+    </script>
 
 </x-app-layout>
 
