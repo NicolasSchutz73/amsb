@@ -33,6 +33,11 @@
             flex-wrap: wrap;
             margin: -2px;
         }
+        @media (max-width: 600px) {
+            .test > div {
+                width: 50%;  /* ou 100% si vous voulez qu'ils prennent toute la largeur sur les très petits écrans */
+            }
+        }
     </style>
 
     <script>
