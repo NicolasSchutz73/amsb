@@ -34,7 +34,7 @@
             margin: -2px;
         }
         a:hover .overlay {
-            opacity: 1; /* Rendre le fond gris transparent visible au survol */
+            opacity: 1; !important; /* Rendre le fond gris transparent visible au survol */
         }
     </style>
 
