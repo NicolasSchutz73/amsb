@@ -171,4 +171,38 @@
             </div>
         </div>
     </div>
+
+    <style>
+        body { padding-bottom: 4rem; } /* Ajustez cette valeur en fonction de la hauteur réelle de votre barre de navigation */
+    </style>
+
+    <!-- Fixed Bottom Navigation for Mobile -->
+    <div class="bg-white dark:bg-gray-800 border-t border-gray-100 dark:border-gray-700 sm:hidden fixed inset-x-0 bottom-0 z-10">
+        <div class="flex justify-between max-w-7xl mx-auto px-4 py-3">
+            <!-- Back Button -->
+            <a href="javascript:history.back()" class="flex flex-col items-center text-gray-800 dark:text-gray-200 hover:text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+                <span class="text-xs">Retour</span>
+            </a>
+
+            <!-- Home Button -->
+            <a href="/" class="flex flex-col items-center text-gray-800 dark:text-gray-200 hover:text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2V21a1 1 0 01-1 1h-3m-6 0a1 1 0 001 1h3m-4 0H6a1 1 0 01-1-1V10m0 0L5 12m16 0l-7 7-7-7" />
+                </svg>
+                <span class="text-xs">Accueil</span>
+            </a>
+
+            <!-- Search User Button -->
+            <a href="/searchUser" class="flex flex-col items-center text-gray-800 dark:text-gray-200 hover:text-gray-500">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-6 w-6">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span class="text-xs">Chercher</span>
+            </a>
+        </div>
+    </div>
+
 </nav>
