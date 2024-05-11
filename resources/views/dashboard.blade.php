@@ -10,8 +10,8 @@
             <div class="test" style="display: flex; justify-content: center; flex-wrap: wrap; margin: -2px;">
                 @foreach($instagram as $post)
                     <div style="width: 33.3333%; padding: 2px; box-sizing: border-box;">
-                        <a href="https://www.instagram.com/amsb_test/" target="_blank" style="display: block; height: 300px; background-color: rgba(0, 0, 0, 0.5); overflow: hidden; position: relative;">
-                            <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: black; opacity: 0;"></div>
+                        <a href="https://www.instagram.com/amsb_test/" target="_blank" style="display: block; height: 300px; background-color: #c3b1e1; overflow: hidden; position: relative;">
+                            <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.5); opacity: 0;"></div>
                             <img src="{{ $post->url }}" alt="Instagram Post" style="width: 100%; height: 100%; object-fit: cover;">
                         </a>
                     </div>
