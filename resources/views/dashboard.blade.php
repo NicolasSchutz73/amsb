@@ -33,7 +33,7 @@
             flex-wrap: wrap;
             margin: -2px;
         }
-        .overlay:hover {
+        a:hover .overlay {
             opacity: 1; /* Rendre le fond gris transparent visible au survol */
         }
     </style>
