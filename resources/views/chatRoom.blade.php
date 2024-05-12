@@ -7,7 +7,7 @@
 
 
 <!-- component -->
-    <div class="flex flex-col md:flex-row h-[85vh] antialiased text-gray-800">
+    <div class="flex flex-col md:flex-row h-[88vh] antialiased text-gray-800 ">
         <div class="conversation-list flex flex-col overflow-y-scroll h-full w-full md:w-96 md:flex-shrink-0 bg-gray-100 p-4 md:block">
 
         <div class="flex flex-col w-full h-full pl-4 pr-4 py-4 -mr-4">
@@ -77,7 +77,7 @@
             <div class="mt-5">
                 <div class="text-xs text-gray-400 font-semibold uppercase">Team</div>
             </div>
-            <div class="mt-2 overflow-y-scroll">
+            <div class="mt-2 overflow-y-scroll overflow-x-hidden">
                 <div class="flex flex-col -mx-4">
                     <div class="relative flex flex-row items-center p-4">
                         <div class="absolute text-xs text-gray-500 right-0 top-0 mr-4 mt-3">5 min</div>
