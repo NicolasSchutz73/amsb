@@ -36,6 +36,8 @@
         @endif
         {{ $users->links() }}
     </div>
+
+
 </x-app-layout>
 
 <script>
@@ -52,3 +54,4 @@
         });
     });
 </script>
+

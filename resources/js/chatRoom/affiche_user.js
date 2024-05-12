@@ -685,7 +685,7 @@ function startRefreshingConversations() {
         loadUserGroups();
         loadUserConversation();
         console.log("actualiser")
-        }, 1000);
+        }, 60000);
 }
 
 
