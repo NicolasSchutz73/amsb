@@ -35,7 +35,7 @@
         }
         @media (max-width: 600px) {
             .test > div {
-                width: 100%;  
+                width: 100%; !important;
             }
         }
     </style>
