@@ -25,3 +25,4 @@
         </div>
     </div> <!-- End of Vue.js app div -->
 </x-app-layout>
+

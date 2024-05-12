@@ -172,3 +172,30 @@
         </div>
     </div>
 </nav>
+
+{{--navbar--}}
+<nav class="fixed bottom-0 left-0 w-full bg-white shadow-lg py-2">
+    <div class="flex justify-around">
+        <!-- Utilisez flex et justify-around pour distribuer uniformément les liens -->
+        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-gray-700 hover:text-blue-500" class="nav-link">
+            <iconify-icon icon="tabler:home-filled" width="25" height="25" class="iconify"></iconify-icon>
+            <span class="block text-xs">{{ __('Dashboard') }}</span>
+        </x-nav-link>
+        <x-nav-link :href="route('calendar')" :active="request()->routeIs('calendar')" class="text-gray-700 hover:text-blue-500" class="nav-link">
+            <iconify-icon icon="ion:calendar" width="25" height="25" class="iconify"></iconify-icon>
+            <span class="block text-xs">{{ __('Mon agenda') }}</span>
+        </x-nav-link>
+        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" v-if="$can('Admin')" class="text-gray-700 hover:text-blue-500" class="nav-link">
+            <iconify-icon icon="fluent:people-28-filled" width="25" height="25" class="iconify"></iconify-icon>
+            <span class="block text-xs">{{ __('Utilisateur') }}</span>
+        </x-nav-link>
+        <x-nav-link :href="route('chat-room-users')" :active="request()->routeIs('chat-room-users')" class="text-gray-700 hover:text-blue-500" class="nav-link">
+            <iconify-icon icon="streamline:chat-two-bubbles-oval-solid" width="25" height="25" class="iconify"></iconify-icon>
+            <span class="block text-xs">{{ __('Messagerie') }}</span>
+        </x-nav-link>
+        <x-nav-link :href="route('my.teams')" :active="request()->routeIs('my.teams')" class="text-gray-700 hover:text-blue-500" class="nav-link">
+            <iconify-icon icon="fluent:people-team-24-filled" width="25" height="25" class="iconify"></iconify-icon>
+            <span class="block text-xs">{{ __('Mon équipe') }}</span>
+        </x-nav-link>
+    </div>
+</nav>
