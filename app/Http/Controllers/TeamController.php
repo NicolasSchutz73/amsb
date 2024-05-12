@@ -63,14 +63,14 @@ class TeamController extends Controller
      */
     public function store(StoreTeamRequest $request): RedirectResponse
     {
+
         // Valider les données du formulaire à l'aide du StoreTeamRequest
         $validatedData = $request->validated();
-
         // Créer une nouvelle équipe avec les données validées
         $team = Team::create([
             'name' => $validatedData['name'],
             'category' => $validatedData['category'],
-            // Ajoute d'autres propriétés si nécessaire
+            'color' => $request['color']
         ]);
 
         Log::info('Équipe créée : ', ['team_id' => $team->id, 'team_name' => $team->name]);
@@ -154,6 +154,7 @@ class TeamController extends Controller
         $team->update([
             'name' => $validatedData['name'],
             'category' => $validatedData['category'],
+            'color' => $request['color']
         ]);
 
         // Ajoute les utilisateurs à l'équipe

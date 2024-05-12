@@ -11,8 +11,11 @@ class Team extends Model
 
     protected $fillable = [
         'name',
-        'category'
+        'category',
+        'color'
     ];
+
+
 
     // Relation Many-to-Many avec les utilisateurs (joueurs et parents)
     public function users()

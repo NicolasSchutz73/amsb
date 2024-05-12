@@ -265,6 +265,11 @@
                     next: 'chevrons-right'
                 },
                 initialView: 'timeGridWeek',
+                views: {
+                    timeGridWeek: {
+                        dayHeaderFormat: { weekday: 'short' }
+                    }
+                },
                 events: events,
                 eventContent: function(arg) {
                     var element = document.createElement('div');
