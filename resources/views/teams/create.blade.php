@@ -30,6 +30,14 @@
                     </div>
 
                     <div class="mb-4">
+                        <label for="color" class="block text-neutral-900 text-sm font-bold mb-2">Catégorie :</label>
+                        <input type="color" name="color" value="{{ old('color') }}" class="w-full block shadow-sm text-sm focus:ring-neutral-900 focus:border-neutral-900 border-neutral-300 rounded-md">
+                        @error('color')
+                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
                         <label for="add_users" class="block text-neutral-900 text-sm font-bold mb-2">Ajouter des utilisateurs :</label>
                         <select name="add_users[]" multiple class="block w-full shadow-sm focus:ring-neutral-900 focus:border-neutral-900 border-neutral-300 rounded-md" style="height: 210px;">
                             @foreach ($allUsers as $user)

@@ -32,6 +32,14 @@
                     </div>
 
                     <div class="mb-4">
+                        <label for="color" class="block text-neutral-900 text-sm font-bold mb-2">Catégorie :</label>
+                        <input type="color" name="color" value="{{ $team->color }}" class="w-full block shadow-sm text-sm focus:ring-neutral-900 focus:border-neutral-900 border-neutral-300 rounded-md">
+                        @error('color')
+                        <p class="text-red-500 text-xs italic">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
                         <label for="add_users" class="block text-neutral-900 text-sm font-bold mb-2">Ajouter des utilisateurs :</label>
                         <select name="add_users[]" multiple aria-label="Add_users" id="add_users" class="overflow-x-auto block w-full shadow-sm focus:ring-neutral-900 focus:border-neutral-900 border-neutral-300 rounded-md">
                             @foreach ($allUsers->diff($team->users) as $user)
