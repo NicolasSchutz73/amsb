@@ -200,4 +200,41 @@
             <span class="block text-xs">{{ __('Mon équipe') }}</span>
         </x-nav-link>
     </div>
+
+    <style>
+        body{
+            margin-bottom: 60px !important;
+        }
+        nav {
+            background-color: #ffffff !important; /* Couleur de fond */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; /* Ombre portée */
+        }
+
+        /* Ajoutez ces styles dans votre fichier CSS ou dans une balise <style> dans votre document HTML */
+        .nav-link {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            font-size: 10px !important; /* Réduisez la taille de la police pour le texte */
+            color: #353535 !important; /* Couleur du texte gris */
+            margin-bottom: 10px;
+        }
+
+        .nav-link:hover, .nav-link:hover * {
+            color: #c00000 !important; /* Couleur bleue au survol */
+        }
+
+        .iconify {
+            color: #353535 !important; /* Couleur de l'icône par défaut */
+            transition: color 0.3s !important; /* Transition douce pour le changement de couleur */
+        }
+
+        .fixed.bottom-0 {
+            background-color: #FFFFFF !important; /* Fond blanc */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important; /* Ombre subtile pour le bas de la barre */
+            z-index: 10;
+            border-top-right-radius: 25px;
+            border-top-left-radius: 25px;
+        }
+    </style>
 </nav>
