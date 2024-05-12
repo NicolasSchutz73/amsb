@@ -33,6 +33,9 @@
             flex-wrap: wrap;
             margin: -2px;
         }
+        .posts {
+            width: 33.3333%;
+        }
         @media (max-width: 600px) {
             .posts {
                 width: 100%; !important;
