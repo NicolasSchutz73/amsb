@@ -150,7 +150,7 @@
             }
 
             .card-check:hover {
-                background-color: #f0f0f0; /* Couleur au survol si pas sélectionnée */
+                background-color: #b0e0a1; /* Couleur au survol si pas sélectionnée */
             }
 
 
@@ -288,7 +288,7 @@
             card.addEventListener('click', function() {
                 var checkbox = this.querySelector('input[type="checkbox"]');
                 checkbox.checked = !checkbox.checked; // Change l'état de la checkbox
-                this.classList.toggle('checked', checkbox.checked); // Ajoute/retire la classe 'checked'
+                this.classList.toggle('checked'); // Ajoute/retire la classe 'checked'
             });
         });
 
