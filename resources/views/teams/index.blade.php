@@ -11,10 +11,9 @@
             <input type="text" id="searchBar" placeholder="Rechercher des utilisateurs..." class="mt-2 mb-4 w-64 px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none text-gray-900">
 
         @if (!$teams->isEmpty())
-                <x-dynamic-table :headers="['ID', 'Nom', 'Catégorie', 'Action']">
+                <x-dynamic-table :headers="['Nom', 'Catégorie', 'Action']">
                     @foreach ($teams as $team)
                         <tr class="bg-white border-b hover:bg-gray-50 team-item">
-                            <td class="px-6 py-4 text-sm text-neutral-600">{{ $loop->iteration }}</td>
                             <td class="px-6 py-4 text-sm text-neutral-600 team-name">{{ $team->name }}</td>
                             <td class="px-6 py-4 text-sm text-neutral-600 team-category">{{ $team->category }}</td>
                             <td class="px-6 py-4 text-sm text-neutral-600">
