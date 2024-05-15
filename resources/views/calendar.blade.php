@@ -1,4 +1,3 @@
-@php use App\Http\Controllers\CalendarController; @endphp
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -21,7 +20,6 @@
         </script>
     @endif
 
-
     <div class="container py-12">
         <div class="row">
             <div class="col-12 col-md-8 mx-auto">
@@ -29,7 +27,7 @@
                     <button id="toggleFormButton" class="btn btn-info" onclick="toggleForm()">
                         <span id="arrowIcon" class="arrow down"></span> Ajouter des équipes
                     </button>
-                    <form id="dynamicForm" action="{{ url('calendar') }}" method="GET" style="display: none; overflow: hidden; transition: max-height 0.5s ease;">
+                    <form id="dynamicForm" action="{{ url('calendar') }}" method="GET" style="display: none; overflow: hidden; transition: max-height 0.5s ease; max-height: 422.4px !important;">
                         <input type="text" id="searchBox" placeholder="Rechercher une équipe..." class="form-control mb-3">
                         <div class="scroll-container">
                             @foreach($categories as $category)
@@ -41,14 +39,18 @@
                                 </div>
                             @endforeach
                         </div>
-                        <select name="place_filter" class="form-control mt-3">
+                        <select name="place_filter" id="placeFilter" class="form-control mt-3" onchange="updatePlaceOptions()">
                             <option value="both" {{ request()->get('place_filter') == 'both' ? 'selected' : '' }}>Les deux</option>
                             <option value="domicile" {{ request()->get('place_filter') == 'domicile' ? 'selected' : '' }}>Domicile</option>
                             <option value="exterieur" {{ request()->get('place_filter') == 'exterieur' ? 'selected' : '' }}>Extérieur</option>
                         </select>
+                        <select name="domicile_place" id="domicilePlace" class="form-control mt-3" style="display: none;">
+                            <option value="aix les bains" {{ request()->get('domicile_place') == 'aix les bains' ? 'selected' : '' }}>Aix les bains</option>
+                            <option value="aiguebelle" {{ request()->get('domicile_place') == 'aiguebelle' ? 'selected' : '' }}>Aiguebelle</option>
+                            <option value="both" {{ request()->get('domicile_place') == 'both' ? 'selected' : '' }}>Les deux</option>
+                        </select>
                         <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Voir les calendriers</button>
                     </form>
-
                 </div>
                 <br>
                 <div id='calendar'></div>
@@ -77,6 +79,7 @@
             </div>
         </div>
     </div>
+
     @php
         if (isset($_GET['teams'])) {
             $eventsData = app(\App\Http\Controllers\EventsController::class)->getEventsByCategory(Request::capture(), $_GET['teams']);
@@ -89,7 +92,7 @@
     <style>
         /* CSS personnalisé pour FullCalendar en mode responsive */
         @media (max-width: 767px) {
-            .btn-info{
+            .btn-info {
                 width: 100% !important;
                 background-color: white !important;
                 display: flex !important;
@@ -99,7 +102,7 @@
                 border: none !important;
                 margin-bottom: 10px;
             }
-            .btn-info:hover{
+            .btn-info:hover {
                 border: none;
             }
             .arrow {
@@ -110,21 +113,17 @@
                 margin-left: 5px;
                 vertical-align: middle;
             }
-
             .down {
                 transform: rotate(45deg);
                 -webkit-transform: rotate(45deg);
             }
-
             .up {
                 transform: rotate(-135deg);
                 -webkit-transform: rotate(-135deg);
             }
-
             .form-container {
                 margin-bottom: 20px;
             }
-
             .scroll-container {
                 height: 200px;
                 overflow-y: auto;
@@ -146,57 +145,45 @@
                 cursor: pointer;
                 transition: background-color 0.3s;
             }
-
             .card-check input[type="checkbox"] {
                 display: none; /* Cache la checkbox, mais elle est toujours fonctionnelle */
             }
-
             .card-check.checked {
                 background-color: #b0e0a1; /* Couleur lors de la sélection */
             }
-
             .card-check:hover {
                 background-color: #b0e0a1; /* Couleur au survol si pas sélectionnée */
             }
-
-
-            #calendar{
+            #calendar {
                 margin: 15px;
             }
-
-            select{
+            select {
                 width: 75%;
                 margin: 0 12.5%;
             }
             .fc-header-toolbar {
                 flex-direction: column;
             }
-
             .fc-toolbar-title {
                 font-size: 1.5rem !important; /* Taille de texte plus petite */
                 margin-bottom: 0.5rem !important; /* Ajoute un peu d'espace en dessous du titre */
             }
-
             .fc-button-group > .fc-button, .fc-button {
                 font-size: 0.8rem; /* Réduit la taille de texte des boutons */
                 padding: 0.25rem 0.5rem; /* Réduit le padding des boutons */
             }
-
             .fc-button-group {
                 margin-bottom: 0.5rem; /* Ajoute de l'espace sous les boutons de groupe */
             }
-
             /* Ajuste les vues spécifiques si nécessaire */
             .fc-dayGridMonth-view, .fc-timeGridWeek-view, .fc-timeGridDay-view {
                 /* Styles spécifiques aux vues */
             }
-
         }
         #eventModal {
             display: none; /* Cache le modal au chargement de la page */
         }
-
-        a{ text-decoration: none !important; }
+        a { text-decoration: none !important; }
     </style>
 
     <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.js'></script>
@@ -205,7 +192,6 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-
         function formatDate(dateStr) {
             let date = new Date(dateStr);
             let day = date.getDate().toString().padStart(2, '0');
@@ -252,11 +238,11 @@
                     right: 'dayGridMonth,timeGridWeek,timeGridDay,listWeek'
                 },
                 buttonText: {
-                    today:    'Aujourd\'hui',
-                    month:    'Mois',
-                    week:     'Semaine',
-                    day:      'Jour',
-                    list:     'Liste'
+                    today: 'Aujourd\'hui',
+                    month: 'Mois',
+                    week: 'Semaine',
+                    day: 'Jour',
+                    list: 'Liste'
                 },
                 buttonIcons: {
                     prev: 'chevrons-left',
@@ -287,6 +273,7 @@
                 window.location.href = '/calendar?category=' + encodeURIComponent(category);
             }
         }
+
         document.querySelectorAll('.card-check').forEach(function(card) {
             card.addEventListener('click', function() {
                 var checkbox = this.querySelector('input[type="checkbox"]');
@@ -324,6 +311,19 @@
                 arrowIcon.classList.add('down');
             }
         }
+
+        function updatePlaceOptions() {
+            var placeFilter = document.getElementById('placeFilter').value;
+            var domicilePlace = document.getElementById('domicilePlace');
+            if (placeFilter === 'domicile') {
+                domicilePlace.style.display = 'block';
+            } else {
+                domicilePlace.style.display = 'none';
+            }
+        }
+
+        // Initial call to ensure the correct display based on initial selection
+        updatePlaceOptions();
 
     </script>
 </x-app-layout>

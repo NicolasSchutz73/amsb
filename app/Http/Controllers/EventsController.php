@@ -159,18 +159,12 @@ class EventsController extends Controller
 
     public function getEventsByCategory(Request $request, $categories): JsonResponse
     {
-        // Configuration de l'accès à l'API Google Calendar
         $client = new Google_Client();
         $client->setAuthConfig(config_path('google/credentials.json'));
         $client->setScopes(Google_Service_Calendar::CALENDAR_READONLY);
-
-        // Authentification avec une clé d'API
         $client->setDeveloperKey('AIzaSyCxxKnWhC3mcOalpB-FCWJoA9Kg9jSCnPs');
 
-        // Création du service Google Calendar
         $service = new Google_Service_Calendar($client);
-
-        // Récupération des événements
         $calendarId = 'charriersim@gmail.com';
         $optParams = [
             'orderBy' => 'startTime',
@@ -181,26 +175,25 @@ class EventsController extends Controller
         $results = $service->events->listEvents($calendarId, $optParams);
         $events = $results->getItems();
 
-        // Récupérer le filtre de place
         $placeFilter = $request->get('place_filter', 'both');
+        $domicilePlace = $request->get('domicile_place', 'both');
 
-        // Filtrer les événements pour ceux qui contiennent la catégorie spécifiée dans leur description
         $filteredEvents = [];
         foreach ($events as $event) {
             $description = $event->getDescription();
             foreach ($categories as $category) {
                 if ($description && strpos($description, $category) !== false) {
-                    // Recherche de l'événement dans la base de données
                     $eventId = $event->getId();
                     $dbEvent = Event::where('id', $eventId)->first();
 
-                    // Vérifier le filtre de place
                     $includeEvent = false;
                     if ($dbEvent) {
                         if ($placeFilter === 'both') {
                             $includeEvent = true;
                         } elseif ($placeFilter === 'domicile' && $dbEvent->place !== null) {
-                            $includeEvent = true;
+                            if ($domicilePlace === 'both' || strpos(strtolower($dbEvent->place), strtolower($domicilePlace)) !== false) {
+                                $includeEvent = true;
+                            }
                         } elseif ($placeFilter === 'exterieur' && $dbEvent->place === null) {
                             $includeEvent = true;
                         }
@@ -228,10 +221,7 @@ class EventsController extends Controller
             }
         }
 
-        // Retourner les événements filtrés au format JSON
-        return response()->json([
-            'data' => $filteredEvents,
-        ]);
+        return response()->json(['data' => $filteredEvents]);
     }
 
 
