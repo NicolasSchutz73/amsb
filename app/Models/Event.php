@@ -10,7 +10,7 @@ class Event extends Model {
     protected $table = 'events'; // Défini seulement si le nom de la table n'est pas la version plurielle du nom du modèle
 
     protected $fillable = [
-        'id', 'title', 'description', 'location', 'start', 'end', 'isRecurring'
+        'id', 'title', 'description', 'location', 'start', 'end', 'isRecurring', 'place'
     ];
 
     protected $casts = [
