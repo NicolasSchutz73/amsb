@@ -41,8 +41,14 @@
                                 </div>
                             @endforeach
                         </div>
+                        <select name="place_filter" class="form-control mt-3">
+                            <option value="both" {{ request()->get('place_filter') == 'both' ? 'selected' : '' }}>Les deux</option>
+                            <option value="domicile" {{ request()->get('place_filter') == 'domicile' ? 'selected' : '' }}>Domicile</option>
+                            <option value="exterieur" {{ request()->get('place_filter') == 'exterieur' ? 'selected' : '' }}>Extérieur</option>
+                        </select>
                         <button type="submit" class="btn btn-primary" style="margin-top: 20px;">Voir les calendriers</button>
                     </form>
+
                 </div>
                 <br>
                 <div id='calendar'></div>
@@ -150,7 +156,7 @@
             }
 
             .card-check:hover {
-                background-color: #f0f0f0; /* Couleur au survol si pas sélectionnée */
+                background-color: #b0e0a1; /* Couleur au survol si pas sélectionnée */
             }
 
 
@@ -212,27 +218,20 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             @php
-                // Récupération de la réponse JSON
                 $responseData = json_decode($eventsData->getContent(), true);
-//                dd($responseData);
-                // Initialisation du tableau pour stocker les événements
                 $events = [];
                 foreach ($responseData['data'] as $item) {
                     $event = $item['event'];
-                    $event['backgroundColor'] = $item['colors'][0] ?? '#ccc'; // Couleur par défaut si aucune couleur n'est définie
+                    $event['backgroundColor'] = $item['colors'][0] ?? '#ccc';
                     $events[] = $event;
                 }
             @endphp
 
             var events = {!! json_encode($events) !!};
-
-            console.log(events)
-
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 eventClick: function(info) {
                     var eventObj = info.event;
-                    console.log(eventObj)
                     $('#eventTitle').text(eventObj.title);
                     $('#eventDescription').text(eventObj.extendedProps.description);
                     $('#eventLocation').text(eventObj.extendedProps.location);
@@ -242,7 +241,6 @@
                     $('#messPageLink').attr('href', '/chat-room-users');
                     $('#eventModal').modal('show');
                 },
-
                 height: 'auto',
                 locale: 'fr',
                 firstDay: 1,
@@ -273,7 +271,7 @@
                 events: events,
                 eventContent: function(arg) {
                     var element = document.createElement('div');
-                    element.innerText = "("+arg.event.extendedProps.description+") "+ arg.event.title;
+                    element.innerText = "(" + arg.event.extendedProps.description + ") " + arg.event.title;
                     element.style.backgroundColor = arg.event.backgroundColor;
                     element.style.color = '#ffffff';
                     return { domNodes: [element] };
