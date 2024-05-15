@@ -13,7 +13,7 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             @forelse ($users as $user)
                 <div class="bg-white rounded-lg shadow-lg p-4 flex flex-col justify-between leading-normal">
-                    <div class="mb-8">
+                    <div class="mb-2">
                         <div class="flex mb-4">
                             @php
                                 $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";
@@ -35,14 +35,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between">
-                        <a href="{{ route('users.show', $user->id) }}" class="px-4 py-2 text-sm bg-blue-500 text-white rounded">Voir</a>
+                    <div class="flex items-center justify-around">
+                        <a href="{{ route('users.show', $user->id) }}" class="text-blue-500 hover:text-blue-700">Voir</a>
                         @can('update-user')
-                            <a href="{{ route('users.edit', $user->id) }}" class="px-4 py-2 text-sm bg-yellow-500 text-white rounded">Modifier</a>
+                            <a href="{{ route('users.edit', $user->id) }}" class="text-yellow-500 hover:text-yellow-700 ml-4">Modifier</a>
                             <form method="POST" action="{{ route('users.destroy', $user->id) }}" onsubmit="return confirm('Are you sure?');">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="px-4 py-2 text-sm bg-red-500 text-white rounded">Supprimer</button>
+                                <button type="submit" class="text-red-500 hover:text-red-700 ml-4">Supprimer</button>
                             </form>
                         @endcan
                     </div>
