@@ -139,19 +139,6 @@ class UserController extends Controller
         return redirect()->route('users.index');
     }
 
-    /**
-     * Récupère les détails d'un utilisateur par son ID et retourne les données en JSON.
-     *
-     * @param int $id L'ID de l'utilisateur.
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function getUserDetailsById($id)
-    {
-        $user = User::findOrFail($id);
-
-        return response()->json($user);
-    }
-
 
     public function chatRoomUsers()
     {
@@ -180,7 +167,28 @@ class UserController extends Controller
         ]);
     }
 
+    /**
+     * Récupère les détails d'un utilisateur par son ID, y compris les rôles et les équipes.
+     *
+     * @param int $id L'ID de l'utilisateur.
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getUserDetails($id)
+    {
+        $user = User::findOrFail($id);
 
+        // Récupérer l'équipe et le rôle de l'utilisateur
+        $team = $user->team->pluck('name')->first(); // assuming a user can belong to one team
+        $role = $user->roles->pluck('name')->first(); // assuming a user can have one role
+
+        return response()->json([
+            'firstname' => $user->firstname,
+            'lastname' => $user->lastname,
+            'id' => $user->id,
+            'team' => $team,
+            'role' => $role,
+        ]);
+    }
 
 
 

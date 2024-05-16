@@ -137,4 +137,11 @@ class RoleController extends Controller
         $role->delete();
         return redirect()->route("roles.index");
     }
+
+    public function apiIndex()
+    {
+        $roles = Role::all();
+        return response()->json($roles);
+    }
+
 }

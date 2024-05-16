@@ -258,10 +258,28 @@
                 <!-- Corps de la modale -->
                 <div class="p-4">
                     <!-- Barre de recherche -->
-                    <input type="text" placeholder="Rechercher..." class="mb-4 px-3 py-2 border border-gray-300 rounded-md w-full">
+                    <input type="text" id="searchUser" placeholder="Rechercher..." class="mb-4 px-3 py-2 border border-gray-300 rounded-md w-full">
+
+                    <!-- Filtres -->
+                    <div class="mb-4">
+                        <label for="filterTeam">Équipe :</label>
+                        <select id="filterTeam" class="mb-4 px-3 py-2 border border-gray-300 rounded-md w-full">
+                            <option value="">Toutes les équipes</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="filterRole">Rôle :</label>
+                        <select id="filterRole" class="mb-4 px-3 py-2 border border-gray-300 rounded-md w-full">
+                            <option value="">Tous les rôles</option>
+                        </select>
+                    </div>
 
                     <!-- Bouton Nouveau Groupe -->
                     <button class="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md" id="nouveau-groupe-btn">Nouveau Groupe</button>
+
+                    <button id="selectAllUsers">Tout sélectionner</button>
+
                     <!-- Champ de saisie pour le nom du groupe -->
                     <div id="groupNameContainer" class="hidden mb-4">
                         <input type="text" id="groupNameInput" placeholder="Nom du groupe" class="px-3 py-2 border border-gray-300 rounded-md w-full">
@@ -284,9 +302,7 @@
                     <button id="nextButton" type="button" class="hidden w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
                         Suivant
                     </button>
-
                 </div>
-
             </div>
         </div>
     </div>

@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Http\Controllers\UserController;
 use App\Models\Event;
 use App\Http\Controllers\EventsController;
 use App\Http\Controllers\GroupController;
@@ -49,3 +50,10 @@ Route::post('/send-notification-group', [GroupController::class, 'sendNotificati
 
 Route::get('events', [EventsController::class, 'getEvents'])->name('events');
 
+use App\Http\Controllers\TeamController;
+use App\Http\Controllers\RoleController;
+
+Route::get('/teams', [TeamController::class, 'apiIndex'])->middleware('auth:sanctum');
+Route::get('/roles', [RoleController::class, 'apiIndex'])->middleware('auth:sanctum');
+
+Route::middleware('auth:sanctum')->get('/user-details/{id}', [UserController::class, 'getUserDetails']);

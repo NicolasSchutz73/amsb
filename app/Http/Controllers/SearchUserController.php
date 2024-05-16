@@ -84,16 +84,22 @@ class SearchUserController extends Controller
     // Dans votre controller
     public function getUserInfo()
     {
-        // Récupération de l'utilisateur actuellement connecté
         $user = auth()->user();
 
-        // Retourne le prénom et le nom sous forme de tableau associatif
+        $user->load('teams', 'roles');
+
+        $team = $user->teams->pluck('name')->first();
+        $role = $user->roles->pluck('name')->first();
+
         return response()->json([
             'firstname' => $user->firstname,
             'lastname' => $user->lastname,
             'id' => $user->id,
+            'team' => $team ?? 'No team',
+            'role' => $role ?? 'No role',
         ]);
     }
+
 
 
 

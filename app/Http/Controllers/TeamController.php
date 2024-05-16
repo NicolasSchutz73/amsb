@@ -211,5 +211,12 @@ class TeamController extends Controller
         return view('user_teams.show', ['teamDetails' => $teamDetails]);
     }
 
+    public function apiIndex()
+    {
+        $teams = Team::all();
+        return response()->json($teams);
+    }
+
+
 
 }
