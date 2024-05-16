@@ -13,42 +13,51 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('nouveau-groupe-btn').addEventListener('click', toggleGroupCreationMode);
     document.getElementById('nextButton').addEventListener('click', createGroup);
 
-    showConversationList()
+    // Gestion des onglets
+    const groupTab = document.getElementById('groupTab');
+    const privateTab = document.getElementById('privateTab');
 
+    groupTab.addEventListener('click', function() {
+        document.getElementById('groupContainer').classList.remove('hidden');
+        document.getElementById('privateContainer').classList.add('hidden');
+        groupTab.classList.add('bg-blue-500', 'text-white');
+        privateTab.classList.remove('bg-blue-500', 'text-white');
+        privateTab.classList.add('bg-gray-200', 'text-gray-700');
+    });
 
-    const backButton = document.getElementById('backButton'); // L'identifiant du bouton de retour
+    privateTab.addEventListener('click', function() {
+        document.getElementById('groupContainer').classList.add('hidden');
+        document.getElementById('privateContainer').classList.remove('hidden');
+        privateTab.classList.add('bg-blue-500', 'text-white');
+        groupTab.classList.remove('bg-blue-500', 'text-white');
+        groupTab.classList.add('bg-gray-200', 'text-gray-700');
+    });
+
+    showConversationList();
+
+    const backButton = document.getElementById('backButton');
     backButton.addEventListener('click', showConversationList);
 
     const sendButton = document.getElementById('sendButton');
     const messageInput = document.getElementById('messageInput');
 
     sendButton.addEventListener('click', function() {
-        sendMessage(messageInput.value); // Envoie le contenu du champ de saisie
-        messageInput.value = ''; // Efface le champ après l'envoi
+        sendMessage(messageInput.value);
+        messageInput.value = '';
     });
 
     messageInput.addEventListener('keydown', function(event) {
         if (event.key === 'Enter') {
-            sendMessage(messageInput.value); // Simule un clic sur le bouton d'envoi
-            messageInput.value = ''; // Efface le champ après l'envoi
+            sendMessage(messageInput.value);
+            messageInput.value = '';
         }
     });
-
-
-
-
 
     getUserInfoAsync().then(() => {
         loadUserGroups();
         loadUserConversation();
         startRefreshingConversations();
-        loadUnreadMessagesCount()
-        loadUserFavorites(); // Ajoutez cet appel pour charger les favoris
-
-
-
-
-
+        loadUserFavorites();
 
         messaging.onMessage(function(payload) {
             const noteTitle = payload.notification.title;
@@ -56,17 +65,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 body: payload.notification.body,
                 icon: payload.notification.icon,
             };
-            console.log("new message")
+            console.log("new message");
             loadUserGroups();
             loadUserConversation();
         });
-
     }).catch(error => {
         console.error('Erreur lors de la récupération des informations utilisateur', error);
     });
-
-
 });
+
 
 let isGroupCreationActive = false;
 
@@ -231,23 +238,21 @@ function createGroup() {
 
 
 function loadUserGroups() {
-    axios.get('/api/user-favorites') // Récupère d'abord les favoris de l'utilisateur
+    axios.get('/api/user-favorites')
         .then(response => {
             const favorites = response.data.favorites.map(fav => fav.id);
 
             axios.get('/api/user-groups?type=group')
                 .then(response => {
                     const groups = response.data.groups;
-                    const groupsContainer = document.querySelector('.flex.flex-col.-mx-4');
+                    const groupsContainer = document.getElementById('groupContainer').querySelector('.flex.flex-col.-mx-4');
 
                     console.log(response.data.groups);
-                    // Nettoyage du conteneur des groupes
                     groupsContainer.innerHTML = '';
 
                     const favoriteGroups = [];
                     const otherGroups = [];
 
-                    // Sépare les groupes en favoris et non-favoris
                     groups.forEach(group => {
                         if (favorites.includes(group.id)) {
                             favoriteGroups.push(group);
@@ -256,24 +261,20 @@ function loadUserGroups() {
                         }
                     });
 
-                    // Fonction pour créer l'élément de groupe
                     const createGroupElement = (group, isFavorite) => {
                         const groupElement = document.createElement('div');
                         groupElement.classList.add('flex', 'flex-row', 'items-center', 'p-4', 'relative');
-                        groupElement.setAttribute('data-group-id', group.id); // Attribut de données unique pour chaque groupe
+                        groupElement.setAttribute('data-group-id', group.id);
 
-                        // Temps depuis la dernière activité
                         const timeElement = document.createElement('div');
                         timeElement.classList.add('absolute', 'text-xs', 'text-gray-500', 'right-0', 'top-0', 'mr-4', 'mt-3');
                         timeElement.textContent = group.lastMessageTime || 'Un moment';
                         timeElement.setAttribute('data-last-message-time', group.id);
 
-                        // Icône du groupe
                         const iconElement = document.createElement('div');
                         iconElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-blue-500', 'text-blue-300', 'font-bold', 'flex-shrink-0');
                         iconElement.textContent = group.name.charAt(0);
 
-                        // Nom du groupe et dernier message
                         const groupInfoElement = document.createElement('div');
                         groupInfoElement.classList.add('flex', 'flex-col', 'flex-grow', 'ml-3');
                         const groupNameElement = document.createElement('div');
@@ -284,29 +285,26 @@ function loadUserGroups() {
                         lastMessageElement.textContent = group.lastMessageContent || 'Pas de messages';
                         lastMessageElement.setAttribute('data-last-message', group.id);
 
-                        // Nombre de nouveaux messages
                         const newMessagesElement = document.createElement('div');
                         newMessagesElement.classList.add('flex-shrink-0', 'ml-2', 'self-end', 'mb-1');
                         const messagesCountElement = document.createElement('span');
                         messagesCountElement.classList.add('flex', 'items-center', 'justify-center', 'h-5', 'w-5', 'bg-red-500', 'text-white', 'text-xs', 'rounded-full');
                         messagesCountElement.textContent = group.newMessagesCount || '';
 
-                        // Bouton étoile pour les favoris
                         const favoriteButton = document.createElement('button');
                         favoriteButton.classList.add('ml-2', 'text-sm', 'p-1', 'rounded', 'focus:outline-none');
-                        favoriteButton.style.fontSize = '24px'; // Taille de l'étoile
-                        favoriteButton.style.padding = '5px'; // Ajustez le remplissage si nécessaire
-                        favoriteButton.innerHTML = '&#9733;'; // Étoile unicode
+                        favoriteButton.style.fontSize = '24px';
+                        favoriteButton.style.padding = '5px';
+                        favoriteButton.innerHTML = '&#9733;';
 
-                        // Définir l'état initial du bouton en fonction des favoris de l'utilisateur
                         if (isFavorite) {
-                            favoriteButton.classList.add('text-yellow-500'); // Étoile jaune
+                            favoriteButton.classList.add('text-yellow-500');
                         } else {
-                            favoriteButton.classList.add('text-gray-500'); // Étoile grise
+                            favoriteButton.classList.add('text-gray-500');
                         }
 
                         favoriteButton.addEventListener('click', (event) => {
-                            event.stopPropagation(); // Empêche le clic de propager pour éviter de rejoindre le chat
+                            event.stopPropagation();
 
                             if (favoriteButton.classList.contains('text-yellow-500')) {
                                 removeFavorite(group.id);
@@ -315,7 +313,6 @@ function loadUserGroups() {
                             }
                         });
 
-                        // Assemblage des éléments
                         groupInfoElement.appendChild(groupNameElement);
                         groupInfoElement.appendChild(lastMessageElement);
                         if (group.newMessagesCount > 0) {
@@ -325,27 +322,24 @@ function loadUserGroups() {
                         groupElement.appendChild(iconElement);
                         groupElement.appendChild(groupInfoElement);
                         groupElement.appendChild(newMessagesElement);
-                        groupElement.appendChild(favoriteButton); // Ajoute le bouton étoile
+                        groupElement.appendChild(favoriteButton);
 
-                        // Ajout d'un écouteur d'événements pour le clic
                         groupElement.addEventListener('click', () => joinGroupChat(group.id, groupNameElement.textContent));
 
                         return groupElement;
                     };
 
-                    // Afficher d'abord les groupes favoris
                     favoriteGroups.forEach(group => {
                         const groupElement = createGroupElement(group, true);
                         groupsContainer.appendChild(groupElement);
                     });
 
-                    // Afficher ensuite les autres groupes
                     otherGroups.forEach(group => {
                         const groupElement = createGroupElement(group, false);
                         groupsContainer.appendChild(groupElement);
                     });
 
-                    subscribeToAllGroupChannels(groups); // S'abonne à tous les groupes
+                    subscribeToAllGroupChannels(groups);
                 })
                 .catch(error => console.error('Erreur lors du chargement des groupes', error));
         })
@@ -618,10 +612,8 @@ function startConversation(userId) {
     axios.get(`/check-group/${globalUserId}/${userId}`)
         .then(response => {
             if (response.data.groupId) {
-                // Un groupe existant a été trouvé, rejoignez-le
                 joinGroupChat(response.data.groupId, response.data.groupName);
             } else {
-                // Aucun groupe n'existe, créez-en un nouveau
                 createPrivateGroup(globalUserId, userId);
             }
         })
@@ -633,23 +625,18 @@ function startConversation(userId) {
 }
 
 
-
 function createPrivateGroup(userOneId, userTwoId) {
     axios.get(`/api/user-details/${userTwoId}`).then(response => {
         const otherUser = response.data;
-        //console.log(response.data);
-
-        // Construisez le nom du groupe en utilisant le prénom et le nom de l'autre utilisateur.
-        const groupName = `${otherUser.firstname} ${otherUser.lastname}`; // Ajouté le lastname
+        const groupName = `${otherUser.firstname} ${otherUser.lastname}`;
 
         axios.post('/create-group', {
             groupName: groupName,
             userIds: [userOneId, userTwoId]
         })
             .then(response => {
-                //('Conversation privée créée avec succès', response.data);
                 joinGroupChat(response.data.group.id, groupName);
-                loadUserConversation()
+                loadUserConversation();
             })
             .catch(error => {
                 console.error('Erreur lors de la création de la conversation privée', error);
@@ -661,7 +648,7 @@ function createPrivateGroup(userOneId, userTwoId) {
 
 
 function loadUserConversation() {
-    axios.get('/api/user-favorites') // Récupère d'abord les favoris de l'utilisateur
+    axios.get('/api/user-favorites')
         .then(response => {
             const favorites = response.data.favorites.map(fav => fav.id);
 
@@ -669,15 +656,13 @@ function loadUserConversation() {
                 axios.get('/api/user-groups?type=private')
                     .then(response => {
                         const groups = response.data.groups;
-                        const conversationsContainer = document.querySelector('.flex.flex-col.divide-y.h-full.overflow-y-auto.-mx-4');
+                        const conversationsContainer = document.getElementById('privateContainer').querySelector('.flex.flex-col.-mx-4');
 
-                        // Nettoyer la liste actuelle des conversations
                         conversationsContainer.innerHTML = '';
 
                         const favoriteGroups = [];
                         const otherGroups = [];
 
-                        // Sépare les groupes en favoris et non-favoris
                         groups.forEach(group => {
                             if (favorites.includes(group.id)) {
                                 favoriteGroups.push(group);
@@ -686,27 +671,23 @@ function loadUserConversation() {
                             }
                         });
 
-                        // Fonction pour créer l'élément de conversation
                         const createConversationElement = (group, isFavorite) => {
                             const unreadCount = group.unreadMessagesCount;
                             const otherMember = group.members.find(member => member.id !== globalUserId);
 
                             const conversationElement = document.createElement('div');
                             conversationElement.classList.add('flex', 'flex-row', 'items-center', 'p-4', 'relative');
-                            conversationElement.setAttribute('data-conversation-id', group.id); // Attribut de données unique pour chaque conversation
+                            conversationElement.setAttribute('data-conversation-id', group.id);
 
-                            // Temps depuis la dernière activité
                             const timeElement = document.createElement('div');
                             timeElement.classList.add('absolute', 'text-xs', 'text-gray-500', 'right-0', 'top-0', 'mr-4', 'mt-3');
                             timeElement.textContent = group.lastMessageTime || 'Un moment';
                             timeElement.setAttribute('data-last-message-time', group.id);
 
-                            // Icône
                             const iconElement = document.createElement('div');
                             iconElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-pink-500', 'text-pink-300', 'font-bold', 'flex-shrink-0');
                             iconElement.textContent = otherMember ? otherMember.firstname.charAt(0) : group.name.charAt(0);
 
-                            // Nom et dernier message
                             const groupInfoElement = document.createElement('div');
                             groupInfoElement.classList.add('flex', 'flex-col', 'flex-grow', 'ml-3');
                             const groupNameElement = document.createElement('div');
@@ -717,29 +698,26 @@ function loadUserConversation() {
                             lastMessageElement.textContent = group.lastMessageContent || 'Pas de messages';
                             lastMessageElement.setAttribute('data-last-message', group.id);
 
-                            // Nombre de nouveaux messages
                             const newMessagesElement = document.createElement('div');
                             newMessagesElement.classList.add('flex-shrink-0', 'ml-2', 'self-end', 'mb-1');
                             const messagesCountElement = document.createElement('span');
                             messagesCountElement.classList.add('flex', 'items-center', 'justify-center', 'h-5', 'w-5', 'bg-red-500', 'text-white', 'text-xs', 'rounded-full');
-                            messagesCountElement.textContent = unreadCount || ''; // À définir selon votre logique de comptage des nouveaux messages
+                            messagesCountElement.textContent = unreadCount || '';
 
-                            // Bouton étoile pour les favoris
                             const favoriteButton = document.createElement('button');
                             favoriteButton.classList.add('ml-2', 'text-sm', 'p-1', 'rounded', 'focus:outline-none');
-                            favoriteButton.style.fontSize = '24px'; // Taille de l'étoile
-                            favoriteButton.style.padding = '5px'; // Ajustez le remplissage si nécessaire
-                            favoriteButton.innerHTML = '&#9733;'; // Étoile unicode
+                            favoriteButton.style.fontSize = '24px';
+                            favoriteButton.style.padding = '5px';
+                            favoriteButton.innerHTML = '&#9733;';
 
-                            // Définir l'état initial du bouton en fonction des favoris de l'utilisateur
                             if (isFavorite) {
-                                favoriteButton.classList.add('text-yellow-500'); // Étoile jaune
+                                favoriteButton.classList.add('text-yellow-500');
                             } else {
-                                favoriteButton.classList.add('text-gray-500'); // Étoile grise
+                                favoriteButton.classList.add('text-gray-500');
                             }
 
                             favoriteButton.addEventListener('click', (event) => {
-                                event.stopPropagation(); // Empêche le clic de propager pour éviter de rejoindre le chat
+                                event.stopPropagation();
 
                                 if (favoriteButton.classList.contains('text-yellow-500')) {
                                     removeFavorite(group.id);
@@ -748,7 +726,6 @@ function loadUserConversation() {
                                 }
                             });
 
-                            // Assemblage des éléments
                             groupInfoElement.appendChild(groupNameElement);
                             groupInfoElement.appendChild(lastMessageElement);
                             if (unreadCount > 0) {
@@ -757,22 +734,18 @@ function loadUserConversation() {
                             conversationElement.appendChild(timeElement);
                             conversationElement.appendChild(iconElement);
                             conversationElement.appendChild(groupInfoElement);
-                            // conversationElement.appendChild(newMessagesElement); // Décommenter cette ligne si nécessaire
-                            conversationElement.appendChild(favoriteButton); // Ajoute le bouton étoile
+                            conversationElement.appendChild(favoriteButton);
 
-                            // Ajouter un écouteur d'événements pour rejoindre la conversation lors du clic
                             conversationElement.addEventListener('click', () => joinGroupChat(group.id, groupNameElement.textContent));
 
                             return conversationElement;
                         };
 
-                        // Afficher d'abord les groupes favoris
                         favoriteGroups.forEach(group => {
                             const conversationElement = createConversationElement(group, true);
                             conversationsContainer.appendChild(conversationElement);
                         });
 
-                        // Afficher ensuite les autres groupes
                         otherGroups.forEach(group => {
                             const conversationElement = createConversationElement(group, false);
                             conversationsContainer.appendChild(conversationElement);
@@ -868,14 +841,12 @@ function subscribeToAllGroupChannelsPrivate(groups) {
 
 function updateConversationPreview(conversationId) {
     loadUnreadMessagesCount().then(groupsWithUnreadCounts => {
-        loadUserConversation()
-        loadPreviousMessages(conversationId)
+        loadUserConversation();
+        loadPreviousMessages(conversationId);
 
-        // Trouver les données du groupe spécifique en utilisant son ID
         const groupData = groupsWithUnreadCounts.find(group => group.id === conversationId);
         const unreadCount = groupData ? groupData.unreadMessagesCount : 0;
 
-        // Sélectionner les éléments de la conversation en utilisant les attributs de données
         const lastMessageElement = document.querySelector(`[data-conversation-id="${conversationId}"] [data-last-message]`);
         if (lastMessageElement) {
             lastMessageElement.textContent = groupData.lastMessageContent || 'Nouveau message';
@@ -886,7 +857,6 @@ function updateConversationPreview(conversationId) {
             lastMessageTimeElement.textContent = groupData.lastMessageTime || new Date().toLocaleTimeString();
         }
 
-        // Sélectionnez l'élément pour afficher le compte des messages non lus
         const messagesCountElement = document.querySelector(`[data-conversation-id="${conversationId}"] .messages-count`);
         if (messagesCountElement) {
             if (unreadCount > 0) {
@@ -896,7 +866,6 @@ function updateConversationPreview(conversationId) {
                 messagesCountElement.classList.add('hidden');
             }
         }
-
     }).catch(error => {
         console.error("Erreur lors du chargement du nombre de messages non lus:", error);
     });
@@ -905,10 +874,10 @@ function updateConversationPreview(conversationId) {
 
 
 function updateLastVisitedAt(groupId) {
-    axios.post(`/api/groups/${groupId}/update-last-visited`) // Assurez-vous que cette route est définie dans votre backend
+    axios.post(`/api/groups/${groupId}/update-last-visited`)
         .then(response => {
             console.log("Dernière visite mise à jour pour le groupe:", groupId);
-            loadUserConversation()
+            loadUserConversation();
         })
         .catch(error => {
             console.error("Erreur lors de la mise à jour de la dernière visite:", error);
@@ -918,13 +887,11 @@ function updateLastVisitedAt(groupId) {
 
 
 function loadUnreadMessagesCount() {
-    // Retourner une promesse qui résoudra avec les données des groupes
     return new Promise((resolve, reject) => {
         axios.get('/api/user-groups')
             .then(response => {
                 const groups = response.data.groups;
                 const groupsWithUnreadCounts = groups.map(group => {
-                    // Assurez-vous que lastMessageContent et lastMessageTime sont renvoyés par votre API
                     return {
                         id: group.id,
                         unreadMessagesCount: group.unreadMessagesCount,
@@ -933,12 +900,11 @@ function loadUnreadMessagesCount() {
                     };
                 });
 
-                // Résoudre la promesse avec les données de groupes mises à jour
                 resolve(groupsWithUnreadCounts);
             })
             .catch(error => {
                 console.error("Erreur lors du chargement des groupes et du nombre de messages non lus:", error);
-                reject(error); // Rejeter la promesse en cas d'erreur
+                reject(error);
             });
     });
 }

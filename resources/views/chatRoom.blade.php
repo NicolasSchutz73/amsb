@@ -1,39 +1,32 @@
 <x-app-layout>
-
-
-
     <script src="https://cdn.tailwindcss.com"></script>
 
-
-
     <!-- component -->
-    <div class="flex flex-col md:flex-row h-[85vh] antialiased text-gray-800 ">
+    <div class="flex flex-col md:flex-row h-[85vh] antialiased text-gray-800">
         <div class="conversation-list flex flex-col overflow-y-scroll h-full w-full md:w-96 md:flex-shrink-0 bg-gray-100 p-4 md:block">
-
             <div class="flex flex-col w-full h-full pl-4 pr-4 py-4 -mr-4">
+<!--
                 <div class="flex items-center justify-center p-1">
-
                     <label for="toggleNotifications" class="flex items-center cursor-pointer">
-                        <!-- toggle -->
+                        &lt;!&ndash; toggle &ndash;&gt;
                         <div class="relative">
-                            <!-- input -->
+                            &lt;!&ndash; input &ndash;&gt;
                             <input id="toggleNotifications" type="checkbox" class="sr-only" />
-                            <!-- line -->
+                            &lt;!&ndash; line &ndash;&gt;
                             <div class="w-10 h-4 bg-gray-400 rounded-full shadow-inner"></div>
-                            <!-- dot -->
+                            &lt;!&ndash; dot &ndash;&gt;
                             <div class="toggle-dot absolute w-6 h-6 bg-white rounded-full shadow -left-1 -top-1 transition"></div>
                         </div>
-                        <!-- label -->
+                        &lt;!&ndash; label &ndash;&gt;
                         <div class="ml-3 text-gray-700 font-medium">
                             Activer les notifications
                         </div>
                     </label>
                 </div>
+-->
 
                 <div class="flex flex-row items-center">
-
                     <div class="flex flex-row items-center">
-
                         <div class="text-xl font-semibold">Messages</div>
                     </div>
                     <div class="ml-auto">
@@ -51,75 +44,35 @@
                         </button>
                     </div>
                 </div>
-                <div class="mt-5">
-                    <div class="text-xs text-gray-400 font-semibold uppercase">Team</div>
+
+                <div class="mt-5 flex flex-row justify-center">
+                    <button id="groupTab" class="px-4 py-2 bg-blue-500 text-white rounded-l-lg focus:outline-none">Groupes</button>
+                    <button id="privateTab" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-r-lg focus:outline-none">Conversations</button>
                 </div>
-                <div class=" overflow-y-scroll overflow-x-hidden">
+
+                <div id="groupContainer" class="overflow-y-scroll overflow-x-hidden mt-5">
                     <div class="flex flex-col -mx-4">
-                        <div class="relative flex flex-row items-center p-4">
-                            <div class="absolute text-xs text-gray-500 right-0 top-0 mr-4 mt-3">5 min</div>
-                            <div class="flex items-center justify-center h-10 w-10 rounded-full bg-pink-500 text-pink-300 font-bold flex-shrink-0">
-                                T
-                            </div>
-                            <div class="flex flex-col flex-grow ml-3">
-                                <div class="text-sm font-medium">Cuberto</div>
-                                <div class="text-xs truncate w-40">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis, doloribus?</div>
-                            </div>
-                            <div class="flex-shrink-0 ml-2 self-end mb-1">
-                                <span class="flex items-center justify-center h-5 w-5 bg-red-500 text-white text-xs rounded-full">5</span>
-                            </div>
-                        </div>
-                        <!--                    <div class="flex flex-row items-center p-4 bg-gradient-to-r from-red-100 to-transparent border-l-2 border-red-500">
-                                                <div class="flex items-center justify-center h-10 w-10 rounded-full bg-pink-500 text-pink-300 font-bold flex-shrink-0">
-                                                    T
-                                                </div>
-                                                <div class="flex flex-col flex-grow ml-3">
-                                                    <div class="flex items-center">
-                                                        <div class="text-sm font-medium">UI Art Design</div>
-                                                        <div class="h-2 w-2 rounded-full bg-green-500 ml-2"></div>
-                                                    </div>
-                                                    <div class="text-xs truncate w-40">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Debitis, doloribus?</div>
-                                                </div>
-                                            </div>-->
+                        <!-- Les groupes seront ajoutés ici par JavaScript -->
                     </div>
                 </div>
-                <div class="mt-5">
-                    <div class="text-xs text-gray-400 font-semibold uppercase">Personal</div>
+
+                <div id="privateContainer" class="overflow-y-scroll overflow-x-hidden mt-5 hidden">
+                    <div class="flex flex-col -mx-4">
+                        <!-- Les conversations privées seront ajoutées ici par JavaScript -->
+                    </div>
                 </div>
-                <div class="overflow-y-scroll relative pt-2">
-                    <div class="flex flex-col divide-y h-full overflow-y-auto -mx-4">
-                        <div class="flex flex-row items-center p-4 relative">
-                            <div class="absolute text-xs text-gray-500 right-0 top-0 mr-4 mt-3">2 hours ago</div>
-                            <div class="flex items-center justify-center h-10 w-10 rounded-full bg-pink-500 text-pink-300 font-bold flex-shrink-0">
 
-                            </div>
-                            <div class="flex flex-col flex-grow ml-3">
-                                <div class="text-sm font-medium">Flo Steinle</div>
-                                <div class="text-xs truncate w-40">Good after noon! how can i help you?</div>
-                            </div>
-                            <div class="flex-shrink-0 ml-2 self-end mb-1">
-                                <span class="flex items-center justify-center h-5 w-5 bg-red-500 text-white text-xs rounded-full">3</span>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="absolute bottom-0 right-0 mr-2">
-                        <button class="flex items-center justify-center shadow-sm h-10 w-10 bg-red-500 text-white rounded-full" id="btn_affiche_user">
-                            <svg class="w-6 h-6"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 viewBox="0 0 24 24"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                            </svg>
-                        </button>
-                    </div>
+                <!-- Bouton de création de groupe -->
+                <div class="fixed bottom-20 left-60 m-4">
+                    <button class="flex items-center justify-center shadow-sm h-10 w-10 bg-red-500 text-white rounded-full" id="btn_affiche_user">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>
+
         <div class="conversation flex flex-col overflow-y-auto h-full w-full md:flex-grow bg-white px-4 py-6">
             <div id="groupHeader" class="flex flex-row items-center py-4 px-6 rounded-2xl shadow">
                 <button id="backButton" class="mr-2 md:hidden">
@@ -127,19 +80,16 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button>
-                <div id="groupLogo" class="flex items-center justify-center h-10 w-10 ">
-                    <div class="flex items-center justify-center h-10 w-10 ">Messagerie</div>
+                <div id="groupLogo" class="flex items-center justify-center h-10 w-10">
+                    <div class="flex items-center justify-center h-10 w-10">Messagerie</div>
                 </div>
                 <div class="flex flex-col ml-3">
                     <div id="groupName" class="font-semibold text-sm"></div>
                 </div>
                 <div class="ml-auto">
                     <ul class="flex flex-row items-center space-x-2">
-
-
                         <li>
-                            <a href="#"
-                               class="flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-400 h-10 w-10 rounded-full">
+                            <a href="#" class="flex items-center justify-center bg-gray-100 hover:bg-gray-200 text-gray-400 h-10 w-10 rounded-full">
                 <span>
                   <svg class="w-5 h-5"
                        fill="none"
@@ -160,66 +110,19 @@
             <div class="h-full overflow-hidden py-4">
                 <div class="h-full overflow-y-auto">
                     <div class="grid grid-cols-12 gap-y-2">
-
-                        <!--MESSAGE-->
-
-                        <!--
-                                            <div class="col-start-1 col-end-8 p-3 rounded-lg">
-                                                <div class="flex flex-row items-center">
-                                                    <div
-                                                        class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0"
-                                                    >
-                                                        A
-                                                    </div>
-                                                    <div
-                                                        class="relative ml-3 text-sm bg-white py-2 px-4 shadow rounded-xl"
-                                                    >
-                                                        <div>Hey How are you today?</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                        -->
-                        <!--MESSAGE-->
-                        <!--
-                                            <div class="col-start-6 col-end-13 p-3 rounded-lg">
-                                                <div class="flex items-center justify-start flex-row-reverse">
-                                                    <div
-                                                        class="flex items-center justify-center h-10 w-10 rounded-full bg-indigo-500 flex-shrink-0"
-                                                    >
-                                                        A
-                                                    </div>
-                                                    <div
-                                                        class="relative mr-3 text-sm bg-indigo-100 py-2 px-4 shadow rounded-xl"
-                                                    >
-                                                        <div>I'm ok what about you?</div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                        -->
-
-
+                        <!-- Les messages seront ajoutés ici par JavaScript -->
                     </div>
                 </div>
             </div>
             <div class="flex items-center space-x-4">
                 <div id="previewContainer" class="flex justify-center space-x-2 p-2"></div>
-
                 <div class="flex items-center w-full border rounded-3xl h-12 px-4">
-
                     <input type="text" id="messageInput" class="border-transparent w-full focus:outline-none text-sm h-10" placeholder="Type your message....">
-
                     <div class="flex items-center space-x-2">
                         <button id="btn_image" class="flex items-center justify-center h-10 w-8 text-gray-400 ml-1 mr-2">
                             <input type="file" id="fileInput" style="display: none;" accept="image/*,video/*" multiple>
-                            <svg class="w-5 h-5"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 viewBox="0 0 24 24"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                             </svg>
                         </button>
                     </div>
@@ -235,48 +138,28 @@
         </div>
     </div>
 
-
     <!-- Modale -->
-
-
-    <!-- Modale Container -->
     <div id="userModal" class="hidden fixed z-10 inset-0 overflow-y-auto">
-        <!-- Fond de la modale -->
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <!-- Overlay -->
             <div class="fixed inset-0 transition-opacity" aria-hidden="true">
                 <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
             </div>
-
-            <!-- Contenu de la modale -->
             <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-                <!-- En-tête de la modale -->
                 <div class="bg-gray-100 p-4">
                     <h3 class="text-lg leading-6 font-medium text-gray-900">Utilisateurs</h3>
                 </div>
-
-                <!-- Corps de la modale -->
                 <div class="p-4">
-                    <!-- Barre de recherche -->
                     <input type="text" placeholder="Rechercher..." class="mb-4 px-3 py-2 border border-gray-300 rounded-md w-full">
-
-                    <!-- Bouton Nouveau Groupe -->
                     <button class="mb-4 px-4 py-2 bg-blue-500 text-white rounded-md" id="nouveau-groupe-btn">Nouveau Groupe</button>
-                    <!-- Champ de saisie pour le nom du groupe -->
                     <div id="groupNameContainer" class="hidden mb-4">
                         <input type="text" id="groupNameInput" placeholder="Nom du groupe" class="px-3 py-2 border border-gray-300 rounded-md w-full">
                     </div>
-
-                    <!-- Liste des utilisateurs dans la modale -->
                     <div id="userList" class="max-h-60 overflow-auto">
-                        <ul id="userListContainer" class="list-disc pl-5"> <!-- Ajout de l'ID userListContainer ici -->
+                        <ul id="userListContainer" class="list-disc pl-5">
                             <!-- Les utilisateurs seront ajoutés ici par JavaScript -->
                         </ul>
                     </div>
-
                 </div>
-
-                <!-- Pied de la modale -->
                 <div class="bg-gray-100 px-4 py-3 sm:flex sm:flex-row-reverse">
                     <button type="button" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm" id="btn_fermer_modal_">
                         Fermer
@@ -284,16 +167,13 @@
                     <button id="nextButton" type="button" class="hidden w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 sm:w-auto sm:text-sm">
                         Suivant
                     </button>
-
                 </div>
-
             </div>
         </div>
     </div>
 
     <!-- Pop-up container -->
     <div id="notificationPopup" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" onclick="closePopup()">
-        <!-- Pop-up content -->
         <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" onclick="event.stopPropagation()">
             <div class="mt-3 text-center">
                 <div class="mx-auto flex items-center justify-between">
@@ -310,13 +190,11 @@
     </div>
 
     @vite(['resources/js/chatRoom/notif.js'])
-
     @vite(['resources/js/chatRoom/affiche_user.js'])
     @vite(['resources/js/chatRoom/btn_image.js'])
     @vite(['resources/js/bootstrap.js'])
 
-
-    <!-- Dans votre vue Blade (par exemple, dans resources/views/welcome.blade.php) -->
+<!--
     <script defer>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/firebase-messaging-sw.js')
@@ -358,17 +236,12 @@
             });
         });
 
-
-
-
     </script>
-
-
+-->
 
     <script src="https://www.gstatic.com/firebasejs/7.23.0/firebase.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script>
-
         var firebaseConfig = {
             apiKey: "AIzaSyCxxKnWhC3mcOalpB-FCWJoA9Kg9jSCnPs",
             authDomain: "push-notification-56ed1.firebaseapp.com",
@@ -379,14 +252,11 @@
             measurementId: "G-FJVMG71W9Q"
         };
 
-
         firebase.initializeApp(firebaseConfig);
         const messaging = firebase.messaging();
 
         function initFirebaseMessagingRegistration() {
-            // Ajoutez un vérificateur pour Safari
             if (['Safari', 'iOS'].includes(navigator.vendor)) {
-                // Pour Safari, assurez-vous que la demande de permission est faite en réponse à l'interaction de l'utilisateur
                 document.getElementById('btn-nft-enable').addEventListener('click', function () {
                     requestPermissionForSafari();
                 });
@@ -419,26 +289,20 @@
                                 console.log('User Chat Token Error' + err);
                             },
                         });
-
                     }).catch(function (err) {
                     console.log('User Chat Token Error' + err);
                 });
             }
         }
 
-
-
-
         function requestPermissionForSafari() {
             Notification.requestPermission().then((permission) => {
                 if (permission === 'granted') {
                     console.log('Notification permission granted.');
 
-                    // Pour Safari, procédez à l'obtention du jeton FCM ici
                     messaging.getToken().then(function(token) {
                         console.log(token);
 
-                        // Enregistrez le jeton, similaire à la manière dont vous le faites pour les autres navigateurs
                         $.ajaxSetup({
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -446,7 +310,7 @@
                         });
 
                         $.ajax({
-                            url: '{{ route("save-token") }}', // Assurez-vous que cette URL est correcte dans le contexte de Safari
+                            url: '{{ route("save-token") }}',
                             type: 'POST',
                             data: {
                                 token: token
@@ -454,13 +318,11 @@
                             dataType: 'JSON',
                             success: function (response) {
                                 alert('Token saved successfully.');
-
                             },
                             error: function (err) {
                                 console.log('User Chat Token Error' + err);
                             },
                         });
-
                     }).catch(function(err) {
                         console.log('Error getting token for Safari: ' + err);
                     });
@@ -470,8 +332,6 @@
             });
         }
 
-
-        // Gestion des messages entrants
         messaging.onMessage(function(payload) {
             const noteTitle = payload.notification.title;
             const noteOptions = {
@@ -480,6 +340,7 @@
             };
             new Notification(noteTitle, noteOptions);
         });
-    </script>
 
+
+    </script>
 </x-app-layout>
