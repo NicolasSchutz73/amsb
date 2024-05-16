@@ -1,8 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Emploi du temps') }}
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="mb-1 font-semibold text-xl text-white">
+                Dashboard
+            </h2>
+        </div>
     </x-slot>
 
     @if(!($filtre) && $valable)

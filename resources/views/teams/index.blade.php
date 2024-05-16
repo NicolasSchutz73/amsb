@@ -1,6 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-crud-header title="Gérer les équipes" subtitle="Voici la liste des équipes disponibles."></x-crud-header>
+        <div class="flex items-center justify-between">
+            <h2 class="mb-1 font-semibold text-xl text-white">
+                Gérer les équipes
+            </h2>
+        </div>
     </x-slot>
 
     <div class="p-6">

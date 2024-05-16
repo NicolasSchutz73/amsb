@@ -1,7 +1,10 @@
 <x-app-layout>
     <x-slot name="header">
-        <!-- Utilisation du composant CRUD Header -->
-        <x-crud-header title="Gérer les rôles" subtitle="Voici la liste des rôles disponible."></x-crud-header>
+        <div class="flex items-center justify-between">
+            <h2 class="mb-1 font-semibold text-xl text-white">
+                Gérer les rôles
+            </h2>
+        </div>
     </x-slot>
 
     <div class="p-6">
