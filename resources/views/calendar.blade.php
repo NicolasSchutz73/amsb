@@ -27,7 +27,7 @@
                     <button id="toggleFormButton" class="btn btn-info" onclick="toggleForm()">
                         <span id="arrowIcon" class="arrow down"></span> Ajouter des équipes
                     </button>
-                    <form id="dynamicForm" action="{{ url('calendar') }}" method="GET" style="display: none; overflow: hidden; transition: max-height 0.5s ease; max-height: 422.4px !important;">
+                    <form id="dynamicForm" action="{{ url('calendar') }}" method="GET" style="display: none; overflow: hidden; transition: max-height 0.5s ease; height: 425px !important;">
                         <input type="text" id="searchBox" placeholder="Rechercher une équipe..." class="form-control mb-3">
                         <div class="scroll-container">
                             @foreach($categories as $category)
@@ -92,6 +92,7 @@
     <style>
         /* CSS personnalisé pour FullCalendar en mode responsive */
         @media (max-width: 767px) {
+
             .btn-info {
                 width: 100% !important;
                 background-color: white !important;
@@ -125,7 +126,7 @@
                 margin-bottom: 20px;
             }
             .scroll-container {
-                height: 200px;
+                max-height: 200px;
                 overflow-y: auto;
                 padding: 15px;
                 border: 1px solid #ccc;
@@ -155,7 +156,7 @@
                 background-color: #b0e0a1; /* Couleur au survol si pas sélectionnée */
             }
             #calendar {
-                margin: 15px;
+                margin: 15px 0;
             }
             select {
                 width: 75%;
