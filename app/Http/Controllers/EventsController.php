@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 class EventsController extends Controller
 {
 
-    public function getEvents(Request $request): JsonResponse
+    public function getEvents(Request $request): \Google\Service\Calendar\Event
     {
         $client = new Google_Client();
         $client->setAuthConfig(config_path('google/credentials.json'));
@@ -43,12 +43,36 @@ class EventsController extends Controller
             $start = $startDateTime ? Carbon::parse($startDateTime)->format('Y-m-d H:i:s') : null;
             $end = $endDateTime ? Carbon::parse($endDateTime)->format('Y-m-d H:i:s') : null;
 
+            // Check Domicile/Extérieur
+            $place = null;
+            $ListeLieuxA = ['Gymnastique Volontaire Aix-les-Bains, 24 Av. de Marlioz, 73100 Aix-les-Bains, France','Gymnase de Marlioz, 120 Chem. du Lycée, 73100 Aix-les-Bains, France',
+                'Aix Maurienne Savoie Basket, Gymnase de Marlioz, 120 Chem. du Lycée, 73100 Aix-les-Bains, France'];
+            $ListeLieuxB = ['Maurienne Savoie Basket, Chef Lieu, 73220 Val-d\'Arc, France',
+                'Chef Lieu, 73220 Val-d\'Arc'];
+            $endroit = $event->getLocation();
+            $longueur = count($ListeLieuxA);
+
+            for ($i=0; $i < $longueur; $i++) {
+                if ($endroit == $ListeLieuxA[$i]){
+                    $place = 'Aix les bains';
+                }
+            }
+
+            $longueur = count($ListeLieuxB);
+            for ($i=0; $i < $longueur; $i++) {
+                if ($endroit == $ListeLieuxB[$i]){
+                    $place = 'Aiguebelle';
+                }
+            }
+
+
             $newEvent = Event::updateOrCreate(
                 ['id' => $event->getId()],
                 [
                     'title' => $event->getSummary(),
                     'description' => $event->getDescription(),
                     'location' => $event->getLocation(),
+                    'place' => $place,
                     'start' => $start,
                     'end' => $end,
                     'isRecurring' => !is_null($event->getRecurringEventId()),
@@ -79,8 +103,8 @@ class EventsController extends Controller
                 $group->users()->sync($userIds);
             }
         }
-
-        return response()->json(['success' => true, 'message' => 'Events updated/created successfully.']);
+        return $event;
+        //return response()->json(['success' => true, 'message' => 'Events updated/created successfully.']);
 
     }
 
@@ -154,20 +178,16 @@ class EventsController extends Controller
         ]);
     }
 
+
+
     public function getEventsByCategory(Request $request, $categories): JsonResponse
     {
-        // Configuration de l'accès à l'API Google Calendar
         $client = new Google_Client();
         $client->setAuthConfig(config_path('google/credentials.json'));
         $client->setScopes(Google_Service_Calendar::CALENDAR_READONLY);
-
-        // Authentification avec une clé d'API
         $client->setDeveloperKey('AIzaSyCxxKnWhC3mcOalpB-FCWJoA9Kg9jSCnPs');
 
-        // Création du service Google Calendar
         $service = new Google_Service_Calendar($client);
-
-        // Récupération des événements
         $calendarId = 'charriersim@gmail.com';
         $optParams = [
             'orderBy' => 'startTime',
@@ -175,43 +195,120 @@ class EventsController extends Controller
             'timeMin' => date('c'),
         ];
 
-
         $results = $service->events->listEvents($calendarId, $optParams);
         $events = $results->getItems();
 
-        // Filtrer les événements pour ceux qui contiennent la catégorie spécifiée dans leur description
+        $placeFilter = $request->get('place_filter', 'both');
+        $domicilePlace = $request->get('domicile_place', 'both');
+
         $filteredEvents = [];
         foreach ($events as $event) {
             $description = $event->getDescription();
-            // Log pour voir ce que contient réellement description
-//            Log::info("Description: $description, Category: $category, Match: " . strpos($description, $category));
-            foreach ($categories as $category){
+            foreach ($categories as $category) {
                 if ($description && strpos($description, $category) !== false) {
-                    $newEvent = [
-                        'id' => $event->getId(),
-                        'title' => $event->getSummary(),
-                        'description' => $event->getDescription(),
-                        'location' => $event->getLocation(),
-                        'start' => $event->getStart()->dateTime,
-                        'end' => $event->getEnd()->dateTime,
-                        'isRecurring' => $event->getRecurringEventId() ? 1 : 0
-                    ];
-                    $teamNames = explode(',', $description);
-                    $colors = $this->fetchColorsForTeams($teamNames);
-                    $filteredEvents[] = [
-                        'event' => $newEvent,
-                        'colors' => $colors
-                    ];
+                    $eventId = $event->getId();
+                    $dbEvent = Event::where('id', $eventId)->first();
+
+                    $includeEvent = false;
+                    if ($dbEvent) {
+                        if ($placeFilter === 'both') {
+                            $includeEvent = true;
+                        } elseif ($placeFilter === 'domicile' && $dbEvent->place !== null) {
+                            if ($domicilePlace === 'both' || strpos(strtolower($dbEvent->place), strtolower($domicilePlace)) !== false) {
+                                $includeEvent = true;
+                            }
+                        } elseif ($placeFilter === 'exterieur' && $dbEvent->place === null) {
+                            $includeEvent = true;
+                        }
+                    }
+
+                    if ($includeEvent) {
+                        $newEvent = [
+                            'id' => $event->getId(),
+                            'title' => $event->getSummary(),
+                            'description' => $event->getDescription(),
+                            'location' => $event->getLocation(),
+                            'place' => $dbEvent ? $dbEvent->place : null,
+                            'start' => $event->getStart()->dateTime,
+                            'end' => $event->getEnd()->dateTime,
+                            'isRecurring' => $event->getRecurringEventId() ? 1 : 0
+                        ];
+                        $teamNames = explode(',', $description);
+                        $colors = $this->fetchColorsForTeams($teamNames);
+                        $filteredEvents[] = [
+                            'event' => $newEvent,
+                            'colors' => $colors
+                        ];
+                    }
                 }
             }
         }
 
-        // Retourner les événements filtrés au format JSON
-        return response()->json([
-            'data' => $filteredEvents,
-        ]);
-//        return response()->json(['success' => true, 'data' => $eventsData]);
+        return response()->json(['data' => $filteredEvents]);
     }
+
+
+
+//    public function getEventsByCategory(Request $request, $categories): JsonResponse
+//    {
+//        // Configuration de l'accès à l'API Google Calendar
+//        $client = new Google_Client();
+//        $client->setAuthConfig(config_path('google/credentials.json'));
+//        $client->setScopes(Google_Service_Calendar::CALENDAR_READONLY);
+//
+//        // Authentification avec une clé d'API
+//        $client->setDeveloperKey('AIzaSyCxxKnWhC3mcOalpB-FCWJoA9Kg9jSCnPs');
+//
+//        // Création du service Google Calendar
+//        $service = new Google_Service_Calendar($client);
+//
+//        // Récupération des événements
+//        $calendarId = 'charriersim@gmail.com';
+//        $optParams = [
+//            'orderBy' => 'startTime',
+//            'singleEvents' => true,
+//            'timeMin' => date('c'),
+//        ];
+//
+//        $results = $service->events->listEvents($calendarId, $optParams);
+//        $events = $results->getItems();
+//
+//        // Filtrer les événements pour ceux qui contiennent la catégorie spécifiée dans leur description
+//        $filteredEvents = [];
+//        foreach ($events as $event) {
+//            $description = $event->getDescription();
+//            // Log pour voir ce que contient réellement description
+//            // Log::info("Description: $description, Category: $category, Match: " . strpos($description, $category));
+//            foreach ($categories as $category) {
+//                if ($description && strpos($description, $category) !== false) {
+//                    // Recherche de l'événement dans la base de données
+//                    $dbEvent = Event::where('id', $event->getId())->first();
+//
+//                    $newEvent = [
+//                        'id' => $event->getId(),
+//                        'title' => $event->getSummary(),
+//                        'description' => $event->getDescription(),
+//                        'location' => $event->getLocation(),
+//                        'place' => $dbEvent ? $dbEvent->place : null,
+//                        'start' => $event->getStart()->dateTime,
+//                        'end' => $event->getEnd()->dateTime,
+//                        'isRecurring' => $event->getRecurringEventId() ? 1 : 0
+//                    ];
+//                    $teamNames = explode(',', $description);
+//                    $colors = $this->fetchColorsForTeams($teamNames);
+//                    $filteredEvents[] = [
+//                        'event' => $newEvent,
+//                        'colors' => $colors
+//                    ];
+//                }
+//            }
+//        }
+//
+//        // Retourner les événements filtrés au format JSON
+//        return response()->json([
+//            'data' => $filteredEvents,
+//        ]);
+//    }
 
     private function prepareEventData($event)
     {
@@ -227,6 +324,7 @@ class EventsController extends Controller
                 'title' => $event->getSummary(),
                 'description' => $event->getDescription(),
                 'location' => $event->getLocation(),
+                'place' => $event->getPlace(),
                 'start' => $start,
                 'end' => $end,
                 'isRecurring' => $event->getRecurringEventId() !== null ? 1 : 0,

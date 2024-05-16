@@ -57,6 +57,8 @@ class CalendarController extends Controller
 
         // Récupérer les catégories depuis un modèle Team ou autre logique
         $categories = Team::all()->pluck('name'); // Exemple de récupération des noms de catégories
+        $categories = $categories->sort();
+        $categories = collect($categories)->sort()->toArray();
 
         return view('calendar', [
             'events' => $events,
@@ -99,7 +101,8 @@ class CalendarController extends Controller
 
         $events = $events->get();
 
-//        dd($events);
+        $categories = $categories->sort();
+        $categories = collect($categories)->sort()->toArray();
 
         if ($teamData == ['team_id' => $userTeam->id]) {
             $teamId = $teamData['team_id'];
@@ -126,51 +129,6 @@ class CalendarController extends Controller
         }
     }
 
-
-
-//    public function index(Request $request)
-//    {
-//        $filtre = false;
-//        $valable = false;
-//        $user = auth()->user();
-//        $userTeam = $user->team()->first();
-//        $teamData = $this->getUserTeam();
-//        $teamNames = $request->input('teams', []);
-//        $categories = Team::all()->pluck('name');
-//
-//        $events = Event::select('events.*', 'teams.color as teamColor')
-//            ->leftJoin('teams', 'events.descritpion', '=', 'teams.name');
-//
-//        if (!empty($teamNames)) {
-//            $filtre = true;
-//            $events = $events->whereIn('teams.name', $teamNames);
-//        }
-//
-//        $events = $events->get();
-//
-//        if ($teamData == ['team_id' => $userTeam->id]) {
-//            $teamId = $teamData['team_id'];
-//            $teamNameData = $this->getTeamName($teamId);
-//            $teamName = $teamNameData['team_name'];
-//
-//            $valable = true;
-//
-//            return view('calendar', [
-//                'events' => $events,
-//                'categories' => $categories,
-//                'teamName' => $teamName,
-//                'filtre' => $filtre,
-//                'valable' => $valable
-//            ]);
-//        } else {
-//            return view('calendar', [
-//                'events' => $events,
-//                'categories' => $categories,
-//                'filtre' => $filtre,
-//                'valable' => $valable
-//            ]);
-//        }
-//    }
 
 
     private function fetchColorsForTeams($teamNames)
