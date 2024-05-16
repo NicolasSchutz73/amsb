@@ -78,4 +78,9 @@ class User extends Authenticatable
     {
         return $this->groups()->where('groups.id', $groupId)->exists();
     }
+
+    public function favoriteGroups()
+    {
+        return $this->belongsToMany(Group::class, 'user_favorites')->withTimestamps();
+    }
 }

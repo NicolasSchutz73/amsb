@@ -37,5 +37,10 @@ class Group extends Model
 
     protected $fillable = ['name', 'type'];
 
+    public function favoriteUsers()
+    {
+        return $this->belongsToMany(User::class, 'user_favorites')->withTimestamps();
+    }
+
 }
 

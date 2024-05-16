@@ -49,3 +49,11 @@ Route::post('/send-notification-group', [GroupController::class, 'sendNotificati
 
 Route::get('events', [EventsController::class, 'getEvents'])->name('events');
 
+// routes/web.php ou routes/api.php
+use App\Http\Controllers\FavoriteController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/user-favorites', [FavoriteController::class, 'getUserFavorites']);
+    Route::post('/api/user-favorites/add', [FavoriteController::class, 'addFavorite']);
+    Route::post('/api/user-favorites/remove', [FavoriteController::class, 'removeFavorite']);
+});

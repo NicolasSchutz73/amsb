@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -164,4 +165,8 @@ Route::get('instagram-auth', 'InstagramAuthController@show')->middleware('auth')
 Route::get('instagram-auth/callback', 'InstagramAuthController@callback');
 Route::get('instagram-auth/response', 'InstagramAuthController@response');
 
+
+Route::get('/api/user-favorites', [FavoriteController::class, 'getUserFavorites']);
+Route::post('/api/user-favorites/add', [FavoriteController::class, 'addFavorite']);
+Route::post('/api/user-favorites/remove', [FavoriteController::class, 'removeFavorite']);
 require __DIR__.'/auth.php';
