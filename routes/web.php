@@ -57,6 +57,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+Route::post('/profile/upload-photos', [ProfileController::class, 'uploadPhotos'])->name('profile.upload_photos');
 
 // Routes de page user
 Route::get('/search-user', [SearchUserController::class, 'index'])->name('searchUser.index');
@@ -81,6 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/usershow/{monid}', [UserMessController::class, 'index'])->name('usersMess.index');
     Route::get('/usershow', [UserMessController::class, 'show'])->name('usersMess.show');
+    Route::delete('/delete-photo', [UserController::class, 'deletePhoto'])->name('photo.delete');
 
     // Vérification de groupe privé entre deux utilisateurs
     Route::get('/check-group/{userOneId}/{userTwoId}', [GroupController::class, 'checkPrivateGroup']);

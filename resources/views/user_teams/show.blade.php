@@ -1,21 +1,23 @@
+@vite(['resources/css/my_team/team.css', 'resources/js/my_team/team.js'])
+
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="mb-1 font-semibold text-xl text-neutral-900 dark:text-gray-100">
+            <h2 class="mb-1 font-semibold text-xl text-white">
                 @if (count($teamDetails) > 1)
                     Mes équipes
                 @else
                     Mon équipe
                 @endif
             </h2>
-            <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center text-neutral-900 dark:text-gray-100 py-2 px-4 hover:underline">&larr; Retour</a>
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center justify-center text-white py-2 px-4 hover:underline">&larr; Retour</a>
         </div>
     </x-slot>
 
     @if (!empty($teamDetails))
         <div class="w-full bg-white">
             <!-- Boutons pour sélectionner les équipes -->
-            <div class="flex justify-start w-ful container mx-auto px-4">
+            <div class="flex justify-start w-ful container mx-auto px-4 pt-8">
                 @foreach ($teamDetails as $index => $teamDetail)
                     <button id="teamButton{{ $index }}" class="team-button px-1 mx-2 text-neutral-900 dark:text-gray-100 font-bold relative">{{ $teamDetail['team']->name }}</button>
                 @endforeach
@@ -26,11 +28,11 @@
             <!-- Détails de l'équipe -->
             <div id="teamDetails{{ $index }}" class="team-details {{ $index === 0 ? '' : 'invisible' }}">
                 <!-- Bandeau pour le nom et la catégorie de l'équipe -->
-                <div class="w-full bg-white py-8">
+                <div class="w-full bg-white py-16">
                     <div class="container mx-auto px-4">
                         <div class="text-center">
-                            <span class="block text-neutral-900 font-bold text-3xl mb-2">{{ $teamDetail['team']->name }}</span>
-                            <span class="block text-neutral-600 font-medium text-xl">{{ $teamDetail['team']->category }}</span>
+                            <span class="block text-neutral-900 font-bold text-3xl mb-2">Équipe {{ $teamDetail['team']->name }}</span>
+                            <span class="block text-gray-500 dark:text-gray-400 font-medium text-lg">Catégorie {{ $teamDetail['team']->category }}</span>
                         </div>
                     </div>
                 </div>
@@ -49,7 +51,7 @@
                 <!-- Bandeau pour la liste des utilisateurs -->
                 <div class="w-full bg-white py-6">
                     <div class="container mx-auto px-4">
-                        <div id="effectif{{ $index }}" class="tab-content visible">
+                        <div id="effectif{{ $index }}" class="tab-content {{ $index === 0 ? 'visible' : 'invisible' }}">
                             <h3 class="font-bold text-2xl mb-8">Joueurs</h3>
                             @forelse ($teamDetail['users'] as $user)
                                 @if ($user->hasRole('joueur'))
@@ -58,11 +60,11 @@
                                         $headers = get_headers($imageUrl);
                                     @endphp
 
-                                    <div class="flex items-center mb-2">
+                                    <div class="flex items-center mb-2 cursor-pointer" data-modal-target="user-modal{{ $user->id }}" data-modal-toggle="user-modal{{ $user->id }}">
                                         @if (strpos($headers[0], '200') !== false)
-                                            <img class="w-10 h-10 rounded-full mr-4" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                            <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
                                         @else
-                                            <div class="w-10 h-10 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                            <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
                                                 <span class="text-gray-500">N/A</span>
                                             </div>
                                         @endif
@@ -90,11 +92,11 @@
                                     $headers = get_headers($imageUrl);
                                 @endphp
 
-                                <div class="flex items-center mb-2">
+                                <div class="flex items-center mb-2 cursor-pointer" data-modal-target="user-modal{{ $coach->id }}" data-modal-toggle="user-modal{{ $coach->id }}">
                                     @if (strpos($headers[0], '200') !== false)
-                                        <img class="w-10 h-10 rounded-full mr-4" src="{{ $imageUrl }}" alt="Photo de profil de {{ $coach->firstname }}">
+                                        <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $coach->firstname }}">
                                     @else
-                                        <div class="w-10 h-10 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                        <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
                                             <span class="text-gray-500">N/A</span>
                                         </div>
                                     @endif
@@ -114,11 +116,11 @@
                                         $headers = get_headers($imageUrl);
                                     @endphp
 
-                                    <div class="flex items-center mb-2">
+                                    <div class="flex items-center mb-2 cursor-pointer" data-modal-target="user-modal{{ $user->id }}" data-modal-toggle="user-modal{{ $user->id }}">
                                         @if (strpos($headers[0], '200') !== false)
-                                            <img class="w-10 h-10 rounded-full mr-4" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                            <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
                                         @else
-                                            <div class="w-10 h-10 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                            <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
                                                 <span class="text-gray-500">N/A</span>
                                             </div>
                                         @endif
@@ -135,111 +137,60 @@
         @endforeach
     @endif
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const teamButtons = document.querySelectorAll('.team-button');
-            const teamDetails = document.querySelectorAll('.team-details');
-            const tabButtons = document.querySelectorAll('.tab-button');
+    <!-- Overlay -->
+    <div id="modal-overlay" class="hidden-teams fixed top-0 left-0 w-full h-full bg-gray-900 opacity-50 z-40"></div>
 
-            teamButtons.forEach((button, index) => {
-                button.addEventListener('click', function () {
-                    teamDetails.forEach((details, idx) => {
-                        if (index === idx) {
-                            details.classList.remove('invisible');
-                            details.classList.add('visible');
-                            details.querySelectorAll('.tab-content').forEach(content => content.classList.add('visible'));
-                        } else {
-                            details.classList.remove('visible');
-                            details.classList.add('invisible');
-                            details.querySelectorAll('.tab-content').forEach(content => content.classList.remove('visible'));
-                        }
-                    });
-                    teamButtons.forEach(btn => btn.classList.remove('active-team'));
-                    button.classList.add('active-team');
-                });
-            });
+    <!-- Modals Section -->
+    @foreach ($teamDetails as $index => $teamDetail)
+        @foreach ($teamDetail['users'] as $user)
+            @if ($user->hasRole('joueur') || $user->hasRole('parents') || $user->hasRole('coach'))
+                @php
+                    $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";
+                    $headers = get_headers($imageUrl);
+                @endphp
 
-            tabButtons.forEach(button => {
-                button.addEventListener('click', function () {
-                    const target = this.dataset.target;
-                    const parent = this.closest('.team-details');
-                    parent.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
-                    parent.querySelectorAll('.tab-content').forEach(content => {
-                        content.classList.remove('visible');
-                        content.classList.add('invisible');
-                    });
-                    this.classList.add('active');
-                    parent.querySelector('#' + target).classList.add('visible');
-                    parent.querySelector('#' + target).classList.remove('invisible');
-                });
-            });
-
-            // Set default active team and tab
-            if (document.querySelector('.team-button')) {
-                document.querySelector('.team-button').click();
-            }
-            if (document.querySelector('.tab-button')) {
-                document.querySelector('.tab-button').click();
-            }
-        });
-    </script>
-
-    <style>
-        .invisible {
-            display: none;
-        }
-        .visible {
-            display: block;
-        }
-        .active {
-            background-color: #ffffff; /* Active button background color */
-            color: #000000; /* Active button text color */
-            border-color: rgb(212 212 212); /* Active button border color */
-        }
-
-        .active-team::after, .team-button:hover::after {
-            opacity: 1;
-            transform: translateY(6px);
-        }
-
-        .team-button::after {
-            background-color: #d81e00;
-            bottom: 0;
-            content: "";
-            height: 2px;
-            left: 0;
-            opacity: 0;
-            position: absolute;
-            transform: translateY(12px);
-            transition: opacity .2s ease-in-out, transform .2s ease-in-out;
-            width: 100%;
-        }
-
-        .active-team {
-            position: relative; /* Required for the ::after pseudo-element */
-        }
-
-        .active-team::after {
-            opacity: 1; /* Ensure the ::after element is always visible */
-            transform: translateY(6px); /* Ensure the ::after element is in the correct position */
-        }
-
-        button {
-            background-color: transparent; /* Inactive button background color */
-            color: #6b7280; /* Inactive button text color */
-            border-color: #d1d5db; /* Inactive button border color */
-            position: relative; /* Required for the ::after pseudo-element */
-        }
-
-        .tab-content {
-            transition: transform 0.5s ease, opacity 0.5s ease;
-            transform: translateY(20px);
-            opacity: 0;
-        }
-
-        .tab-content.visible {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    </style>
+                <div id="user-modal{{ $user->id }}" tabindex="-1" aria-hidden="true" class="hidden-teams overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+                    <div class="relative p-4 w-full max-w-2xl max-h-full">
+                        <!-- Modal content -->
+                        <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+                            <!-- Modal header -->
+                            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+                                <div class="flex items-center">
+                                    @if (strpos($headers[0], '200') !== false)
+                                        <img class="w-16 h-16 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                    @else
+                                        <div class="w-16 h-16 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                            <span class="text-gray-500">N/A</span>
+                                        </div>
+                                    @endif
+                                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                                        {{ $user->firstname }} {{ $user->lastname }}
+                                    </h3>
+                                </div>
+                                <button type="button" class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white" data-modal-hide="user-modal{{ $user->id }}">
+                                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                                    </svg>
+                                    <span class="sr-only">Close modal</span>
+                                </button>
+                            </div>
+                            <!-- Modal body -->
+                            <div class="p-4 md:p-5 space-y-4">
+                                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                    E-mail : {{ $user->email }}
+                                </p>
+                                <p class="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+                                    Contact d'urgence : {{ $user->emergency }}
+                                </p>
+                            </div>
+                            <!-- Modal footer -->
+                            <div class="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                                <button data-modal-hide="user-modal{{ $user->id }}" type="button" class="text-white bg-red-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Fermer</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+        @endforeach
+    @endforeach
 </x-app-layout>
