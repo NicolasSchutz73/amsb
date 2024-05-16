@@ -175,7 +175,7 @@
 
 
 <nav class="sm:hidden block fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
-    <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+    <div class="h-full max-w-lg mx-auto flex justify-around items-center font-medium">
 
         <x-nav-link-icon icon="ic:round-home" :href="route('dashboard')" :active="request()->routeIs('dashboard')">
             {{ __('Accueil') }}
@@ -195,3 +195,4 @@
 
     </div>
 </nav>
+
