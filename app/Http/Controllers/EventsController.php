@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\Log;
 class EventsController extends Controller
 {
 
-    public function getEvents(Request $request): JsonResponse
+    public function getEvents(Request $request): \Google\Service\Calendar\Event
     {
         $client = new Google_Client();
         $client->setAuthConfig(config_path('google/credentials.json'));
@@ -43,13 +43,36 @@ class EventsController extends Controller
             $start = $startDateTime ? Carbon::parse($startDateTime)->format('Y-m-d H:i:s') : null;
             $end = $endDateTime ? Carbon::parse($endDateTime)->format('Y-m-d H:i:s') : null;
 
+            // Check Domicile/Extérieur
+            $place = null;
+            $ListeLieuxA = ['Gymnastique Volontaire Aix-les-Bains, 24 Av. de Marlioz, 73100 Aix-les-Bains, France','Gymnase de Marlioz, 120 Chem. du Lycée, 73100 Aix-les-Bains, France',
+                'Aix Maurienne Savoie Basket, Gymnase de Marlioz, 120 Chem. du Lycée, 73100 Aix-les-Bains, France'];
+            $ListeLieuxB = ['Maurienne Savoie Basket, Chef Lieu, 73220 Val-d\'Arc, France',
+                'Chef Lieu, 73220 Val-d\'Arc'];
+            $endroit = $event->getLocation();
+            $longueur = count($ListeLieuxA);
+
+            for ($i=0; $i < $longueur; $i++) {
+                if ($endroit == $ListeLieuxA[$i]){
+                    $place = 'Marlioz';
+                }
+            }
+
+            $longueur = count($ListeLieuxB);
+            for ($i=0; $i < $longueur; $i++) {
+                if ($endroit == $ListeLieuxB[$i]){
+                    $place = 'Aiguebelle';
+                }
+            }
+
+
             $newEvent = Event::updateOrCreate(
                 ['id' => $event->getId()],
                 [
                     'title' => $event->getSummary(),
                     'description' => $event->getDescription(),
                     'location' => $event->getLocation(),
-                    'place' => $event->getPlace(),
+                    'place' => $place,
                     'start' => $start,
                     'end' => $end,
                     'isRecurring' => !is_null($event->getRecurringEventId()),
@@ -80,8 +103,8 @@ class EventsController extends Controller
                 $group->users()->sync($userIds);
             }
         }
-
-        return response()->json(['success' => true, 'message' => 'Events updated/created successfully.']);
+        return $event;
+        //return response()->json(['success' => true, 'message' => 'Events updated/created successfully.']);
 
     }
 
