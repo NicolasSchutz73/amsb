@@ -5,7 +5,7 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                    <a href="{{ route('dashboard') }}" class="">
                         <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                     </a>
                 </div>
@@ -171,70 +171,27 @@
             </div>
         </div>
     </div>
-
-
 </nav>
 
-{{--navbar--}}
-<nav class="fixed bottom-0 left-0 w-full bg-white shadow-lg py-2">
-    <div class="flex justify-around">
-        <!-- Utilisez flex et justify-around pour distribuer uniformément les liens -->
-        <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')" class="text-gray-700 hover:text-blue-500" class="nav-link">
-            <iconify-icon icon="tabler:home-filled" width="25" height="25" class="iconify"></iconify-icon>
-            <span class="block text-xs">{{ __('Dashboard') }}</span>
-        </x-nav-link>
-        <x-nav-link :href="route('calendar')" :active="request()->routeIs('calendar')" class="text-gray-700 hover:text-blue-500" class="nav-link">
-            <iconify-icon icon="ion:calendar" width="25" height="25" class="iconify"></iconify-icon>
-            <span class="block text-xs">{{ __('Mon agenda') }}</span>
-        </x-nav-link>
-        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')" v-if="$can('Admin')" class="text-gray-700 hover:text-blue-500" class="nav-link">
-            <iconify-icon icon="fluent:people-28-filled" width="25" height="25" class="iconify"></iconify-icon>
-            <span class="block text-xs">{{ __('Utilisateur') }}</span>
-        </x-nav-link>
-        <x-nav-link :href="route('chat-room-users')" :active="request()->routeIs('chat-room-users')" class="text-gray-700 hover:text-blue-500" class="nav-link">
-            <iconify-icon icon="streamline:chat-two-bubbles-oval-solid" width="25" height="25" class="iconify"></iconify-icon>
-            <span class="block text-xs">{{ __('Messagerie') }}</span>
-        </x-nav-link>
-        <x-nav-link :href="route('my.teams')" :active="request()->routeIs('my.teams')" class="text-gray-700 hover:text-blue-500" class="nav-link">
-            <iconify-icon icon="fluent:people-team-24-filled" width="25" height="25" class="iconify"></iconify-icon>
-            <span class="block text-xs">{{ __('Mon équipe') }}</span>
-        </x-nav-link>
+
+<nav class="sm:hidden block fixed bottom-0 left-0 z-50 w-full h-16 bg-white border-t border-gray-200 dark:bg-gray-700 dark:border-gray-600">
+    <div class="grid h-full max-w-lg grid-cols-4 mx-auto font-medium">
+
+        <x-nav-link-icon icon="ic:round-home" :href="route('dashboard')" :active="request()->routeIs('dashboard')">
+            {{ __('Accueil') }}
+        </x-nav-link-icon>
+
+        <x-nav-link-icon icon="ion:calendar-outline" :href="route('calendar')" :active="request()->routeIs('calendar')">
+            {{ __('Agenda') }}
+        </x-nav-link-icon>
+
+        <x-nav-link-icon icon="streamline:chat-two-bubbles-oval-solid" :href="route('chat-room-users')" :active="request()->routeIs('chat-room-users')">
+            {{ __('Messagerie') }}
+        </x-nav-link-icon>
+
+        <x-nav-link-icon icon="fluent:people-team-24-filled" :href="route('my.teams')" :active="request()->routeIs('my.teams')">
+            {{ __('Mon équipe') }}
+        </x-nav-link-icon>
+
     </div>
-
-    <style>
-        body{
-            margin-bottom: 60px !important;
-        }
-        nav {
-            background-color: #ffffff !important; /* Couleur de fond */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important; /* Ombre portée */
-        }
-
-        /* Ajoutez ces styles dans votre fichier CSS ou dans une balise <style> dans votre document HTML */
-        .nav-link {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            font-size: 10px !important; /* Réduisez la taille de la police pour le texte */
-            color: #353535 !important; /* Couleur du texte gris */
-            margin-bottom: 10px;
-        }
-
-        .nav-link:hover, .nav-link:hover * {
-            color: #c00000 !important; /* Couleur bleue au survol */
-        }
-
-        .iconify {
-            color: #353535 !important; /* Couleur de l'icône par défaut */
-            transition: color 0.3s !important; /* Transition douce pour le changement de couleur */
-        }
-
-        .fixed.bottom-0 {
-            background-color: #FFFFFF !important; /* Fond blanc */
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1) !important; /* Ombre subtile pour le bas de la barre */
-            z-index: 10;
-            border-top-right-radius: 25px;
-            border-top-left-radius: 25px;
-        }
-    </style>
 </nav>
