@@ -10,6 +10,8 @@ use Illuminate\Http\RedirectResponse;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -191,10 +193,22 @@ class UserController extends Controller
             'id' => $user->id,
         ]);
     }
-
-
-
-
-
-
+//    public function deletePhoto(Request $request)
+//    {
+//        $photoUrl = $request->input('photoUrl');
+//        $baseUrl = 'http://mcida.eu/';
+//        $path = str_replace($baseUrl, '', $photoUrl);
+//
+//        Log::info('Tentative de suppression du fichier: ' . $path);
+//
+//        if (Storage::disk('ftp')->delete($path)) {
+//            Log::info('Photo supprimée: ' . $path);
+//            return response()->json(['success' => true]);
+//        } else {
+//            Log::error('Erreur lors de la suppression de la photo: ' . $path);
+//        }
+//
+//
+//        return response()->json(['success' => false], 404);
+//    }
 }

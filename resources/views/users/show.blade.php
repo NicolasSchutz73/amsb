@@ -26,6 +26,7 @@
             @else
                 <img src="{{ asset('anonyme.jpeg') }}" alt="Photo par défaut" class="rounded-full h-32 w-32 object-cover mx-auto">
             @endif
+            <h2 style="width: 100%; text-align: center" class="mt-2 font-bold">{{ $user->firstname }} {{ $user->lastname }}</h2>
         </div>
 
         <div class="mt-4 px-6 py-4 bg-gray-100 rounded-lg">
@@ -51,10 +52,10 @@
         <!-- Affichage des photos -->
         <div class="mt-8">
             <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Photos</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
                 @if(!empty($photos))
                     @foreach($photos as $photo)
-                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer" onclick="openModal('{{ $photo }}')">
                             <img src="{{ $photo }}" alt="Photo de l'utilisateur" class="w-full h-48 object-cover">
                         </div>
                     @endforeach
@@ -64,4 +65,58 @@
             </div>
         </div>
     </div>
+    <!-- Modal -->
+    <div id="modal" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg overflow-hidden shadow-lg max-w-3xl w-full mx-5">
+            <div class="flex justify-end p-2">
+                <button onclick="closeModal()" class="text-gray-700 hover:text-gray-900">&times;</button>
+            </div>
+            <img id="modalImage" src="" alt="Photo en grand" class="w-full h-auto">
+            <div class="p-4 flex justify-between items-center">
+                <a id="downloadButton" href="" download class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Télécharger</a>
+{{--                @canany(['Admin', 'Super Admin', 'coach'])--}}
+{{--                    <button id="deleteButton" onclick="deletePhoto()" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Supprimer</button>--}}
+{{--                @endcanany--}}
+            </div>
+        </div>
+    </div>
+    <script>
+        let currentPhotoUrl = '';
+
+        function openModal(photoUrl) {
+            currentPhotoUrl = photoUrl;
+            document.getElementById('modalImage').src = photoUrl;
+            document.getElementById('downloadButton').href = photoUrl;
+            document.getElementById('modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+
+        {{--function deletePhoto() {--}}
+        {{--    if (confirm('Voulez-vous vraiment supprimer cette photo ?')) {--}}
+        {{--        // Envoyer une requête pour supprimer la photo--}}
+        {{--        fetch('{{ route('photo.delete') }}', {--}}
+        {{--            method: 'DELETE',--}}
+        {{--            headers: {--}}
+        {{--                'X-CSRF-TOKEN': '{{ csrf_token() }}',--}}
+        {{--                'Content-Type': 'application/json',--}}
+        {{--            },--}}
+        {{--            body: JSON.stringify({ photoUrl: currentPhotoUrl }),--}}
+        {{--        })--}}
+        {{--            .then(response => {--}}
+        {{--                if (response.ok) {--}}
+        {{--                    closeModal();--}}
+        {{--                    location.reload();--}}
+        {{--                } else {--}}
+        {{--                    alert('Une erreur est survenue lors de la suppression de la photo.');--}}
+        {{--                }--}}
+        {{--            })--}}
+        {{--            .catch(error => {--}}
+        {{--                alert('Une erreur est survenue lors de la suppression de la photo.');--}}
+        {{--            });--}}
+        {{--    }--}}
+        {{--}--}}
+    </script>
 </x-app-layout>

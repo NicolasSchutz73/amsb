@@ -77,6 +77,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/usershow/{monid}', [UserMessController::class, 'index'])->name('usersMess.index');
     Route::get('/usershow', [UserMessController::class, 'show'])->name('usersMess.show');
+    Route::delete('/delete-photo', [UserController::class, 'deletePhoto'])->name('photo.delete');
 
     // Vérification de groupe privé entre deux utilisateurs
     Route::get('/check-group/{userOneId}/{userTwoId}', [GroupController::class, 'checkPrivateGroup']);

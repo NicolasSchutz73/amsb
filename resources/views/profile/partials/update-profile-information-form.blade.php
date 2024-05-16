@@ -12,18 +12,6 @@
 <div class="bg-gray-100 min-h-screen">
     <div class="max-w-screen-md mx-auto">
         <!-- Profil Card -->
-        <div class="bg-white rounded-lg shadow p-5 mt-1 mb-6 text-center">
-            <div class="relative">
-                <img class="w-24 h-24 rounded-full mx-auto " src="{{$imageUrl}}" alt="Profil" style="object-fit: cover; aspect-ratio: 1;" >
-{{--                <button class="absolute top-0 right-0 bg-blue-500 text-white p-2 rounded-full">--}}
-{{--                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">--}}
-{{--                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />--}}
-{{--                    </svg>--}}
-{{--                </button>--}}
-            </div>
-            <h3 class="mt-2 font-bold">{{ $user->firstname }} {{ $user->lastname }}</h3>
-            <p class="text-sm text-gray-600">{{ $user->email }}</p>
-        </div>
 
         <!-- Form for profile details -->
         <form method="post" action="{{ route('profile.update') }}" enctype="multipart/form-data" class="bg-white rounded-lg shadow px-8 pt-6 pb-8 mb-4">

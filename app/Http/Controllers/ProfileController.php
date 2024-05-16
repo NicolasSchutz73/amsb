@@ -17,8 +17,20 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $photoPath = "picture/" . $user->id;
+        $photos = [];
+
+        if (Storage::disk('ftp')->exists($photoPath)) {
+            $files = Storage::disk('ftp')->files($photoPath);
+            foreach ($files as $file) {
+                $photos[] = "http://mcida.eu/AMSB/" . $file;
+            }
+        }
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'photos' => $photos
         ]);
     }
 
