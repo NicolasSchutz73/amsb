@@ -9,6 +9,7 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -71,9 +72,20 @@ class UserController extends Controller
      */
     public function show(User $user): View
     {
+        // Récupération des photos de l'utilisateur depuis le serveur FTP
+        $photoPath = "picture/" . $user->id;
+        $photos = [];
+
+        if (Storage::disk('ftp')->exists($photoPath)) {
+            $files = Storage::disk('ftp')->files($photoPath);
+            foreach ($files as $file) {
+                $photos[] = "http://mcida.eu/AMSB/" . $file;
+            }
+        }
 
         return view('users.show', [
-            'user' => $user
+            'user' => $user,
+            'photos' => $photos
         ]);
     }
 

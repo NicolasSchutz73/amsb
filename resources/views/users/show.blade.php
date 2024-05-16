@@ -11,25 +11,10 @@
     </x-slot>
 
     <div class="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md mt-5">
-{{--        <div class="text-center p-6">--}}
-{{--            @php--}}
-{{--                $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";--}}
-{{--                $headers = get_headers($imageUrl);--}}
-{{--            @endphp--}}
-            @php
-                $documentUrl = "http://mcida.eu/AMSB/documents/" . $user->id . ".pdf";
-                $headers = get_headers($documentUrl);
-            @endphp
-
-{{--            @if (strpos($headers[0], '200') !== false)--}}
-{{--                <img src="{{ $imageUrl }}" alt="Photo de profil" class="rounded-full h-32 w-32 object-cover mx-auto">--}}
-{{--            @else--}}
-{{--                <img src="{{ asset('anonyme.jpeg') }}" alt="Photo par défaut" class="rounded-full h-32 w-32 object-cover mx-auto">--}}
-{{--            @endif--}}
-
-{{--            <h3 class="mt-4 text-xl font-bold">{{ $user->firstname }} {{ $user->lastname }}</h3>--}}
-{{--            <p class="text-gray-500">{{ $user->email }}</p>--}}
-{{--        </div>--}}
+        @php
+            $documentUrl = "http://mcida.eu/AMSB/documents/" . $user->id . ".pdf";
+            $headers = get_headers($documentUrl);
+        @endphp
         <div class="mb-4">
             @php
                 $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";
@@ -61,6 +46,22 @@
             <a href="{{ $documentUrl }}" target="_blank" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" style=" width: 100%; text-align: center">
                 Télécharger le document
             </a>
+        </div>
+
+        <!-- Affichage des photos -->
+        <div class="mt-8">
+            <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4">Photos</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                @if(!empty($photos))
+                    @foreach($photos as $photo)
+                        <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                            <img src="{{ $photo }}" alt="Photo de l'utilisateur" class="w-full h-48 object-cover">
+                        </div>
+                    @endforeach
+                @else
+                    <p class="text-gray-600 dark:text-gray-400">Aucune photo disponible.</p>
+                @endif
+            </div>
         </div>
     </div>
 </x-app-layout>

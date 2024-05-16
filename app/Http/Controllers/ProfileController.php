@@ -108,4 +108,39 @@ class ProfileController extends Controller
     {
         return response()->json(['name' => $request->user()]);
     }
+
+
+    public function uploadPhotos(Request $request)
+    {
+        $request->validate([
+            'photos.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $user = auth()->user();
+        $path = "picture/{$user->id}";
+
+        // Créez le dossier si n'existe pas
+        if (!Storage::disk('ftp')->exists($path)) {
+            Storage::disk('ftp')->makeDirectory($path);
+        }
+
+        $uploadedFiles = $request->file('photos');
+        foreach ($uploadedFiles as $file) {
+            $filePath = "{$path}/{$file->getClientOriginalName()}";
+
+            // Enregistrez le fichier sur le serveur FTP
+            try {
+                if (Storage::disk('ftp')->put($filePath, file_get_contents($file->getRealPath()))) {
+                    // Téléchargement réussi
+                    Storage::disk('ftp')->setVisibility($filePath, 'public');
+                } else {
+                    return back()->with('error', 'Erreur de téléchargement.');
+                }
+            } catch (\Exception $e) {
+                return back()->with('error', 'Exception : ' . $e->getMessage());
+            }
+        }
+
+        return back()->with('success', 'Photos téléchargées avec succès.');
+    }
 }
