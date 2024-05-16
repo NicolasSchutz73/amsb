@@ -54,7 +54,7 @@ class EventsController extends Controller
 
             for ($i=0; $i < $longueur; $i++) {
                 if ($endroit == $ListeLieuxA[$i]){
-                    $place = 'Marlioz';
+                    $place = 'Aix les bains';
                 }
             }
 
