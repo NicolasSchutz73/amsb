@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-crud-header title="Gérer les utilisateurs" subtitle="Voici la liste des utilisateurs disponible."></x-crud-header>
+        <x-crud-header title="Gérer les utilisateurs" subtitle="Voici la liste des utilisateurs disponibles."></x-crud-header>
     </x-slot>
 
     <div class="p-6">
@@ -9,45 +9,62 @@
         @endcan
 
         <input type="text" id="searchBar" placeholder="Rechercher des utilisateurs..." class="mt-2 mb-4 w-64 px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none text-gray-900">
-
-        @if (!$users->isEmpty())
-            <x-dynamic-table :headers="['Prénom', 'Nom', 'Rôle', 'Action']">
-                @foreach ($users as $user)
-                    <tr class="bg-white border-b hover:bg-gray-50">
-                        <td class="px-6 py-4 text-sm text-neutral-600">{{ $user->firstname }}</td>
-                        <td class="px-6 py-4 text-sm text-neutral-600">{{ $user->lastname }}</td>
-                        <td class="px-6 py-4">
-                            @forelse ($user->getRoleNames() as $role)
-                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 truncate">{{ $role }}</span>
-                            @empty
-                            @endforelse
-                        </td>
-                        <td class="px-6 py-4 text-sm text-neutral-600">
-                            <!-- Utilisation du composant Action Links -->
-                            <x-action-links :showRoute="'users.show'" :editRoute="'users.edit'" :deleteRoute="'users.destroy'" :id="$user->id"/>
-                        </td>
-                    </tr>
-                @endforeach
-            </x-dynamic-table>
-        @else
-            <p class="text-danger text-center py-10">Aucun utilisateur disponible pour le moment.</p>
-        @endif
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            @forelse ($users as $user)
+                <div class="bg-white rounded-lg shadow-lg p-4 flex flex-col justify-between leading-normal">
+                    <div class="mb-2">
+                        <div class="flex mb-4">
+                            @php
+                                $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";
+                                $headers = get_headers($imageUrl);
+                            @endphp
+                            @if (strpos($headers[0], '200') !== false)
+                                <img src="{{ $imageUrl }}" alt="Avatar de {{ $user->firstname }}" class="h-10 w-10 rounded-full mr-4" style="aspect-ratio: 1; object-fit: cover">
+                            @else
+                                <img class="h-10 w-10 rounded-full mr-4" src="anonyme.jpeg" alt="Avatar de {{ $user->firstname }}">
+                            @endif
+                            <div class="text-sm">
+                                <p class="text-gray-900 leading-none">{{ $user->firstname }} {{ $user->lastname }}</p>
+                                <p class="text-gray-600">{{ $user->roles->first()->name ?? 'Pas de rôle' }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <div class="text-sm">
+{{--                                <p class="text-gray-500">Équipe: {{ $user->team->name ?? 'Aucune' }}</p>--}}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-around">
+                        <a href="{{ route('users.show', $user->id) }}" class="text-blue-500 hover:text-blue-700">Voir</a>
+                        @can('update-user')
+                            <a href="{{ route('users.edit', $user->id) }}" class="text-yellow-500 hover:text-yellow-700 ml-4">Modifier</a>
+                            <form method="POST" action="{{ route('users.destroy', $user->id) }}" onsubmit="return confirm('Are you sure?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="text-red-500 hover:text-red-700 ml-4">Supprimer</button>
+                            </form>
+                        @endcan
+                    </div>
+                </div>
+            @empty
+                <p class="text-danger text-center py-10">Aucun utilisateur disponible pour le moment.</p>
+            @endforelse
+        </div>
         {{ $users->links() }}
     </div>
-
 
 </x-app-layout>
 
 <script>
     document.getElementById('searchBar').addEventListener('keyup', function() {
         var searchValue = this.value.toLowerCase();
-        var userItems = document.querySelectorAll('.user-item');
+        var userCards = document.querySelectorAll('.bg-white');
 
-        userItems.forEach(function(item) {
-            if (item.textContent.toLowerCase().includes(searchValue)) {
-                item.style.display = ''; // L'élément correspond, on l'affiche
+        userCards.forEach(function(card) {
+            if (card.textContent.toLowerCase().includes(searchValue)) {
+                card.style.display = 'block'; // L'élément correspond, on l'affiche
             } else {
-                item.style.display = 'none'; // L'élément ne correspond pas, on le cache
+                card.style.display = 'none'; // L'élément ne correspond pas, on le cache
             }
         });
     });
