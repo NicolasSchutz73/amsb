@@ -20,7 +20,11 @@
                         </div>
 
                         @php
-                            $caption = $post->caption ?? 'Instagram'; // Default caption if none exists
+                            // Check if caption exists and is not empty
+                            $caption = trim($post->caption ?? 'Instagram'); // Use 'Instagram' as default if caption is null
+                            if (empty($caption)) {
+                                $caption = 'Instagram'; // Set default caption if existing caption is empty
+                            }
                             $formatted_caption = preg_replace('/#(\w+)/', '<span class="text-blue-500">#${1}</span>', $caption);
                         @endphp
 
@@ -37,6 +41,7 @@
             </div>
         </div>
     @endif
+
 
 
     <style>
