@@ -5,8 +5,8 @@
         </div>
     </x-slot>
 
-    <div>
-        <h1 class="text-4xl text-red-500 font-black">LES ACTUS RÉSEAUX</h1>
+    <div style="padding: 1rem; width: 100%; display: flex; justify-content: center;">
+        <h1 style="color: #d81e00; font-weight: 900; font-size: 3rem; line-height: 1;">LES ACTUS RÉSEAUX</h1>
     </div>
 
     @if(isset($error))
