@@ -120,7 +120,7 @@ class HomeController extends Controller
         // Check if the profile exists
         if ($profile) {
             // Attempt to get the feed
-            $feed = $profile->feed();
+            $feed = $profile->feed(3);
 
             // Check if the feed is empty
             if (empty($feed)) {
