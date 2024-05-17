@@ -5,7 +5,7 @@
         </h2>
     </x-slot>
     @php
-        $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";
+        $imageUrl = "https://mcida.fr/AMSB/profile/" . $user->id . ".jpg";
         $headers = get_headers($imageUrl);
     @endphp
     <div class="py-12">
