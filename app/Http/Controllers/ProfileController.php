@@ -48,42 +48,42 @@ class ProfileController extends Controller
 
         // Mise à jour de la photo de profil sur le serveur SFTP distant (via le port FTP standard)
         if ($request->hasFile('profile_photo')) {
-            $path = "profile/" . $request->user()->id . '.jpg';
+            $profilePhotoPath = "profile/" . $user->id . '.jpg';
 
             // Gestion des erreurs de téléchargement
-            $fileContent = file_get_contents($request->file('profile_photo')->getRealPath());
+            $profilePhotoContent = file_get_contents($request->file('profile_photo')->getRealPath());
+
             try {
-                if (Storage::disk('ftp')->put($path, $fileContent)) {
+                if (Storage::disk('ftp')->put($profilePhotoPath, $profilePhotoContent)) {
                     // Téléchargement réussi
-                    Storage::disk('ftp')->setVisibility($path, 'public');
-                    $user->profile_photo_path = $path;
+                    Storage::disk('ftp')->setVisibility($profilePhotoPath, 'public');
+                    $user->profile_photo_path = $profilePhotoPath;
                 } else {
                     // Échec du téléchargement
-                    dd('Erreur de téléchargement.');
+                    return Redirect::route('profile.edit')->withErrors(['profile_photo' => 'Erreur de téléchargement.']);
                 }
             } catch (\Exception $e) {
-                dd('Exception : ' . $e->getMessage());
+                return Redirect::route('profile.edit')->withErrors(['profile_photo' => 'Exception : ' . $e->getMessage()]);
             }
         }
 
         if ($request->hasFile('document')) {
-            $path = "documents/" . $request->user()->id . '.pdf';
+            $documentPath = "documents/" . $user->id . '.pdf';
 
             // Gestion des erreurs de téléchargement
-            $fileContent = file_get_contents($request->file('document')->getRealPath());
+            $documentContent = file_get_contents($request->file('document')->getRealPath());
 
             try {
-                if (Storage::disk('ftp')->put($path, $fileContent)) {
+                if (Storage::disk('ftp')->put($documentPath, $documentContent)) {
                     // Téléchargement réussi
-                    Storage::disk('ftp')->setVisibility($path, 'public');
-                    // Vous pouvez stocker le chemin du document dans la base de données si nécessaire
-                    $user->document_path = $path;
+                    Storage::disk('ftp')->setVisibility($documentPath, 'public');
+                    $user->document_path = $documentPath;
                 } else {
                     // Échec du téléchargement
-                    dd('Erreur de téléchargement.');
+                    return Redirect::route('profile.edit')->withErrors(['document' => 'Erreur de téléchargement.']);
                 }
             } catch (\Exception $e) {
-                dd('Exception : ' . $e->getMessage());
+                return Redirect::route('profile.edit')->withErrors(['document' => 'Exception : ' . $e->getMessage()]);
             }
         }
 
