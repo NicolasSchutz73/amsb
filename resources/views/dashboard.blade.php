@@ -58,8 +58,9 @@
         }
         .posts {
             width: 33.3333%;
-            height: 400px; /* Fixe la hauteur pour un aspect rectangulaire */
+            margin-bottom: 2rem;
         }
+
         @media (max-width: 600px) {
             .posts {
                 width: 100% !important;
