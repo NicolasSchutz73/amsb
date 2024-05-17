@@ -18,10 +18,10 @@
                             <x-application-logo class="block h-6 w-auto fill-current"/>
                             <span class="ml-4 text-sm font-bold">Aix Maurienne Savoie Basket</span>
                         </div>
+                        <p>{{$post->caption}}</p>
                         <a href="https://www.instagram.com/amsb_test/" target="_blank" style="display: block; height: 300px; background-color: #c3b1e1; overflow: hidden; position: relative;">
                             <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.4); opacity: 0;"></div>
                             <img src="{{ $post->url }}" alt="Instagram Post" style="width: 100%; height: 100%; object-fit: cover;">
-                            <p>{{$post->caption}}</p>
                         </a>
                     </div>
                 @endforeach
