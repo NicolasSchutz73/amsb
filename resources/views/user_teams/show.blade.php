@@ -80,18 +80,12 @@
                                 </h3>
                                 @forelse ($teamDetail['coaches'] as $coach)
                                     @php
-                                        $imageUrl = "http://mcida.eu/AMSB/profile/" . $coach->id . ".jpg";
+                                        $imageUrl = "https://mcida.fr/AMSB/profile/" . $coach->id . ".jpg";
                                         $headers = get_headers($imageUrl);
                                     @endphp
 
                                     <div class="flex items-center mb-2 cursor-pointer" data-modal-target="user-modal{{ $coach->id }}" data-modal-toggle="user-modal{{ $coach->id }}">
-                                        @if (strpos($headers[0], '200') !== false)
-                                            <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $coach->firstname }}">
-                                        @else
-                                            <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
-                                                <span class="text-gray-500">N/A</span>
-                                            </div>
-                                        @endif
+                                        <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $coach->firstname }}">
                                         <span>{{ $coach->firstname }} {{ $coach->lastname }}</span>
                                     </div>
                                 @empty
@@ -104,18 +98,12 @@
                                 @forelse ($teamDetail['users'] as $user)
                                     @if ($user->hasRole('parents'))
                                         @php
-                                            $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";
+                                            $imageUrl = "https://mcida.fr/AMSB/profile/" . $user->id . ".jpg";
                                             $headers = get_headers($imageUrl);
                                         @endphp
 
                                         <div class="flex items-center mb-2 cursor-pointer" data-modal-target="user-modal{{ $user->id }}" data-modal-toggle="user-modal{{ $user->id }}">
-                                            @if (strpos($headers[0], '200') !== false)
-                                                <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
-                                            @else
-                                                <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
-                                                    <span class="text-gray-500">N/A</span>
-                                                </div>
-                                            @endif
+                                            <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
                                             <span>{{ $user->firstname }} {{ $user->lastname }}</span>
                                         </div>
                                     @endif
