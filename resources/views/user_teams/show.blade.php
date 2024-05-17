@@ -59,8 +59,13 @@
                                         @endphp
 
                                         <div class="flex items-center mb-2 cursor-pointer" data-modal-target="user-modal{{ $user->id }}" data-modal-toggle="user-modal{{ $user->id }}">
-                                            <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
-                                            <span>{{ $user->firstname }} {{ $user->lastname }}</span>
+                                            @if (strpos($headers[0], '200') !== false)
+                                                <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                            @else
+                                                <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                                    <span class="text-gray-500">N/A</span>
+                                                </div>
+                                            @endif
                                         </div>
                                     @endif
                                 @empty
@@ -85,8 +90,13 @@
                                     @endphp
 
                                     <div class="flex items-center mb-2 cursor-pointer" data-modal-target="user-modal{{ $coach->id }}" data-modal-toggle="user-modal{{ $coach->id }}">
-                                        <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $coach->firstname }}">
-                                        <span>{{ $coach->firstname }} {{ $coach->lastname }}</span>
+                                        @if (strpos($headers[0], '200') !== false)
+                                            <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                        @else
+                                            <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                                <span class="text-gray-500">N/A</span>
+                                            </div>
+                                        @endif
                                     </div>
                                 @empty
                                     <p>Aucun entraîneur dans cette équipe pour le moment.</p>
@@ -103,7 +113,13 @@
                                         @endphp
 
                                         <div class="flex items-center mb-2 cursor-pointer" data-modal-target="user-modal{{ $user->id }}" data-modal-toggle="user-modal{{ $user->id }}">
-                                            <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                            @if (strpos($headers[0], '200') !== false)
+                                                <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                            @else
+                                                <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                                    <span class="text-gray-500">N/A</span>
+                                                </div>
+                                            @endif
                                             <span>{{ $user->firstname }} {{ $user->lastname }}</span>
                                         </div>
                                     @endif
@@ -136,7 +152,14 @@
                                 <!-- Modal header -->
                                 <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                     <div class="flex items-center">
-                                        <img class="w-16 h-16 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+
+                                        @if (strpos($headers[0], '200') !== false)
+                                            <img class="w-12 h-12 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                        @else
+                                            <div class="w-12 h-12 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                                <span class="text-gray-500">N/A</span>
+                                            </div>
+                                        @endif
                                         <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                                             {{ $user->firstname }} {{ $user->lastname }}
                                         </h3>
