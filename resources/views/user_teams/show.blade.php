@@ -66,6 +66,7 @@
                                                     <span class="text-gray-500">N/A</span>
                                                 </div>
                                             @endif
+                                                <span>{{ $user->firstname }} {{ $user->lastname }}</span>
                                         </div>
                                     @endif
                                 @empty
@@ -97,6 +98,7 @@
                                                 <span class="text-gray-500">N/A</span>
                                             </div>
                                         @endif
+                                            <span>{{ $user->firstname }} {{ $user->lastname }}</span>
                                     </div>
                                 @empty
                                     <p>Aucun entraîneur dans cette équipe pour le moment.</p>
