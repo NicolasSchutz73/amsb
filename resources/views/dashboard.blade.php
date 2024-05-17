@@ -5,7 +5,7 @@
         </div>
     </x-slot>
 
-    <div style="padding: 1rem; width: 100%; display: flex; justify-content: center;">
+    <div style="padding: 4rem; width: 100%; display: flex; justify-content: center;">
         <h1 style="color: #d81e00; font-weight: 900; font-size: 3rem; line-height: 1;">LES ACTUS RÉSEAUX</h1>
     </div>
 
