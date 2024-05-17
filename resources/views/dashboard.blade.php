@@ -19,7 +19,7 @@
                             <span class="ml-4 text-sm font-bold">Aix Maurienne Savoie Basket</span>
                         </div>
 
-                        <div class="caption pb-2">
+                        <div class="caption" style="padding-bottom: 1rem;">
                             <p class="text-sm">{{$post->caption}}</p>
                         </div>
                         <a href="https://www.instagram.com/amsb_test/" target="_blank" style="display: block; height: 300px; background-color: #c3b1e1; overflow: hidden; position: relative;">
