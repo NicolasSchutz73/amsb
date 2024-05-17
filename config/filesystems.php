@@ -33,9 +33,9 @@ return [
         'ftp' => [
             'driver'   => 'ftp',
             'host'     => 'mcida.fr',
-            'username' => 'u776818696.mcida.eu',
+            'username' => 'u776818696',
             'password' => '29062003$Kykygrd',
-            'root'     => '/public_html/AMSB',
+            'root'     => '/domains/mcida.fr/public_html/AMSB',
             'port'     => 21,
             'passive'  => true,
             'ssl'      => false,

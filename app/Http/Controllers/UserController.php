@@ -81,7 +81,7 @@ class UserController extends Controller
         if (Storage::disk('ftp')->exists($photoPath)) {
             $files = Storage::disk('ftp')->files($photoPath);
             foreach ($files as $file) {
-                $photos[] = "http://mcida.eu/AMSB/" . $file;
+                $photos[] = "https://mcida.fr/AMSB/" . $file;
             }
         }
 
@@ -196,7 +196,7 @@ class UserController extends Controller
 //    public function deletePhoto(Request $request)
 //    {
 //        $photoUrl = $request->input('photoUrl');
-//        $baseUrl = 'http://mcida.eu/';
+//        $baseUrl = 'https://mcida.fr/';
 //        $path = str_replace($baseUrl, '', $photoUrl);
 //
 //        Log::info('Tentative de suppression du fichier: ' . $path);

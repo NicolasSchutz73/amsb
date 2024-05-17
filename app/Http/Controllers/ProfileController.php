@@ -24,7 +24,7 @@ class ProfileController extends Controller
         if (Storage::disk('ftp')->exists($photoPath)) {
             $files = Storage::disk('ftp')->files($photoPath);
             foreach ($files as $file) {
-                $photos[] = "http://mcida.eu/AMSB/" . $file;
+                $photos[] = "https://mcida.fr/AMSB/" . $file;
             }
         }
 

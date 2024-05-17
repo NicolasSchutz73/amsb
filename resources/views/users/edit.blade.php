@@ -18,7 +18,7 @@
             @method("PUT")
             <div class="mb-4">
                 @php
-                    $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";
+                    $imageUrl = "https://mcida.fr/AMSB/profile/" . $user->id . ".jpg";
                     $headers = get_headers($imageUrl);
                 @endphp
 
@@ -33,7 +33,7 @@
 
             <div class="mb-4">
                 @php
-                    $documentUrl = "http://mcida.eu/AMSB/documents/" . $user->id . ".pdf";
+                    $documentUrl = "https://mcida.fr/AMSB/documents/" . $user->id . ".pdf";
                     $headers = get_headers($documentUrl);
                 @endphp
 

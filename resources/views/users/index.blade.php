@@ -19,7 +19,7 @@
                     <div class="mb-2">
                         <div class="flex mb-4">
                             @php
-                                $imageUrl = "http://mcida.eu/AMSB/profile/" . $user->id . ".jpg";
+                                $imageUrl = "https://mcida.fr/AMSB/profile/" . $user->id . ".jpg";
                                 $headers = get_headers($imageUrl);
                             @endphp
                             @if (strpos($headers[0], '200') !== false)
