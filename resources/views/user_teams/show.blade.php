@@ -154,7 +154,7 @@
                             <!-- Modal header -->
                             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <div class="flex items-center">
-                                        <img class="w-16 h-16 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
+                                    <img class="w-16 h-16 rounded-full mr-4 object-cover object-center" src="test" alt="Photo de profil de {{ $user->firstname }}">
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                                         {{ $user->firstname }} {{ $user->lastname }}
                                     </h3>
