@@ -32,7 +32,7 @@
                             $formatted_caption = preg_replace('/#(\w+)/', '<span class="text-blue-500">#${1}</span>', $caption);
                         @endphp
 
-                        <div class="caption" style="padding-bottom: 1rem;">
+                        <div class="caption" style="padding-bottom: 1rem; height: 50px; overflow: hidden;">
                             <p class="text-sm">{!! $formatted_caption !!}</p> <!-- Use unescaped data to render HTML -->
                         </div>
 
@@ -45,6 +45,7 @@
             </div>
         </div>
     @endif
+
 
 
 
