@@ -37,9 +37,6 @@
                             <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.4); opacity: 0; border-radius: 8px;"></div>
                             <img src="{{ $post->url }}" alt="Instagram Post" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
                         </a>
-
-                        <!-- Séparateur sous chaque post -->
-                        <div style="height: 1px; background-color: #ccc; width: 100%; margin-top: 2rem;"></div>
                     </div>
                 @endforeach
             </div>
@@ -61,12 +58,12 @@
         }
         .posts {
             width: 33.3333%;
-            height: 400px; /* Hauteur fixée pour un aspect rectangulaire */
+            height: 400px; /* Fixe la hauteur pour un aspect rectangulaire */
         }
         @media (max-width: 600px) {
             .posts {
                 width: 100% !important;
-                height: auto; /* Hauteur ajustable sur les petits écrans */
+                height: auto; /* Permet une meilleure responsivité sur les petits écrans */
             }
         }
     </style>
@@ -87,4 +84,5 @@
             });
         });
     </script>
+
 </x-app-layout>
