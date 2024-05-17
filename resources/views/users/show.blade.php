@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between">
-            <label for="User Information" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+            <label for="User Information" class="text-white dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                 Information de l'utilisateur
             </label>
             <div>

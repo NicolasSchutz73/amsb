@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex justify-between">
-            <label for="Add New Role" class="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
+            <label for="Add New Role" class="text-white dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300">
                 Add New User
             </label>
             <div>
