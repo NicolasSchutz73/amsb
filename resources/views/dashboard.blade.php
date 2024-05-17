@@ -14,7 +14,7 @@
             <div class="test" style="display: flex; justify-content: center; flex-wrap: wrap;">
                 @foreach($instagram as $post)
                     <div class="posts" style="padding: 2px; box-sizing: border-box;">
-                        <div class="mb-8">
+                        <div class="mb-8 flex flex-row items-center justify-start">
                             <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
                             <span class="text-base	 font-bold">Aix Maurienne Savoie Basket</span>
                         </div>
