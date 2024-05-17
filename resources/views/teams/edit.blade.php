@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <div class="flex items-center justify-between">
-            <h2 class="mb-1 font-semibold text-xl text-neutral-900 dark:text-gray-100">Édition de l'équipe</h2>
+            <h2 class="mb-1 font-semibold text-xl text-white dark:text-gray-100">Édition de l'équipe</h2>
 
             <a href="{{ route('teams.index') }}" class="inline-flex items-center justify-center text-neutral-900 dark:text-gray-100 py-2 px-4 hover:underline">&larr; Retour</a>
         </div>
