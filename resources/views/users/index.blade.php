@@ -25,7 +25,9 @@
                             @if (strpos($headers[0], '200') !== false)
                                 <img src="{{ $imageUrl }}" alt="Avatar de {{ $user->firstname }}" class="h-10 w-10 rounded-full mr-4" style="aspect-ratio: 1; object-fit: cover">
                             @else
-                                <img class="h-10 w-10 rounded-full mr-4" src="anonyme.jpeg" alt="Avatar de {{ $user->firstname }}">
+                                <div class="w-10 h-10 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
+                                    <span class="text-gray-500">N/A</span>
+                                </div>
                             @endif
                             <div class="text-sm">
                                 <p class="text-gray-900 leading-none">{{ $user->firstname }} {{ $user->lastname }}</p>
