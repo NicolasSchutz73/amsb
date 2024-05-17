@@ -20,7 +20,7 @@
                     <div class="posts" style="padding: 2px; box-sizing: border-box;">
                         <div class="mb-4 flex flex-row items-center justify-start">
                             <x-application-logo class="block h-6 w-auto fill-current"/>
-                            <span class="ml-4 text-sm font-bold">Club de Basket</span>
+                            <span class="ml-4 text-sm font-bold hover:decoration-solid">Aix Maurienne Savoie Basket</span>
                         </div>
 
                         @php
