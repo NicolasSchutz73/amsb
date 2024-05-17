@@ -206,6 +206,7 @@
     }
 
     .bottom-nav-bar {
-        padding: 10px;
+        padding-top: 10px;
+        padding-bottom: 10px;
     }
 </style>
