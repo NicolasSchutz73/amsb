@@ -11,13 +11,13 @@
         <p class="text-red-500">{{ $error }}</p>
     @else
         <div class="container mx-auto px-4 py-4" style="max-width: 1200px; margin: auto;">
-            <!-- Section pour le logo et le nom du club -->
-            <div class="flex justify-center items-center flex-col mb-8">
-                <img src="/path/to/logo.png" alt="Logo Club de Basket" class="w-20 h-20 mb-4"> <!-- Assurez-vous de remplacer '/path/to/logo.png' par le chemin réel du logo -->
-                <h1 class="text-xl font-bold">Club de Basket</h1>
-            </div>
             <div class="test" style="display: flex; justify-content: center; flex-wrap: wrap;">
                 @foreach($instagram as $post)
+                    <!-- Section pour le logo et le nom du club -->
+                    <div class="flex justify-center items-center flex-col mb-8">
+                        <x-application-logo class="block h-9 w-auto fill-current text-gray-800 dark:text-gray-200" />
+                        <h1 class="text-xl font-bold">Aix Maurienne Savoie Basket</h1>
+                    </div>
                     <div class="posts" style="padding: 2px; box-sizing: border-box;">
                         <a href="https://www.instagram.com/amsb_test/" target="_blank" style="display: block; height: 300px; background-color: #c3b1e1; overflow: hidden; position: relative;">
                             <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.4); opacity: 0;"></div>
