@@ -154,13 +154,7 @@
                             <!-- Modal header -->
                             <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <div class="flex items-center">
-                                    @if (strpos($headers[0], '200') !== false)
                                         <img class="w-16 h-16 rounded-full mr-4 object-cover object-center" src="{{ $imageUrl }}" alt="Photo de profil de {{ $user->firstname }}">
-                                    @else
-                                        <div class="w-16 h-16 rounded-full mr-4 bg-gray-200 flex items-center justify-center">
-                                            <span class="text-gray-500">N/A</span>
-                                        </div>
-                                    @endif
                                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
                                         {{ $user->firstname }} {{ $user->lastname }}
                                     </h3>
