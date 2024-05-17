@@ -16,12 +16,18 @@
                     <div class="posts" style="padding: 2px; box-sizing: border-box;">
                         <div class="mb-4 flex flex-row items-center justify-start">
                             <x-application-logo class="block h-6 w-auto fill-current"/>
-                            <span class="ml-4 text-sm font-bold">Aix Maurienne Savoie Basket</span>
+                            <span class="ml-4 text-sm font-bold">Club de Basket</span>
                         </div>
 
+                        @php
+                            $caption = $post->caption ?? 'Instagram'; // Default caption if none exists
+                            $formatted_caption = preg_replace('/#(\w+)/', '<span class="text-blue-500">#${1}</span>', $caption);
+                        @endphp
+
                         <div class="caption" style="padding-bottom: 1rem;">
-                            <p class="text-sm">{{$post->caption}}</p>
+                            <p class="text-sm">{!! $formatted_caption !!}</p> <!-- Use unescaped data to render HTML -->
                         </div>
+
                         <a href="https://www.instagram.com/amsb_test/" target="_blank" style="display: block; height: 300px; overflow: hidden; position: relative;">
                             <div class="overlay" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: rgba(0, 0, 0, 0.4); opacity: 0; border-radius: 8px;"></div>
                             <img src="{{ $post->url }}" alt="Instagram Post" style="width: 100%; height: 100%; object-fit: cover; border-radius: 8px;">
