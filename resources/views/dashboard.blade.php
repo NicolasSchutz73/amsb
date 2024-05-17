@@ -7,6 +7,10 @@
         </div>
     </x-slot>
 
+    <div>
+        <h1 class="text-4xl text-red-500 font-black">LES ACTUS RÉSEAUX</h1>
+    </div>
+
     @if(isset($error))
         <p class="text-red-500">{{ $error }}</p>
     @else
@@ -21,7 +25,7 @@
 
                         @php
                             // Check if caption exists and is not empty
-                            $caption = trim($post->caption ?? 'Instagram'); // Use 'Instagram' as default if caption is null
+                            $caption = trim($post->caption ?? ''); // Default empty if caption is null
                             if (empty($caption)) {
                                 $caption = 'Instagram'; // Set default caption if existing caption is empty
                             }
@@ -41,6 +45,7 @@
             </div>
         </div>
     @endif
+
 
 
 
