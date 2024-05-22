@@ -397,7 +397,7 @@ Cette section est dédiée à la gestion des utilisateurs et des profils dans l'
 Fonctionnalités Utilisateur et Profil
 
 Contrôleurs
-- UserController
+- ##### UserController
 ### index()
     Description : Affiche la liste de tous les utilisateurs.
     Route : GET /users
@@ -433,7 +433,7 @@ Contrôleurs
     Route : DELETE /users/{id}
     Sortie : Redirection vers la liste des utilisateurs.
     
- - ProfileController
+ - ##### ProfileController
 ### show($id)
     Description : Affiche les détails du profil d'un utilisateur spécifique.
     Route : GET /profile/{id}
