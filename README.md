@@ -64,3 +64,188 @@ If you discover a security vulnerability within Laravel, please send an e-mail t
 ## License
 
 The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+
+# APPLICATION 
+
+## Messagerie
+
+Cette partie est consacrée à la messagerie en temps réel permettant aux utilisateurs de communiquer via des groupes et des conversations privées. Vous trouverez ci-dessous une explication détaillée des fonctionnalités de messagerie, ainsi que la logique et les fonctions utilisées pour les mettre en œuvre.
+
+### Fonctionnalités de la Messagerie
+
+#### Gestion des Conversations et des Groupes
+
+- **toggleGroupCreationMode()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Active ou désactive le mode de création de groupe, affichant ou masquant les éléments de l'interface utilisateur liés à la création de groupe.
+
+- **createGroup()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Crée un nouveau groupe avec les utilisateurs sélectionnés et recharge la liste des groupes.
+
+- **loadUsers()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Charge la liste des utilisateurs à partir de l'API et les affiche dans le modal de sélection d'utilisateurs.
+
+- **loadUserGroups()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Charge la liste des groupes de l'utilisateur, en séparant les groupes favoris des autres groupes, et les affiche.
+
+- **joinGroupChat(groupId, groupName)**
+    - **Entrée** : `groupId` (ID du groupe), `groupName` (Nom du groupe)
+    - **Sortie** : Aucune
+    - **Description** : Rejoint un chat de groupe, met à jour l'en-tête et charge les messages précédents du groupe sélectionné.
+
+- **subscribeToGroupChannel(groupId)**
+    - **Entrée** : `groupId` (ID du groupe)
+    - **Sortie** : Aucune
+    - **Description** : Abonne l'utilisateur au canal de groupe pour recevoir les messages en temps réel.
+
+- **subscribeToAllGroupChannels(groups)**
+    - **Entrée** : `groups` (Liste des groupes)
+    - **Sortie** : Aucune
+    - **Description** : Abonne l'utilisateur à tous les canaux de groupe pour recevoir les messages en temps réel.
+
+#### Envoi et Réception de Messages
+
+- **sendMessage()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Envoie un message texte et/ou des fichiers au groupe ou à la conversation privée actuellement sélectionné(e).
+
+- **loadPreviousMessages(groupId)**
+    - **Entrée** : `groupId` (ID du groupe)
+    - **Sortie** : Aucune
+    - **Description** : Charge les messages précédents du groupe spécifié et les affiche dans le chat.
+
+- **appendMessageToChat(messageContent, authorID, authorFirstname, authorLastname, fileData)**
+    - **Entrée** : `messageContent` (Contenu du message), `authorID` (ID de l'auteur), `authorFirstname` (Prénom de l'auteur), `authorLastname` (Nom de l'auteur), `fileData` (Données des fichiers)
+    - **Sortie** : Aucune
+    - **Description** : Ajoute un message au chat, en formatant le message en fonction de l'auteur et des fichiers attachés.
+
+#### Favoris
+
+- **loadUserFavorites()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Charge les favoris de l'utilisateur et les affiche.
+
+- **addFavorite(groupId)**
+    - **Entrée** : `groupId` (ID du groupe)
+    - **Sortie** : Aucune
+    - **Description** : Ajoute le groupe spécifié aux favoris de l'utilisateur.
+
+- **removeFavorite(groupId)**
+    - **Entrée** : `groupId` (ID du groupe)
+    - **Sortie** : Aucune
+    - **Description** : Supprime le groupe spécifié des favoris de l'utilisateur.
+
+#### Gestion des Utilisateurs
+
+- **getUserInfo()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Récupère les informations de l'utilisateur et les stocke dans des variables globales.
+
+- **getUserInfoAsync()**
+    - **Entrée** : Aucune
+    - **Sortie** : Promise
+    - **Description** : Wrapper de `getUserInfo` pour fonctionner de manière asynchrone avec des promesses.
+
+#### Autres Fonctions Utilitaires
+
+- **showConversationList()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Affiche la liste des conversations et masque la conversation active.
+
+- **showConversation()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Affiche la conversation active et masque la liste des conversations.
+
+- **updateGroupPreview(groupId, messageContent)**
+    - **Entrée** : `groupId` (ID du groupe), `messageContent` (Contenu du message)
+    - **Sortie** : Aucune
+    - **Description** : Met à jour l'aperçu du dernier message et l'heure du dernier message pour un groupe.
+
+- **startConversation(userId)**
+    - **Entrée** : `userId` (ID de l'utilisateur)
+    - **Sortie** : Aucune
+    - **Description** : Démarre une nouvelle conversation avec l'utilisateur spécifié ou rejoint une conversation existante.
+
+- **createPrivateGroup(userOneId, userTwoId)**
+    - **Entrée** : `userOneId` (ID du premier utilisateur), `userTwoId` (ID du second utilisateur)
+    - **Sortie** : Aucune
+    - **Description** : Crée un groupe privé entre deux utilisateurs et rejoint la conversation.
+
+- **loadUserConversation()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Charge les conversations privées de l'utilisateur et les affiche.
+
+- **triggerPushNotification(groupId, messageContent, globaluserId)**
+    - **Entrée** : `groupId` (ID du groupe), `messageContent` (Contenu du message), `globaluserId` (ID de l'utilisateur)
+    - **Sortie** : Aucune
+    - **Description** : Déclenche une notification push pour un nouveau message.
+
+- **startRefreshingConversations()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Démarre l'actualisation périodique des conversations et des groupes.
+
+- **updateLastVisitedAt(groupId)**
+    - **Entrée** : `groupId` (ID du groupe)
+    - **Sortie** : Aucune
+    - **Description** : Met à jour la dernière visite d'un utilisateur pour un groupe spécifié.
+
+- **loadUnreadMessagesCount()**
+    - **Entrée** : Aucune
+    - **Sortie** : Promise
+    - **Description** : Charge le nombre de messages non lus pour chaque groupe et conversation.
+
+- **openModal()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Ouvre la modale pour la sélection des utilisateurs.
+
+- **closeModal()**
+    - **Entrée** : Aucune
+    - **Sortie** : Aucune
+    - **Description** : Ferme la modale pour la sélection des utilisateurs.
+
+## Utilisation de la Messagerie
+
+### Affichage des Groupes et Conversations Privées :
+- Utilisez les onglets "Groupes" et "Conversations" pour basculer entre les vues.
+
+### Création de Groupes :
+- Cliquez sur le bouton "+" en bas à droite pour entrer en mode création de groupe.
+- Entrez un nom de groupe, sélectionnez des utilisateurs, puis cliquez sur "Suivant" pour créer le groupe.
+
+### Envoi de Messages :
+- Sélectionnez un groupe ou une conversation privée.
+- Tapez votre message dans le champ de saisie et cliquez sur le bouton d'envoi ou appuyez sur "Entrée".
+- Pour envoyer des fichiers, cliquez sur l'icône de fichier et sélectionnez les fichiers à envoyer.
+
+### Gestion des Favoris :
+- Ajoutez ou supprimez des groupes et des conversations privées de vos favoris en cliquant sur l'étoile à côté de chaque élément.
+
+### ------------------------
+## Agenda
+
+écrire ici 
+
+### ------------------------
+## Flux Instagram
+
+écrire ici 
+
+### ------------------------
+## Utilisateur / profil 
+
+écrire ici 
