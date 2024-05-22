@@ -20,16 +20,16 @@ document.addEventListener('DOMContentLoaded', function() {
     groupTab.addEventListener('click', function() {
         document.getElementById('groupContainer').classList.remove('hidden');
         document.getElementById('privateContainer').classList.add('hidden');
-        groupTab.classList.add('bg-blue-500', 'text-white');
-        privateTab.classList.remove('bg-blue-500', 'text-white');
+        groupTab.classList.add('bg-red-500', 'text-white');
+        privateTab.classList.remove('bg-red-500', 'text-white');
         privateTab.classList.add('bg-gray-200', 'text-gray-700');
     });
 
     privateTab.addEventListener('click', function() {
         document.getElementById('groupContainer').classList.add('hidden');
         document.getElementById('privateContainer').classList.remove('hidden');
-        privateTab.classList.add('bg-blue-500', 'text-white');
-        groupTab.classList.remove('bg-blue-500', 'text-white');
+        privateTab.classList.add('bg-red-500', 'text-white');
+        groupTab.classList.remove('bg-red-500', 'text-white');
         groupTab.classList.add('bg-gray-200', 'text-gray-700');
     });
 
@@ -189,7 +189,7 @@ function loadUsers() {
 
                 const userCheckbox = document.createElement('input');
                 userCheckbox.type = 'checkbox';
-                userCheckbox.classList.add("form-checkbox", "h-5", "w-5", "text-blue-600", "hidden");
+                userCheckbox.classList.add("form-checkbox", "h-5", "w-5", "text-red-600", "hidden");
                 userCheckbox.setAttribute('data-user-id', user.id);
 
                 userItem.appendChild(userInfo);
@@ -272,7 +272,7 @@ function loadUserGroups() {
                         timeElement.setAttribute('data-last-message-time', group.id);
 
                         const iconElement = document.createElement('div');
-                        iconElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-blue-500', 'text-blue-300', 'font-bold', 'flex-shrink-0');
+                        iconElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-red-500', 'text-red-300', 'font-bold', 'flex-shrink-0');
                         iconElement.textContent = group.name.charAt(0);
 
                         const groupInfoElement = document.createElement('div');
@@ -386,7 +386,7 @@ function joinGroupChat(groupId, groupName) {
 
     groupNameElement.textContent = groupName; // Met à jour le nom du groupe
     groupLogoElement.textContent = groupName.charAt(0); // Utilise la première lettre du nom du groupe comme logo
-    groupLogoElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'bg-blue-500', 'text-blue-300', 'text-m', 'rounded-full');
+    groupLogoElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'bg-red-500', 'text-red-300', 'text-m', 'rounded-full');
 
     // Efface les messages précédents
     document.querySelector('.grid.grid-cols-12.gap-y-2').innerHTML = '';

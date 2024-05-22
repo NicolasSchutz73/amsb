@@ -46,7 +46,7 @@
                 </div>
 
                 <div class="mt-5 flex flex-row justify-center">
-                    <button id="groupTab" class="px-4 py-2 bg-blue-500 text-white rounded-l-lg focus:outline-none">Groupes</button>
+                    <button id="groupTab" class="px-4 py-2 bg-red-500 text-white rounded-l-lg focus:outline-none">Groupes</button>
                     <button id="privateTab" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-r-lg focus:outline-none">Conversations</button>
                 </div>
 
