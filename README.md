@@ -392,4 +392,132 @@ Cette partie est consacrée à la messagerie en temps réel permettant aux utili
 ### ------------------------
 ## Utilisateur / profil 
 
-écrire ici 
+Cette section est dédiée à la gestion des utilisateurs et des profils dans l'application. Voici les détails sur les fonctionnalités, la logique et les fonctions utilisées pour gérer les utilisateurs et leurs profils.
+
+Fonctionnalités Utilisateur et Profil
+
+Contrôleurs
+- UserController
+### index()
+    Description : Affiche la liste de tous les utilisateurs.
+    Route : GET /users
+    Sortie : Vue affichant tous les utilisateurs.
+    
+### show($id)
+    Description : Affiche les détails d'un utilisateur spécifique.
+    Route : GET /users/{id}
+    Sortie : Vue affichant les détails de l'utilisateur.
+    
+### create()
+    Description : Affiche le formulaire pour créer un nouvel utilisateur.
+    Route : GET /users/create
+    Sortie : Vue affichant le formulaire de création.
+    
+### store(Request $request)
+    Description : Enregistre un nouvel utilisateur dans la base de données.
+    Route : POST /users
+    Sortie : Redirection vers la liste des utilisateurs.
+    
+### edit($id)
+    Description : Affiche le formulaire pour éditer un utilisateur existant.
+    Route : GET /users/{id}/edit
+    Sortie : Vue affichant le formulaire d'édition.
+    
+### update(Request $request, $id)
+    Description : Met à jour les informations d'un utilisateur existant dans la base de données.
+    Route : PUT /users/{id}
+    Sortie : Redirection vers la liste des utilisateurs.
+    
+### destroy($id)
+    Description : Supprime un utilisateur de la base de données.
+    Route : DELETE /users/{id}
+    Sortie : Redirection vers la liste des utilisateurs.
+    
+ - ProfileController
+### show($id)
+    Description : Affiche les détails du profil d'un utilisateur spécifique.
+    Route : GET /profile/{id}
+    Sortie : Vue affichant les détails du profil.
+
+### update(Request $request, $id)
+    Description : Met à jour les informations du profil d'un utilisateur spécifique.
+    Route : PUT /profile/{id}
+    Sortie : Redirection vers les détails du profil.
+
+### Utilisateur / Profil
+
+Cette section détaille les fonctionnalités disponibles pour la gestion des utilisateurs et des profils, ainsi que les étapes pour effectuer chaque action.
+
+#### Fonctionnalités Utilisateur et Profil
+
+##### 1. Afficher la liste des utilisateurs
+
+- **Étapes** :
+  1. Accédez à l'URL `/users` dans votre navigateur.
+  2. La page affiche une table listant tous les utilisateurs avec leurs noms, emails et actions disponibles.
+  3. Vous pouvez voir les options pour afficher, éditer ou supprimer chaque utilisateur.
+
+##### 2. Afficher les détails d'un utilisateur
+
+- **Étapes** :
+  1. Dans la liste des utilisateurs, cliquez sur le lien "View" à côté de l'utilisateur que vous souhaitez voir.
+  2. Vous serez redirigé vers la page `/users/{id}`, où `{id}` est l'identifiant de l'utilisateur.
+  3. La page affiche les détails de l'utilisateur, y compris son nom et son email.
+  4. Vous pouvez également voir les options pour éditer ou supprimer cet utilisateur.
+
+##### 3. Créer un nouvel utilisateur
+
+- **Étapes** :
+  1. Accédez à l'URL `/users/create` dans votre navigateur.
+  2. Remplissez le formulaire de création d'utilisateur avec les informations suivantes :
+     - **Nom** : Saisissez le nom de l'utilisateur.
+     - **Email** : Saisissez l'email de l'utilisateur.
+     - **Mot de passe** : Saisissez un mot de passe pour l'utilisateur.
+  3. Cliquez sur le bouton "Create User" pour soumettre le formulaire.
+  4. L'utilisateur sera créé et vous serez redirigé vers la liste des utilisateurs.
+
+##### 4. Éditer un utilisateur existant
+
+- **Étapes** :
+  1. Dans la liste des utilisateurs, cliquez sur le lien "Edit" à côté de l'utilisateur que vous souhaitez modifier.
+  2. Vous serez redirigé vers la page `/users/{id}/edit`, où `{id}` est l'identifiant de l'utilisateur.
+  3. Modifiez les informations de l'utilisateur dans le formulaire :
+     - **Nom** : Modifiez le nom de l'utilisateur.
+     - **Email** : Modifiez l'email de l'utilisateur.
+  4. Cliquez sur le bouton "Update User" pour soumettre le formulaire.
+  5. Les informations de l'utilisateur seront mises à jour et vous serez redirigé vers la liste des utilisateurs.
+
+##### 5. Supprimer un utilisateur
+
+- **Étapes** :
+  1. Dans la liste des utilisateurs, cliquez sur le lien "Delete" à côté de l'utilisateur que vous souhaitez supprimer.
+  2. Un formulaire de confirmation de suppression s'affiche.
+  3. Cliquez sur le bouton "Delete User" pour confirmer la suppression.
+  4. L'utilisateur sera supprimé de la base de données et vous serez redirigé vers la liste des utilisateurs.
+
+##### 6. Mettre à jour le mot de passe d'un utilisateur
+
+- **Étapes** :
+  1. Accédez à l'URL `/profile/updatePassword/{id}`, où `{id}` est l'identifiant de l'utilisateur.
+  2. Remplissez le formulaire de mise à jour du mot de passe avec le nouveau mot de passe.
+  3. Cliquez sur le bouton "Update Password" pour soumettre le formulaire.
+  4. Le mot de passe de l'utilisateur sera mis à jour.
+
+##### 7. Ajouter des photos dans le profil
+
+- **Étapes** :
+  1. Accédez à l'URL `/profile/addPictures/{id}`, où `{id}` est l'identifiant de l'utilisateur.
+  2. Cliquez sur le champ input de type fichier pour sélectionner les photos que vous souhaitez ajouter.
+  3. Sélectionnez les fichiers de photos depuis votre ordinateur.
+  4. Cliquez sur le bouton "Add Pictures" pour téléverser les photos.
+  5. Les photos seront ajoutées au profil de l'utilisateur.
+
+##### 8. Mettre à jour les informations de profil
+
+- **Étapes** :
+  1. Accédez à l'URL `/profile/update/{id}`, où `{id}` est l'identifiant de l'utilisateur.
+  2. Modifiez les informations de profil dans le formulaire :
+     - **Nom** : Modifiez le nom de l'utilisateur.
+     - **Email** : Modifiez l'email de l'utilisateur.
+  3. Cliquez sur le bouton "Update Profile" pour soumettre le formulaire.
+  4. Les informations de profil de l'utilisateur seront mises à jour.
