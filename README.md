@@ -238,8 +238,146 @@ Cette partie est consacrée à la messagerie en temps réel permettant aux utili
 ### ------------------------
 ## Agenda
 
-écrire ici 
 
+Cette section du projet gère la fonctionnalité d'agenda, incluant la création, l'affichage, la mise à jour et la suppression d'événements. Les événements peuvent être filtrés par équipe et sont synchronisés avec Google Calendar.
+
+#### Prérequis
+
+Avant de commencer, assurez-vous que les éléments suivants sont installés et configurés sur votre machine :
+
+- [PHP](https://www.php.net/downloads) (version 7.4 ou supérieure)
+- [Composer](https://getcomposer.org/download/)
+- [Laravel](https://laravel.com/docs/8.x/installation) (version 8.x ou supérieure)
+- Clé d'API Google et identifiants OAuth pour Google Calendar API
+
+#### Installation
+
+1. Clonez le dépôt :
+
+    ```sh
+    git clone https://github.com/votre-utilisateur/votre-repo.git
+    cd votre-repo
+    ```
+
+2. Installez les dépendances PHP avec Composer :
+
+    ```sh
+    composer install
+    ```
+
+3. Configurez votre fichier `.env` :
+
+    ```sh
+    cp .env.example .env
+    php artisan key:generate
+    ```
+
+4. Configurez la base de données dans le fichier `.env` et migrez les tables :
+
+    ```sh
+    php artisan migrate
+    ```
+
+5. Configurez Google API :
+
+    - Placez votre fichier de clés OAuth JSON dans `config/google/credentials.json`.
+    - Ajoutez votre clé d'API Google dans le fichier `.env` :
+
+    ```sh
+    GOOGLE_API_KEY=Votre_Clé_API
+    ```
+
+#### Utilisation
+
+##### Modèle : `Event`
+
+Le modèle `Event` représente un événement dans le système. Voici les attributs principaux :
+
+- `id` : Identifiant unique de l'événement (utilisé pour la synchronisation avec Google Calendar).
+- `title` : Titre de l'événement.
+- `description` : Description de l'événement (peut inclure les catégories d'équipe).
+- `location` : Lieu de l'événement.
+- `place` : Indication du lieu (par exemple, "domicile" ou "extérieur").
+- `start` : Date et heure de début de l'événement.
+- `end` : Date et heure de fin de l'événement.
+- `isRecurring` : Booléen indiquant si l'événement est récurrent.
+
+##### Vues
+
+###### `calendar.blade.php`
+
+Cette vue affiche le calendrier et les événements. Elle permet également de filtrer les événements par équipe.
+
+###### `events/show.blade.php`
+
+Cette vue affiche les détails d'un événement spécifique.
+
+##### Contrôleurs
+
+###### `CalendarController`
+
+- `getUserTeam` : Récupère l'équipe de l'utilisateur authentifié.
+- `getTeamName` : Récupère le nom de l'équipe par son ID.
+- `show` : Affiche tous les événements et catégories d'équipes.
+- `index` : Filtre et affiche les événements par équipe sélectionnée.
+
+###### `EventsController`
+
+- `getEvents` : Synchronise les événements depuis Google Calendar et les enregistre dans la base de données.
+- `getCategories` : Récupère les catégories d'équipes pour chaque événement depuis Google Calendar.
+- `getCategoriesById` : Récupère les catégories pour un événement spécifique.
+- `getEventsByCategory` : Filtre les événements par catégorie d'équipe.
+
+#### Synchronisation avec Google Calendar
+
+1. Configurez votre projet Google API et obtenez les identifiants OAuth et la clé d'API.
+2. Placez le fichier des clés OAuth dans `config/google/credentials.json`.
+3. Ajoutez la clé d'API dans le fichier `.env` :
+
+    ```sh
+    GOOGLE_API_KEY=Votre_Clé_API
+    ```
+
+4. Utilisez les méthodes du `EventsController` pour synchroniser les événements.
+
+#### Relier le Google Agenda de votre choix à l'application
+
+1. Rendez-vous sur le site : [Google Calendar](https://calendar.google.com/calendar/) et connectez-vous au compte souhaité.
+2. Ouvrez le menu déroulant en haut à gauche.
+3. Dans "Mes agendas", allez dans "Paramètre et partage" de l'agenda souhaité.
+4. Sélectionnez "Rendre disponible publiquement" dans "Autorisations d'accès aux événements".
+5. Puis récupérez dans "Intégrer l'agenda" votre "ID de l'agenda".
+
+Implémentez ensuite dans le code votre ID d'agenda dans `EventsController.php` :
+Dans les fonctions `getEvents`, `getCategories`, `getEventsByCategory`, indiquez l'id d'agenda voulu à la ligne :
+
+    ```php
+    $calendarId = 'votre id d'agenda';
+    ```
+
+#### Styles et Scripts
+
+##### CSS
+
+Le style est principalement géré par Tailwind CSS et les classes Bootstrap pour le style des composants.
+
+##### JavaScript
+
+Le calendrier est géré par FullCalendar et des scripts personnalisés pour la manipulation des événements et des filtres.
+
+#### Développement futur
+
+##### Fonctionnalités à ajouter
+
+1. **Notifications** : Implémenter des notifications pour les nouveaux événements ou les changements.
+2. **Support multilingue** : Ajouter des traductions pour supporter plusieurs langues.
+3. **Tests** : Ajouter des tests unitaires et fonctionnels pour améliorer la robustesse du système.
+
+##### Améliorations possibles
+
+1. **Interface utilisateur** : Améliorer l'interface utilisateur avec des animations et une meilleure UX.
+2. **Sécurité** : Ajouter des mesures de sécurité supplémentaires pour protéger les données des événements.
+3. **Performances** : Optimiser les requêtes et la gestion des événements pour de meilleures performances.
 ### ------------------------
 ## Flux Instagram
 
