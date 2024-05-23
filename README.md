@@ -387,7 +387,27 @@ Cette partie est consacrée à la messagerie en temps réel permettant aux utili
 
 ## Flux Instagram
 
-écrire ici 
+HomeController.php
+Le contrôleur HomeController contient la fonction suivantes :
+
+instagramPosts : Une fonction pour récupérer et afficher les posts Instagram à l'aide du package dymantic/laravel-instagram-feed.
+Voici un exemple de la fonction instagramPosts ajoutée pour récupérer les posts Instagram :
+
+public function instagramPosts()
+{
+    $profile = \Dymantic\InstagramFeed\Profile::for('my_profile');
+    $feed = $profile->feed();
+
+    return view('instagram-feed', ['instagram_feed' => $feed]);
+}
+
+Le fichier dashboard.blade.php est conçu pour afficher les posts Instagram. Il utilise une structure HTML/CSS pour afficher les images des posts dans une grille flexible.
+
+- Fonctionnalités Instagram
+Ce projet utilise le package Dymantic/laravel-instagram-feed pour intégrer facilement votre flux Instagram.
+
+Voici le lien du package comprenant une description approfondi pour l'utilisation de ce dernier : 
+https://github.com/Dymantic/laravel-instagram-feed
 
 ### ------------------------
 ## Utilisateur / profil 
@@ -521,3 +541,5 @@ Cette section détaille les fonctionnalités disponibles pour la gestion des uti
      - **Email** : Modifiez l'email de l'utilisateur.
   3. Cliquez sur le bouton "Update Profile" pour soumettre le formulaire.
   4. Les informations de profil de l'utilisateur seront mises à jour.
+
+
