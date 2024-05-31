@@ -114,6 +114,13 @@ Avant de commencer, assurez-vous que les éléments suivants sont installés et 
     GOOGLE_API_KEY=Votre_Clé_API
     ```
 
+6. compte Pusher : 
+
+Compte : Pusher →  
+
+MAIL : amsb.application@gmail.com
+
+MDP : AmsbUsmb123*
 
 
 ### ------------------------
