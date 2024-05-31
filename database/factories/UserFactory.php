@@ -21,14 +21,22 @@ class UserFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
     public function definition(): array
     {
+        // Configurer Faker pour utiliser la locale française
+        $this->faker->locale('fr_FR');
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'firstname' => fake()->firstname(),
+            'lastname' => fake()->lastname(),
+            'email' => $this->faker->unique()->userName() . '@gmail.com',
             'email_verified_at' => now(),
+            'description' => fake()->paragraph(),
+            'emergency' => fake()->phoneNumber(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'profile_photo_path' => 'https://picsum.photos/400/400?random=' . $this->faker->unique()->numberBetween(1, 1000),
         ];
     }
 

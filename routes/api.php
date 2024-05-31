@@ -1,7 +1,10 @@
 <?php
 
+
+use App\Models\Event;
+use App\Http\Controllers\EventsController;
 use App\Http\Controllers\GroupController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\SearchUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,9 +26,13 @@ Route::middleware('auth:sanctum')->group(static function () : void {
 
 });
 
+
+Route::get('/getCategories', [EventsController::class, 'getCategories']);
+
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
 
 Route::middleware('auth:sanctum')->get('/user-groups', [GroupController::class, 'getUserGroups']);
 
@@ -34,5 +41,19 @@ Route::middleware('auth:sanctum')->get('/user-groups', [GroupController::class, 
 Route::get('/check-group/{userOneId}/{userTwoId}', [GroupController::class, 'checkPrivateGroup']);
 
 
-Route::middleware('auth:sanctum')->get('/user-details/{id}', [UserController::class, 'getUserDetailsById']);
+Route::middleware('auth:sanctum')->get('/user-details/{id}', [SearchUserController::class, 'getUserDetailsById']);
+Route::post('/send-notification', [App\Http\Controllers\HomeController::class, 'sendNotification'])->name('send.notification');
 
+
+Route::post('/send-notification-group', [GroupController::class, 'sendNotificationGroup'])->middleware('auth:sanctum');
+
+Route::get('events', [EventsController::class, 'getEvents'])->name('events');
+
+// routes/web.php ou routes/api.php
+use App\Http\Controllers\FavoriteController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/api/user-favorites', [FavoriteController::class, 'getUserFavorites']);
+    Route::post('/api/user-favorites/add', [FavoriteController::class, 'addFavorite']);
+    Route::post('/api/user-favorites/remove', [FavoriteController::class, 'removeFavorite']);
+});

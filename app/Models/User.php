@@ -24,8 +24,12 @@ class User extends Authenticatable
         'firstname',
         'lastname',
         'email',
+        'description',
+        'emergency',
         'password',
-        'device_token'
+        'profile_photo_path',
+        'document_path',
+        'device_token', // Ajoutez cette ligne
     ];
 
     /**
@@ -48,6 +52,11 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
+    public function team()
+    {
+        return $this->belongsToMany(Team::class, 'team_user', 'user_id', 'team_id')->withTimestamps();
+    }
+
     public function courses(): BelongsToMany
     {
         return $this->belongsToMany((Course::class));
@@ -55,8 +64,9 @@ class User extends Authenticatable
 
     public function groups()
     {
-        return $this->belongsToMany(Group::class);
+        return $this->belongsToMany(Group::class)->withPivot('last_visited_at');
     }
+
 
     /**
      * Vérifie si l'utilisateur est membre d'un groupe spécifique.
@@ -67,5 +77,10 @@ class User extends Authenticatable
     public function isMemberOfGroup( $groupId): bool
     {
         return $this->groups()->where('groups.id', $groupId)->exists();
+    }
+
+    public function favoriteGroups()
+    {
+        return $this->belongsToMany(Group::class, 'user_favorites')->withTimestamps();
     }
 }

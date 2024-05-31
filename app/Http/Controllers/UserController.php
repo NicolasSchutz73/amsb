@@ -9,6 +9,9 @@ use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
@@ -26,13 +29,13 @@ class UserController extends Controller
     }
 
     /**
-     * Affiche la liste des utilisateurs.
+     * Affiche la liste des utilisateurs pour users
      * @return View
      */
     public function index(): View
     {
         return view('users.index', [
-            'users' => User::latest('id')->paginate(3)
+            'users' => User::latest('id')->paginate(15)
         ]);
 
     }
@@ -65,15 +68,26 @@ class UserController extends Controller
     }
 
     /**
-     * Affiche les détails de l'utilisateur spécifié.
+     * Affiche les détails de l'utilisateur spécifié pour users
      * @param User $user
      * @return View
      */
     public function show(User $user): View
     {
+        // Récupération des photos de l'utilisateur depuis le serveur FTP
+        $photoPath = "picture/" . $user->id;
+        $photos = [];
+
+        if (Storage::disk('ftp')->exists($photoPath)) {
+            $files = Storage::disk('ftp')->files($photoPath);
+            foreach ($files as $file) {
+                $photos[] = "https://mcida.fr/AMSB/" . $file;
+            }
+        }
 
         return view('users.show', [
-            'user' => $user
+            'user' => $user,
+            'photos' => $photos
         ]);
     }
 
@@ -179,10 +193,22 @@ class UserController extends Controller
             'id' => $user->id,
         ]);
     }
-
-
-
-
-
-
+//    public function deletePhoto(Request $request)
+//    {
+//        $photoUrl = $request->input('photoUrl');
+//        $baseUrl = 'https://mcida.fr/';
+//        $path = str_replace($baseUrl, '', $photoUrl);
+//
+//        Log::info('Tentative de suppression du fichier: ' . $path);
+//
+//        if (Storage::disk('ftp')->delete($path)) {
+//            Log::info('Photo supprimée: ' . $path);
+//            return response()->json(['success' => true]);
+//        } else {
+//            Log::error('Erreur lors de la suppression de la photo: ' . $path);
+//        }
+//
+//
+//        return response()->json(['success' => false], 404);
+//    }
 }

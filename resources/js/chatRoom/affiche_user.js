@@ -6,28 +6,139 @@ let groupChannels = {};
 let globalFirstname = '';
 let globalLastname = '';
 let globalUserId = '';
+
 document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('btn_affiche_user').addEventListener('click', openModal);
     document.getElementById('btn_fermer_modal_').addEventListener('click', closeModal);
     document.getElementById('nouveau-groupe-btn').addEventListener('click', toggleGroupCreationMode);
     document.getElementById('nextButton').addEventListener('click', createGroup);
 
+    // Gestion des onglets
+    const groupTab = document.getElementById('groupTab');
+    const privateTab = document.getElementById('privateTab');
+
+    groupTab.addEventListener('click', function() {
+        document.getElementById('groupContainer').classList.remove('hidden');
+        document.getElementById('privateContainer').classList.add('hidden');
+        groupTab.classList.add('bg-red-500', 'text-white');
+        privateTab.classList.remove('bg-red-500', 'text-white');
+        privateTab.classList.add('bg-gray-200', 'text-gray-700');
+    });
+
+    privateTab.addEventListener('click', function() {
+        document.getElementById('groupContainer').classList.add('hidden');
+        document.getElementById('privateContainer').classList.remove('hidden');
+        privateTab.classList.add('bg-red-500', 'text-white');
+        groupTab.classList.remove('bg-red-500', 'text-white');
+        groupTab.classList.add('bg-gray-200', 'text-gray-700');
+    });
+
+    showConversationList();
+
+    const backButton = document.getElementById('backButton');
+    backButton.addEventListener('click', showConversationList);
 
     const sendButton = document.getElementById('sendButton');
     const messageInput = document.getElementById('messageInput');
 
     sendButton.addEventListener('click', function() {
-        sendMessage(messageInput.value); // Envoie le contenu du champ de saisie
-        messageInput.value = ''; // Efface le champ après l'envoi
+        sendMessage(messageInput.value);
+        messageInput.value = '';
     });
 
-    loadUserGroups();
-    loadUserConversation()
-    getUserInfo();
+    messageInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+            sendMessage(messageInput.value);
+            messageInput.value = '';
+        }
+    });
 
+    getUserInfoAsync().then(() => {
+        loadUserGroups();
+        loadUserConversation();
+        startRefreshingConversations();
+        loadUserFavorites();
+
+        messaging.onMessage(function(payload) {
+            const noteTitle = payload.notification.title;
+            const noteOptions = {
+                body: payload.notification.body,
+                icon: payload.notification.icon,
+            };
+            console.log("new message");
+            loadUserGroups();
+            loadUserConversation();
+        });
+    }).catch(error => {
+        console.error('Erreur lors de la récupération des informations utilisateur', error);
+    });
 });
 
+
 let isGroupCreationActive = false;
+
+function getUserInfoAsync() {
+    return new Promise((resolve, reject) => {
+        try {
+            getUserInfo(); // votre fonction actuelle qui ne retourne pas de promesse
+            resolve(); // Si tout va bien, résolvez la promesse
+        } catch (error) {
+            reject(error); // Si une erreur se produit, rejetez la promesse
+        }
+    });
+}
+
+function loadUserFavorites() {
+    axios.get('/api/user-favorites')
+        .then(response => {
+            const favorites = response.data.favorites;
+            console.log('Favoris de l\'utilisateur :', favorites);
+        })
+        .catch(error => {
+            console.error('Erreur lors du chargement des favoris', error);
+        });
+}
+
+function addFavorite(groupId) {
+    axios.post('/api/user-favorites/add', { group_id: groupId })
+        .then(response => {
+            console.log(response.data.message);
+            loadUserGroups(); // Recharge les groupes après ajout
+            loadUserConversation(); // Recharge les conversations après ajout
+        })
+        .catch(error => {
+            console.error('Erreur lors de l\'ajout aux favoris', error);
+        });
+}
+
+function removeFavorite(groupId) {
+    axios.post('/api/user-favorites/remove', { group_id: groupId })
+        .then(response => {
+            console.log(response.data.message);
+            loadUserGroups(); // Recharge les groupes après suppression
+            loadUserConversation(); // Recharge les conversations après suppression
+        })
+        .catch(error => {
+            console.error('Erreur lors de la suppression des favoris', error);
+        });
+}
+
+
+function showConversationList() {
+    const conversationList = document.querySelector('.conversation-list');
+    const conversation = document.querySelector('.conversation');
+    conversationList.classList.remove('hidden');
+    conversation.classList.add('hidden');
+}
+
+// Cette fonction montre une conversation spécifique et cache la liste des conversations
+function showConversation() {
+    console.log("show")
+    const conversationList = document.querySelector('.conversation-list');
+    const conversation = document.querySelector('.conversation');
+    conversationList.classList.add('hidden');
+    conversation.classList.remove('hidden');
+}
 
 
 
@@ -78,7 +189,7 @@ function loadUsers() {
 
                 const userCheckbox = document.createElement('input');
                 userCheckbox.type = 'checkbox';
-                userCheckbox.classList.add("form-checkbox", "h-5", "w-5", "text-blue-600", "hidden");
+                userCheckbox.classList.add("form-checkbox", "h-5", "w-5", "text-red-600", "hidden");
                 userCheckbox.setAttribute('data-user-id', user.id);
 
                 userItem.appendChild(userInfo);
@@ -108,14 +219,14 @@ function createGroup() {
         .map(checkbox => checkbox.getAttribute('data-user-id'));
     const groupName = document.getElementById('groupNameInput').value; // Récupère la valeur du champ de saisie du nom du groupe
 
-    console.log("Créer un groupe nommé:", groupName, "avec les utilisateurs IDs:", selectedUserIds);
 
     axios.post('/create-group', {
         groupName: groupName,
         userIds: selectedUserIds
     })
         .then(() => {
-            console.log('Groupe créé avec succès');
+            loadUserGroups()
+
         })
         .catch(error => {
             console.error('Erreur lors de la création du groupe', error);
@@ -123,87 +234,145 @@ function createGroup() {
     // Fermer la modale et réinitialiser l'état après la création du groupe
     closeModal();
     toggleGroupCreationMode();
-    loadUserGroups()
 }
 
 
 function loadUserGroups() {
-    axios.get('/api/user-groups?type=group')
+    axios.get('/api/user-favorites')
         .then(response => {
-            const groups = response.data.groups;
-            const groupsContainer = document.querySelector('.flex.flex-col.-mx-4'); // Sélecteur de la div où afficher les groupes
+            const favorites = response.data.favorites.map(fav => fav.id);
 
-            // Nettoie la liste actuelle des groupes
-            groupsContainer.innerHTML = '';
+            axios.get('/api/user-groups?type=group')
+                .then(response => {
+                    const groups = response.data.groups;
+                    const groupsContainer = document.getElementById('groupContainer').querySelector('.flex.flex-col.-mx-4');
 
-            groups.forEach(group => {
-                // Crée un nouvel élément pour chaque groupe
-                const groupElement = document.createElement('div');
-                groupElement.classList.add('relative', 'flex', 'flex-row', 'items-center', 'p-4');
+                    console.log(response.data.groups);
+                    groupsContainer.innerHTML = '';
 
-                // Temps depuis la dernière activité du groupe (exemple statique '5 min')
-                const timeElement = document.createElement('div');
-                timeElement.classList.add('absolute', 'text-xs', 'text-gray-500', 'right-0', 'top-0', 'mr-4', 'mt-3');
-                timeElement.textContent = '5 min'; // Vous devrez remplacer cela par une valeur dynamique si disponible
+                    const favoriteGroups = [];
+                    const otherGroups = [];
 
-                // Icône du groupe (exemple statique avec 'T')
-                const iconElement = document.createElement('div');
-                iconElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-blue-500', 'text-blue-300', 'font-bold', 'flex-shrink-0');
-                iconElement.textContent = group.name.charAt(0)
+                    groups.forEach(group => {
+                        if (favorites.includes(group.id)) {
+                            favoriteGroups.push(group);
+                        } else {
+                            otherGroups.push(group);
+                        }
+                    });
 
-                // Nom et description du groupe
-                const groupInfoElement = document.createElement('div');
-                groupInfoElement.classList.add('flex', 'flex-col', 'flex-grow', 'ml-3');
-                const groupNameElement = document.createElement('div');
-                groupNameElement.classList.add('text-sm', 'font-medium');
-                groupNameElement.textContent = group.name;
-                const groupDescElement = document.createElement('div');
-                groupDescElement.classList.add('text-xs', 'truncate', 'w-40');
-/*
-                groupDescElement.textContent = group.description; // Remplacez par la description du groupe si disponible
-*/
+                    const createGroupElement = (group, isFavorite) => {
+                        const groupElement = document.createElement('div');
+                        groupElement.classList.add('flex', 'flex-row', 'items-center', 'p-4', 'relative');
+                        groupElement.setAttribute('data-group-id', group.id);
 
-                // Nombre de nouveaux messages (exemple statique '5')
-                const newMessagesElement = document.createElement('div');
-                newMessagesElement.classList.add('flex-shrink-0', 'ml-2', 'self-end', 'mb-1');
-                const messagesCountElement = document.createElement('span');
-                messagesCountElement.classList.add('flex', 'items-center', 'justify-center', 'h-5', 'w-5', 'bg-red-500', 'text-white', 'text-xs', 'rounded-full');
-                messagesCountElement.textContent = '5'; // Remplacez par le nombre réel de nouveaux messages si disponible
+                        const timeElement = document.createElement('div');
+                        timeElement.classList.add('absolute', 'text-xs', 'text-gray-500', 'right-0', 'top-0', 'mr-4', 'mt-3');
+                        timeElement.textContent = group.lastMessageTime || 'Un moment';
+                        timeElement.setAttribute('data-last-message-time', group.id);
 
-                // Assemblage des éléments
-                //newMessagesElement.appendChild(messagesCountElement);
-                groupInfoElement.appendChild(groupNameElement);
-                groupInfoElement.appendChild(groupDescElement);
-                //groupElement.appendChild(timeElement);
-                groupElement.appendChild(iconElement);
-                groupElement.appendChild(groupInfoElement);
-                groupElement.appendChild(newMessagesElement);
-                groupElement.addEventListener('click', () => joinGroupChat(group.id, groupNameElement.textContent));
+                        const iconElement = document.createElement('div');
+                        iconElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-red-500', 'text-red-300', 'font-bold', 'flex-shrink-0');
+                        iconElement.textContent = group.name.charAt(0);
 
-                // Ajout de l'élément de groupe au conteneur
-                groupsContainer.appendChild(groupElement);
-            });
+                        const groupInfoElement = document.createElement('div');
+                        groupInfoElement.classList.add('flex', 'flex-col', 'flex-grow', 'ml-3');
+                        const groupNameElement = document.createElement('div');
+                        groupNameElement.classList.add('text-sm', 'font-medium');
+                        groupNameElement.textContent = group.name;
+                        const lastMessageElement = document.createElement('div');
+                        lastMessageElement.classList.add('text-xs', 'truncate', 'w-40');
+                        lastMessageElement.textContent = group.lastMessageContent || 'Pas de messages';
+                        lastMessageElement.setAttribute('data-last-message', group.id);
+
+                        const newMessagesElement = document.createElement('div');
+                        newMessagesElement.classList.add('flex-shrink-0', 'ml-2', 'self-end', 'mb-1');
+                        const messagesCountElement = document.createElement('span');
+                        messagesCountElement.classList.add('flex', 'items-center', 'justify-center', 'h-5', 'w-5', 'bg-red-500', 'text-white', 'text-xs', 'rounded-full');
+                        messagesCountElement.textContent = group.newMessagesCount || '';
+
+                        const favoriteButton = document.createElement('button');
+                        favoriteButton.classList.add('ml-2', 'text-sm', 'p-1', 'rounded', 'focus:outline-none');
+                        favoriteButton.style.fontSize = '24px';
+                        favoriteButton.style.padding = '5px';
+                        favoriteButton.innerHTML = '&#9733;';
+
+                        if (isFavorite) {
+                            favoriteButton.classList.add('text-yellow-500');
+                        } else {
+                            favoriteButton.classList.add('text-gray-500');
+                        }
+
+                        favoriteButton.addEventListener('click', (event) => {
+                            event.stopPropagation();
+
+                            if (favoriteButton.classList.contains('text-yellow-500')) {
+                                removeFavorite(group.id);
+                            } else {
+                                addFavorite(group.id);
+                            }
+                        });
+
+                        groupInfoElement.appendChild(groupNameElement);
+                        groupInfoElement.appendChild(lastMessageElement);
+                        if (group.newMessagesCount > 0) {
+                            newMessagesElement.appendChild(messagesCountElement);
+                        }
+                        groupElement.appendChild(timeElement);
+                        groupElement.appendChild(iconElement);
+                        groupElement.appendChild(groupInfoElement);
+                        groupElement.appendChild(newMessagesElement);
+                        groupElement.appendChild(favoriteButton);
+
+                        groupElement.addEventListener('click', () => joinGroupChat(group.id, groupNameElement.textContent));
+
+                        return groupElement;
+                    };
+
+                    favoriteGroups.forEach(group => {
+                        const groupElement = createGroupElement(group, true);
+                        groupsContainer.appendChild(groupElement);
+                    });
+
+                    otherGroups.forEach(group => {
+                        const groupElement = createGroupElement(group, false);
+                        groupsContainer.appendChild(groupElement);
+                    });
+
+                    subscribeToAllGroupChannels(groups);
+                })
+                .catch(error => console.error('Erreur lors du chargement des groupes', error));
         })
-        .catch(error => console.error('Erreur lors du chargement des groupes', error));
+        .catch(error => console.error('Erreur lors du chargement des favoris', error));
 }
+
+
 
 function loadPreviousMessages(groupId) {
     axios.get(`/group-chat/${groupId}/messages`)
         .then(response => {
+            //console.log(response.data)
             const messages = response.data.messages;
             const chatDiv = document.querySelector('.grid.grid-cols-12.gap-y-2');
             chatDiv.innerHTML = ''; // Efface les messages précédents avant de charger les nouveaux
 
             messages.forEach(message => {
                 // Vérifiez que vous avez bien les propriétés user_firstname et user_lastname dans chaque message
-                appendMessageToChat(message.content, message.user_firstname, message.user_lastname);
+                appendMessageToChat(message.content, message.user_id, message.user_firstname, message.user_lastname, message.files);
+                //
+                //console.log(message.content, message.user_id, message.user_firstname, message.user_lastname, message.files)
             });
+            const lastMessageElement = chatDiv.lastElementChild;
+            if (lastMessageElement) {
+                lastMessageElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+            }
         })
         .catch(error => console.error('Erreur lors du chargement des messages', error));
 }
 
 
 function joinGroupChat(groupId, groupName) {
+
     if (currentGroupId && groupChannels[currentGroupId]) {
         window.Echo.leave(`group.${currentGroupId}`);
         delete groupChannels[currentGroupId];
@@ -217,23 +386,28 @@ function joinGroupChat(groupId, groupName) {
 
     groupNameElement.textContent = groupName; // Met à jour le nom du groupe
     groupLogoElement.textContent = groupName.charAt(0); // Utilise la première lettre du nom du groupe comme logo
-    groupLogoElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'bg-blue-500', 'text-blue-300', 'text-m', 'rounded-full');
+    groupLogoElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'bg-red-500', 'text-red-300', 'text-m', 'rounded-full');
 
     // Efface les messages précédents
     document.querySelector('.grid.grid-cols-12.gap-y-2').innerHTML = '';
+
+    // Met à jour le moment de la dernière visite dans la base de données
+    updateLastVisitedAt(groupId); // Mettre à jour la dernière visite
 
     // Charge les messages précédents pour le groupe sélectionné
     loadPreviousMessages(groupId);
 
     // Abonne au canal du groupe
     subscribeToGroupChannel(groupId);
+
+    showConversation()
 }
 function subscribeToGroupChannel(groupId) {
     if (!groupChannels[groupId]) {
         groupChannels[groupId] = window.Echo.private(`group.${groupId}`)
             .listen('GroupChatMessageEvent', (e) => {
-                console.log(e.message.content, e.message.firstname, e.message.lastname)
-                appendMessageToChat(e.message.content, e.message.firstname, e.message.lastname);
+                appendMessageToChat(e.message.content,e.message.id, e.message.firstname, e.message.lastname,e.message.files);
+                loadPreviousMessages(groupId);
             });
     }
 }
@@ -247,34 +421,60 @@ function getUserInfo() {
             globalFirstname = response.data.firstname;
             globalLastname = response.data.lastname;
             globalUserId = response.data.id
-            console.log('User info loaded:', globalFirstname, globalLastname);
+            //console.log('User info loaded:', globalFirstname, globalLastname);
         })
         .catch(error => {
             console.error('Erreur lors de la récupération des informations de l\'utilisateur', error);
         });
 }
 
+
 function sendMessage() {
     const messageInput = document.querySelector('input[type="text"]');
     const messageContent = messageInput.value;
+    const fileInput = document.getElementById('fileInput');
+    const previewContainer = document.getElementById('previewContainer');
 
-    if (!messageContent.trim() || !currentGroupId) {
-        console.error('Message content is empty or no group selected');
+    if (!currentGroupId) {
+        console.error('No group selected');
         return;
     }
 
-    axios.post(`/group-chat/${currentGroupId}/send`, {
-        groupId: currentGroupId,
-        message: messageContent
+    // Création d'un objet FormData
+    const formData = new FormData();
+    formData.append('groupId', currentGroupId);
+    if (messageContent.trim()) {
+        formData.append('message', messageContent);
+    }
+
+    // Ajouter chaque fichier sélectionné à formData
+    Array.from(fileInput.files).forEach((file, index) => {
+        formData.append(`files[${index}]`, file);
+        console.log(file)
+    });
+
+    axios.post(`/group-chat/${currentGroupId}/send`, formData, {
+        headers: {
+            'Content-Type': 'multipart/form-data'
+        }
     })
         .then(() => {
-            //appendMessageToChat(messageContent, globalFirstname, globalLastname);
             messageInput.value = '';
+            previewContainer.innerHTML = ''; // Effacer l'aperçu
+            fileInput.value = ''; // Réinitialiser l'input de fichier
+
+            loadPreviousMessages(currentGroupId);
+            triggerPushNotification(currentGroupId, messageContent, globalUserId);
+            loadUserConversation()
+            updateConversationPreview(currentGroupId)
         })
         .catch(error => {
             console.error('Erreur d\'envoi', error);
         });
 }
+
+// Le reste du code pour la gestion de l'input de fichier et de l'aperçu reste inchangé
+
 
 
 
@@ -282,39 +482,129 @@ function sendMessage() {
 // Liez cette fonction au bouton d'envoi ou à l'événement 'submit' du formulaire de message.
 
 
+function appendMessageToChat(messageContent, authorID, authorFirstname, authorLastname,fileData) {
 
-function appendMessageToChat(messageContent, authorFirstname, authorLastname) {
+
+
+    //console.log(fileData)
+
     const chatDiv = document.querySelector('.grid.grid-cols-12.gap-y-2');
     const messageElement = document.createElement('div');
-    messageElement.classList.add('col-start-1', 'col-end-8', 'p-3', 'rounded-lg');
 
-    // Vérifie si authorFirstname et authorLastname sont définis
-    const authorInfoText = authorFirstname && authorLastname ? `${authorFirstname} ${authorLastname}` : 'Utilisateur inconnu';
+    // Déterminez si le message a été envoyé par l'utilisateur actuel
+    const isCurrentUserMessage = authorID === globalUserId;
+
+    // Appliquez des classes conditionnelles pour aligner les messages à droite ou à gauche
+    if (isCurrentUserMessage) {
+        messageElement.classList.add('col-start-6', 'col-end-13', 'p-3', 'rounded-lg', 'self-end', 'text-right');
+    } else {
+        messageElement.classList.add('col-start-1', 'col-end-8', 'p-3', 'rounded-lg', 'self-start', 'text-left');
+    }
 
     const authorInfoDiv = document.createElement('div');
     authorInfoDiv.classList.add('mb-2', 'text', 'italic', 'text-gray-600', 'text-xs');
-    authorInfoDiv.textContent = authorInfoText;
+    authorInfoDiv.textContent = isCurrentUserMessage ? 'Vous' : `${authorFirstname} ${authorLastname}`;
 
     const flexDiv = document.createElement('div');
-    flexDiv.classList.add('flex', 'flex-row', 'items-center');
+    // Appliquez 'justify-end' pour aligner à droite si c'est l'utilisateur actuel
+    flexDiv.classList.add('flex', 'items-center', isCurrentUserMessage ? 'justify-end' : 'justify-start');
 
-    // Utilisez les initiales de authorFirstname et authorLastname ou utilisez une valeur par défaut si non disponibles
     const initials = `${authorFirstname ? authorFirstname.charAt(0) : ''}${authorLastname ? authorLastname.charAt(0) : ''}`;
     const authorDiv = document.createElement('div');
-    authorDiv.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-indigo-500', 'flex-shrink-0', 'text-white', 'font-bold');
-    authorDiv.textContent = initials.toUpperCase() || 'U'; // 'U' pour 'Utilisateur'
+    const authorLink = document.createElement('a');
+    authorLink.href = '/usershow/' + String(authorID);
+    authorDiv.appendChild(authorLink);
+    authorDiv.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'text-white', 'font-bold');
+    authorDiv.style.backgroundColor = isCurrentUserMessage ? '#4F46E5' : '#CBD5E1';
+
+    authorLink.textContent = initials.toUpperCase() || 'U';
 
     const messageContentDiv = document.createElement('div');
-    messageContentDiv.classList.add('relative', 'ml-3', 'text-sm', 'bg-white', 'py-2', 'px-4', 'shadow', 'rounded-xl');
+    messageContentDiv.classList.add('relative', 'text-sm', 'bg-white', 'py-2', 'px-4', 'shadow', 'rounded-xl');
     messageContentDiv.textContent = messageContent;
 
-    flexDiv.appendChild(authorDiv);
-    flexDiv.appendChild(messageContentDiv);
+    // Inversez l'ordre d'ajout pour les messages de l'utilisateur actuel
+    if (isCurrentUserMessage) {
+        flexDiv.appendChild(authorDiv);
+        flexDiv.appendChild(messageContentDiv);
+    } else {
+        flexDiv.appendChild(messageContentDiv);
+        flexDiv.appendChild(authorDiv);
+    }
+
+    if (fileData && fileData.length > 0) {
+        fileData.forEach(file => {
+            const { file_path, file_type } = file; // Utilisez les clés correctes ici
+            const fileElement = document.createElement('div');
+            fileElement.className = 'mt-2';
+
+            // Assurez-vous que file_type est défini avant de continuer
+            if (file_type) {
+                if (file_type.startsWith('image/')) {
+                    const img = document.createElement('img');
+                    img.src = file_path; // Utilisez file_path ici
+                    img.className = 'max-w-full h-auto rounded-lg';
+                    fileElement.appendChild(img);
+                } else if (file_type.startsWith('video/')) {
+                    const video = document.createElement('video');
+                    video.src = file_path; // Utilisez file_path ici
+                    video.controls = true;
+                    video.className = 'max-w-full h-auto rounded-lg';
+                    fileElement.appendChild(video);
+                } else if (file_type.startsWith('audio/')) {
+                    const audio = document.createElement('audio');
+                    audio.src = file_path; // Utilisez file_path ici
+                    audio.controls = true;
+                    fileElement.appendChild(audio);
+                } else {
+                    const text = document.createElement('p');
+                    text.textContent = 'Type de fichier non pris en charge';
+                    fileElement.appendChild(text);
+                }
+            } else {
+                const text = document.createElement('p');
+                text.textContent = 'Aucun type de fichier disponible';
+                fileElement.appendChild(text);
+            }
+
+
+            messageContentDiv.appendChild(fileElement);
+        });
+
+        // Bouton de téléchargement pour tous les fichiers
+        const downloadAllBtn = document.createElement('button');
+        downloadAllBtn.textContent = 'Enregistrer ⬇️';
+        downloadAllBtn.classList.add('mt-2', 'text-sm', 'text-black', 'p-1', 'rounded');
+        downloadAllBtn.onclick = () => {
+            fileData.forEach((file) => {
+                if (file.file_type.startsWith('image/') || file.file_type.startsWith('video/')) {
+                    const link = document.createElement('a');
+                    link.href = file.file_path;
+                    link.download = ''; // Le navigateur utilisera le nom du fichier sur le serveur
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                }
+            });
+        };
+
+        messageContentDiv.appendChild(downloadAllBtn);
+    }
+
+
+
+
     messageElement.appendChild(authorInfoDiv);
     messageElement.appendChild(flexDiv);
 
     chatDiv.appendChild(messageElement);
+
+    const lastMessageElement = chatDiv.lastElementChild;
+    if (lastMessageElement) {
+        lastMessageElement.scrollIntoView({  block: 'end' });
+    }
 }
+
 
 
 
@@ -322,12 +612,8 @@ function startConversation(userId) {
     axios.get(`/check-group/${globalUserId}/${userId}`)
         .then(response => {
             if (response.data.groupId) {
-                // Un groupe existant a été trouvé, rejoignez-le
-                console.log("Un groupe existe déjà avec l'ID :" + response.data.groupName)
                 joinGroupChat(response.data.groupId, response.data.groupName);
             } else {
-                // Aucun groupe n'existe, créez-en un nouveau
-                console.log("Aucun groupe trouvé, en créer un nouveau.");
                 createPrivateGroup(globalUserId, userId);
             }
         })
@@ -339,23 +625,18 @@ function startConversation(userId) {
 }
 
 
-
 function createPrivateGroup(userOneId, userTwoId) {
     axios.get(`/api/user-details/${userTwoId}`).then(response => {
         const otherUser = response.data;
-        console.log(response.data);
-
-        // Construisez le nom du groupe en utilisant le prénom et le nom de l'autre utilisateur.
-        const groupName = `${otherUser.firstname} ${otherUser.lastname}`; // Ajouté le lastname
+        const groupName = `${otherUser.firstname} ${otherUser.lastname}`;
 
         axios.post('/create-group', {
             groupName: groupName,
             userIds: [userOneId, userTwoId]
         })
             .then(response => {
-                console.log('Conversation privée créée avec succès', response.data.group);
                 joinGroupChat(response.data.group.id, groupName);
-                loadUserConversation()
+                loadUserConversation();
             })
             .catch(error => {
                 console.error('Erreur lors de la création de la conversation privée', error);
@@ -367,67 +648,266 @@ function createPrivateGroup(userOneId, userTwoId) {
 
 
 function loadUserConversation() {
-    axios.get('/api/user-groups?type=private')
+    axios.get('/api/user-favorites')
         .then(response => {
-            const groups = response.data.groups;
-            const conversationsContainer = document.querySelector('.flex.flex-col.divide-y.h-full.overflow-y-auto.-mx-4'); // Sélecteur de la div pour les conversations
+            const favorites = response.data.favorites.map(fav => fav.id);
 
-            // Nettoie la liste actuelle des conversations
-            conversationsContainer.innerHTML = '';
+            loadUnreadMessagesCount().then(() => {
+                axios.get('/api/user-groups?type=private')
+                    .then(response => {
+                        const groups = response.data.groups;
+                        const conversationsContainer = document.getElementById('privateContainer').querySelector('.flex.flex-col.-mx-4');
 
-            groups.forEach(group => {
-                // Crée un nouvel élément pour chaque conversation
-                const conversationElement = document.createElement('div');
-                conversationElement.classList.add('flex', 'flex-row', 'items-center', 'p-4', 'relative');
+                        conversationsContainer.innerHTML = '';
 
-                // Temps depuis la dernière activité (exemple statique '2 hours ago')
-                const timeElement = document.createElement('div');
-                timeElement.classList.add('absolute', 'text-xs', 'text-gray-500', 'right-0', 'top-0', 'mr-4', 'mt-3');
-                timeElement.textContent = '2 hours ago'; // Remplacer par une valeur dynamique si disponible
+                        const favoriteGroups = [];
+                        const otherGroups = [];
 
-                // Icône (exemple statique avec 'T')
-                const iconElement = document.createElement('div');
-                iconElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-pink-500', 'text-pink-300', 'font-bold', 'flex-shrink-0');
-                iconElement.textContent = group.name.charAt(0); // Utilisez la première lettre du nom du groupe comme icône
+                        groups.forEach(group => {
+                            if (favorites.includes(group.id)) {
+                                favoriteGroups.push(group);
+                            } else {
+                                otherGroups.push(group);
+                            }
+                        });
 
-                // Nom et dernier message
-                const groupInfoElement = document.createElement('div');
-                groupInfoElement.classList.add('flex', 'flex-col', 'flex-grow', 'ml-3');
-                const groupNameElement = document.createElement('div');
-                groupNameElement.classList.add('text-sm', 'font-medium');
-                groupNameElement.textContent = group.name; // Nom du groupe
-                const lastMessageElement = document.createElement('div');
-                lastMessageElement.classList.add('text-xs', 'truncate', 'w-40');
-                lastMessageElement.textContent = 'Good after noon! how can i help you?'; // Dernier message, remplacer par la donnée dynamique si disponible
+                        const createConversationElement = (group, isFavorite) => {
+                            const unreadCount = group.unreadMessagesCount;
+                            const otherMember = group.members.find(member => member.id !== globalUserId);
 
-                // Nombre de nouveaux messages (exemple statique '3')
-                const newMessagesElement = document.createElement('div');
-                newMessagesElement.classList.add('flex-shrink-0', 'ml-2', 'self-end', 'mb-1');
-                const messagesCountElement = document.createElement('span');
-                messagesCountElement.classList.add('flex', 'items-center', 'justify-center', 'h-5', 'w-5', 'bg-red-500', 'text-white', 'text-xs', 'rounded-full');
-                messagesCountElement.textContent = '3'; // Remplacer par le nombre réel de nouveaux messages si disponible
+                            const conversationElement = document.createElement('div');
+                            conversationElement.classList.add('flex', 'flex-row', 'items-center', 'p-4', 'relative');
+                            conversationElement.setAttribute('data-conversation-id', group.id);
 
-                // Assemblage des éléments
-                groupInfoElement.appendChild(groupNameElement);
-                groupInfoElement.appendChild(lastMessageElement);
-                newMessagesElement.appendChild(messagesCountElement);
-                conversationElement.appendChild(timeElement);
-                conversationElement.appendChild(iconElement);
-                conversationElement.appendChild(groupInfoElement);
-                conversationElement.appendChild(newMessagesElement);
+                            const timeElement = document.createElement('div');
+                            timeElement.classList.add('absolute', 'text-xs', 'text-gray-500', 'right-0', 'top-0', 'mr-4', 'mt-3');
+                            timeElement.textContent = group.lastMessageTime || 'Un moment';
+                            timeElement.setAttribute('data-last-message-time', group.id);
 
-                // Ajouter un écouteur d'événements pour rejoindre la conversation lors du clic
-                conversationElement.addEventListener('click', () => joinGroupChat(group.id, groupNameElement.textContent));
+                            const iconElement = document.createElement('div');
+                            iconElement.classList.add('flex', 'items-center', 'justify-center', 'h-10', 'w-10', 'rounded-full', 'bg-pink-500', 'text-pink-300', 'font-bold', 'flex-shrink-0');
+                            iconElement.textContent = otherMember ? otherMember.firstname.charAt(0) : group.name.charAt(0);
 
-                // Ajouter l'élément de conversation au conteneur
-                conversationsContainer.appendChild(conversationElement);
+                            const groupInfoElement = document.createElement('div');
+                            groupInfoElement.classList.add('flex', 'flex-col', 'flex-grow', 'ml-3');
+                            const groupNameElement = document.createElement('div');
+                            groupNameElement.classList.add('text-sm', 'font-medium');
+                            groupNameElement.textContent = otherMember ? `${otherMember.firstname} ${otherMember.lastname}` : 'Groupe inconnu';
+                            const lastMessageElement = document.createElement('div');
+                            lastMessageElement.classList.add('text-xs', 'truncate', 'w-40');
+                            lastMessageElement.textContent = group.lastMessageContent || 'Pas de messages';
+                            lastMessageElement.setAttribute('data-last-message', group.id);
+
+                            const newMessagesElement = document.createElement('div');
+                            newMessagesElement.classList.add('flex-shrink-0', 'ml-2', 'self-end', 'mb-1');
+                            const messagesCountElement = document.createElement('span');
+                            messagesCountElement.classList.add('flex', 'items-center', 'justify-center', 'h-5', 'w-5', 'bg-red-500', 'text-white', 'text-xs', 'rounded-full');
+                            messagesCountElement.textContent = unreadCount || '';
+
+                            const favoriteButton = document.createElement('button');
+                            favoriteButton.classList.add('ml-2', 'text-sm', 'p-1', 'rounded', 'focus:outline-none');
+                            favoriteButton.style.fontSize = '24px';
+                            favoriteButton.style.padding = '5px';
+                            favoriteButton.innerHTML = '&#9733;';
+
+                            if (isFavorite) {
+                                favoriteButton.classList.add('text-yellow-500');
+                            } else {
+                                favoriteButton.classList.add('text-gray-500');
+                            }
+
+                            favoriteButton.addEventListener('click', (event) => {
+                                event.stopPropagation();
+
+                                if (favoriteButton.classList.contains('text-yellow-500')) {
+                                    removeFavorite(group.id);
+                                } else {
+                                    addFavorite(group.id);
+                                }
+                            });
+
+                            groupInfoElement.appendChild(groupNameElement);
+                            groupInfoElement.appendChild(lastMessageElement);
+                            if (unreadCount > 0) {
+                                newMessagesElement.appendChild(messagesCountElement);
+                            }
+                            conversationElement.appendChild(timeElement);
+                            conversationElement.appendChild(iconElement);
+                            conversationElement.appendChild(groupInfoElement);
+                            conversationElement.appendChild(favoriteButton);
+
+                            conversationElement.addEventListener('click', () => joinGroupChat(group.id, groupNameElement.textContent));
+
+                            return conversationElement;
+                        };
+
+                        favoriteGroups.forEach(group => {
+                            const conversationElement = createConversationElement(group, true);
+                            conversationsContainer.appendChild(conversationElement);
+                        });
+
+                        otherGroups.forEach(group => {
+                            const conversationElement = createConversationElement(group, false);
+                            conversationsContainer.appendChild(conversationElement);
+                        });
+
+                        subscribeToAllGroupChannelsPrivate(groups);
+                    })
+                    .catch(error => console.error('Erreur lors du chargement des groupes', error));
             });
         })
-        .catch(error => console.error('Erreur lors du chargement des groupes', error));
+        .catch(error => console.error('Erreur lors du chargement des favoris', error));
 }
 
 
 
+function triggerPushNotification(groupId, messageContent, globaluserId) {
+    // Utilisez "Image" comme contenu par défaut si messageContent est vide
+    const notificationContent = messageContent || "Image";
+
+    //console.log("grouid " + groupId + " message " + messageContent + " globaluser " + globaluserId)
+
+
+
+    axios.post('/api/send-notification-group', {
+        groupId: groupId,
+        message: notificationContent, // Utilisez notificationContent ici
+        id_sender: globaluserId
+    })
+        .then(response => {
+            /*console.log(notificationContent);
+            console.log(response.data)*/
+
+        })
+        .catch(error => {
+            console.error('Error triggering notification', error);
+        });
+
+}
+
+
+function startRefreshingConversations() {
+    loadUserConversation(); // Chargez les conversations immédiatement lors du premier appel
+
+    // Définissez un intervalle pour relancer l'actualisation toutes les 1 minute (60000 millisecondes)
+    setInterval(() => {
+        loadUserGroups();
+        loadUserConversation();
+        console.log("actualiser")
+        }, 60000);
+}
+
+
+
+function subscribeToAllGroupChannels(groups) {
+    groups.forEach(group => {
+        if (!groupChannels[group.id]) {
+            groupChannels[group.id] = window.Echo.private(`group.${group.id}`)
+                .listen('GroupChatMessageEvent', (e) => {
+                    console.log(e.message);
+                    updateGroupPreview(group.id, e.message.content);
+                });
+        }
+    });
+}
+
+
+function updateGroupPreview(groupId, messageContent) {
+    // Sélectionner l'élément de dernier message en utilisant l'attribut de données
+    const lastMessageElement = document.querySelector(`[data-last-message="${groupId}"]`);
+    if (lastMessageElement) {
+        lastMessageElement.textContent = messageContent || 'Nouveau message';
+    }
+
+    // Mettre à jour le temps du dernier message de la même manière
+    const lastMessageTimeElement = document.querySelector(`[data-last-message-time="${groupId}"]`);
+    if (lastMessageTimeElement) {
+        lastMessageTimeElement.textContent = new Date().toLocaleTimeString(); // ou toute autre logique de formatage de date
+    }
+
+}
+
+function subscribeToAllGroupChannelsPrivate(groups) {
+    groups.forEach(group => {
+        if (!groupChannels[group.id]) {
+            groupChannels[group.id] = window.Echo.private(`group.${group.id}`)
+                .listen('GroupChatMessageEvent', (e) => {
+                    console.log(e.message);
+                    updateConversationPreview(group.id, e.message.content);
+                });
+        }
+    });
+}
+
+function updateConversationPreview(conversationId) {
+    loadUnreadMessagesCount().then(groupsWithUnreadCounts => {
+        loadUserConversation();
+        loadPreviousMessages(conversationId);
+
+        const groupData = groupsWithUnreadCounts.find(group => group.id === conversationId);
+        const unreadCount = groupData ? groupData.unreadMessagesCount : 0;
+
+        const lastMessageElement = document.querySelector(`[data-conversation-id="${conversationId}"] [data-last-message]`);
+        if (lastMessageElement) {
+            lastMessageElement.textContent = groupData.lastMessageContent || 'Nouveau message';
+        }
+
+        const lastMessageTimeElement = document.querySelector(`[data-conversation-id="${conversationId}"] [data-last-message-time]`);
+        if (lastMessageTimeElement) {
+            lastMessageTimeElement.textContent = groupData.lastMessageTime || new Date().toLocaleTimeString();
+        }
+
+        const messagesCountElement = document.querySelector(`[data-conversation-id="${conversationId}"] .messages-count`);
+        if (messagesCountElement) {
+            if (unreadCount > 0) {
+                messagesCountElement.textContent = unreadCount;
+                messagesCountElement.classList.remove('hidden');
+            } else {
+                messagesCountElement.classList.add('hidden');
+            }
+        }
+    }).catch(error => {
+        console.error("Erreur lors du chargement du nombre de messages non lus:", error);
+    });
+}
+
+
+
+function updateLastVisitedAt(groupId) {
+    axios.post(`/api/groups/${groupId}/update-last-visited`)
+        .then(response => {
+            console.log("Dernière visite mise à jour pour le groupe:", groupId);
+            loadUserConversation();
+        })
+        .catch(error => {
+            console.error("Erreur lors de la mise à jour de la dernière visite:", error);
+        });
+}
+
+
+
+function loadUnreadMessagesCount() {
+    return new Promise((resolve, reject) => {
+        axios.get('/api/user-groups')
+            .then(response => {
+                const groups = response.data.groups;
+                const groupsWithUnreadCounts = groups.map(group => {
+                    return {
+                        id: group.id,
+                        unreadMessagesCount: group.unreadMessagesCount,
+                        lastMessageContent: group.lastMessageContent,
+                        lastMessageTime: group.lastMessageTime,
+                    };
+                });
+
+                resolve(groupsWithUnreadCounts);
+            })
+            .catch(error => {
+                console.error("Erreur lors du chargement des groupes et du nombre de messages non lus:", error);
+                reject(error);
+            });
+    });
+}
 
 
 
@@ -442,3 +922,4 @@ function openModal() {
 function closeModal() {
     document.getElementById('userModal').classList.add('hidden');
 }
+

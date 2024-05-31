@@ -23,5 +23,21 @@ class RoleSeeder extends Seeder
             'edit-user',
             'delete-user'
         ]);
+
+        $coach = Role::create(['name' => 'coach']);
+
+        $coach->givePermissionTo([
+            'create-team',
+            'edit-team',
+            'delete-team',
+            'create-user',
+            'edit-user',
+            'delete-user'
+        ]);
+
+        $parents = Role::create(['name' => 'parents']);
+
+        $joueur = Role::create(['name' => 'joueur']);
+
     }
 }

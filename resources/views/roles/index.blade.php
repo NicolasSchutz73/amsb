@@ -1,58 +1,61 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-white leading-tight">
-            Gérer les rôles
-        </h2>
+        <div class="flex items-center justify-between">
+            <h2 class="mb-1 font-semibold text-xl text-white">
+                Gérer les rôles
+            </h2>
+        </div>
     </x-slot>
+
     <div class="p-6">
         @can('create-role')
-            <a href="{{ route('roles.create') }}" class="inline-flex items-center justify-center px-4 py-2 border border-white text-white rounded-md shadow-sm hover:bg-white hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white sm:ml-3 mt-3 sm:mt-0 mb-4">
-                Ajouter un rôle
-            </a>
+            <!-- Utilisation du composant Create Button -->
+            <x-create-button route="roles.create" label="Ajouter un rôle" />
         @endcan
-            <table class="min-w-full divide-y divide-gray-200">
-                <thead class="bg-gray-50">
-                <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nom</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4">Action</th>
-                </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                @forelse ($roles as $role)
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 whitespace-nowrap">{{ $loop->iteration }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ $role->name }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap flex justify-between">
-                            <form action="{{ route('roles.destroy', $role->id) }}" method="post">
+
+        <input type="text" id="searchBar" placeholder="Rechercher des rôles..." class="mt-2 mb-4 w-64 px-4 py-2 rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 focus:outline-none text-gray-900">
+
+        @if (!$roles->isEmpty())
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach ($roles as $role)
+                    <div class="bg-white rounded-lg shadow-md p-6 role-item">
+                        <h2 class="text-xl font-semibold role-name">{{ $role->name }}</h2>
+                        <div class="mt-4">
+                            <a href="{{ route('roles.show', $role->id) }}" class="text-blue-500 hover:text-blue-700">Voir</a>
+                            <a href="{{ route('roles.edit', $role->id) }}" class="text-yellow-500 hover:text-yellow-700 ml-4">Modifier</a>
+                            <form action="{{ route('roles.destroy', $role->id) }}" method="POST" class="inline">
                                 @csrf
                                 @method('DELETE')
-
-                                <a href="{{ route('roles.show', $role->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-yellow-500 text-white rounded-md shadow-sm hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 mt-3 sm:mt-0">Voir</a>
-
-                                @if ($role->name != 'Super Admin')
-                                    @can('edit-role')
-                                        <a href="{{ route('roles.edit', $role->id) }}" class="inline-flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 sm:ml-3 mt-3 sm:mt-0">Modifier</a>
-                                    @endcan
-
-                                    @can('delete-role')
-                                        @if ($role->name != Auth::user()->hasRole($role->name))
-                                            <button type="submit" class="inline-flex items-center justify-center px-4 py-2 bg-red-500 text-white rounded-md shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 mt-3 sm:mt-0" onclick="return confirm('Voulez-vous supprimer ce rôle ?');">Supprimer</button>
-                                        @endif
-                                    @endcan
-                                @endif
+                                <button type="submit" class="text-red-500 hover:text-red-700 ml-4">Supprimer</button>
                             </form>
-                        </td>
-                    </tr>
-                @empty
-                    <td colspan="3" class="px-6 py-4 whitespace-nowrap">
-                <span class="text-danger">
-                    <strong>Aucun rôle trouver !</strong>
-                </span>
-                    </td>
-                @endforelse
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-danger text-center py-10">Aucun rôle disponible pour le moment.</p>
+        @endif
+
         {{ $roles->links() }}
     </div>
 </x-app-layout>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchBar = document.getElementById('searchBar');
+
+        searchBar.addEventListener('keyup', function (e) {
+            const term = e.target.value.toLowerCase();
+            const roles = document.querySelectorAll('.role-item');
+
+            roles.forEach(function (role) {
+                const name = role.querySelector('.role-name').textContent.toLowerCase();
+                if (name.includes(term)) {
+                    role.style.display = '';
+                } else {
+                    role.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
